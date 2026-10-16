@@ -28,3 +28,13 @@ The storefront presents itself as a small operating system: pages open as window
 ## CSS
 
 Author styles in `config/styles.css`. Canvas/Sidekick compiles that file to `assets/styles.min.css`, which is generated output and **git-ignored**. Never edit it by hand.
+
+## Use this theme on your store
+
+1. Clone this repository.
+2. In a shop with Canvas, start a basic "blank slate" Canvas theme.
+3. Use the Shopify CLI to push this theme's code into that blank slate Canvas theme on your shop.
+
+```bash
+shopify theme push --store your-store --theme <blank-slate-theme-id>
+```
