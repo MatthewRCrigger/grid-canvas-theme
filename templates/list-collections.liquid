@@ -1,0 +1,74 @@
+{% block 'container', class: 'os-stage' %}
+  {%- comment -%} COLLECTIONS: the store's folders in a Finder window (path, icon/list view, status bar). {%- endcomment -%}
+  {% comment %} Unpaginated for-loops cap at 50 items, so paginate keeps every collection reachable on stores with more than 50. {% endcomment %}
+  <div class="os-stage-inner">
+  {% paginate collections by 24 %}
+    {% block 'frame', window: 'page', class: 'os-page', inner_class: 'flex flex-col' %}
+      <div class="panel-header os-page-bar">
+        {% block 'text', tag: 'span', class: 'truncate' %}{{ 'collections.directory_panel' | t }}{% endblock %}
+        <span class="os-page-meta">{{ 'os.items' | t: count: paginate.items }}</span>
+      </div>
+      <div class="os-finder-toolbar">
+        <nav aria-label="{{ 'os.path_label' | t | escape }}" class="min-w-0">
+          <ol role="list" class="os-path">
+            <li><a href="{{ routes.root_url }}">{{ 'os.path_root' | t }}</a></li>
+            <li><span aria-current="page">{{ 'os.sidebar_locations' | t }}</span></li>
+          </ol>
+        </nav>
+        <s-finder-view id="collections-view" class="os-segment" role="group" aria-label="{{ 'os.view_label' | t | escape }}">
+          <button type="button" commandfor="collections-view" command="--icons" aria-pressed="true" aria-label="{{ 'os.view_icons' | t | escape }}">{% render 'os-icon', name: 'icons' %}</button>
+          <button type="button" commandfor="collections-view" command="--list" aria-pressed="false" aria-label="{{ 'os.view_list' | t | escape }}">{% render 'os-icon', name: 'list' %}</button>
+        </s-finder-view>
+      </div>
+      <div class="os-finder-head">
+        {% block 'text', tag: 'span', variant: 'type-overline', class: 'mb-3 block text-ink-300' %}{{ 'collections.directory_overline' | t }}{% endblock %}
+        {% block 'text', tag: 'h1', variant: 'type-title', class: 'max-w-full break-words text-on-surface' %}{{ 'collections.all_collections' | t }}{% endblock %}
+      </div>
+      {%- if collections.size > 0 -%}
+        {% comment %} Account for the 1440px page cap, gutters and window borders of the 2/3/4-column folder; mirror in snippets/lcp-preload.liquid. {% endcomment %}
+        {%- assign collection_sizes = '(min-width: 1440px) 320px, (min-width: 990px) calc((100vw - 96px) / 4), (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 64px) / 2)' -%}
+        <div class="pt-4">
+            <ul role="list" class="os-finder-grid -me-px border-t border-line-400">
+              {% for collection in collections %}
+                {% comment %} forloop.index resets per paginated page, so the first grid row stays eager on every page. {% endcomment %}
+                {%- if forloop.index <= 4 -%}{%- assign image_loading = 'eager' -%}{%- else -%}{%- assign image_loading = 'lazy' -%}{%- endif -%}
+                {%- if forloop.first -%}{%- assign fetch_priority = 'high' -%}{%- else -%}{%- assign fetch_priority = 'auto' -%}{%- endif -%}
+                {%- assign card_collection = collection -%}
+                {%- assign card_url = card_collection.url | default: routes.root_url -%}
+                {%- if card_collection -%}{%- assign card_title = card_collection.title -%}{%- else -%}{%- assign card_title = 'collections.placeholder_title' | t -%}{%- endif -%}
+                {%- assign card_image = card_collection.image | default: card_collection.products.first.featured_image | default: images['grid-dev-module-rack.png'] -%}
+                {%- capture image_attributes -%}loading="{{ image_loading }}" fetchpriority="{{ fetch_priority }}"{%- endcapture -%}
+                {%- assign card_index = paginate.current_offset | plus: forloop.index -%}
+                <li class="border-b border-e border-line-400 bg-panel">
+                  {% block 'card', block.name: 't:blocks.collection_card', url: card_url, aria_label: card_title, class: 'h-full p-3 md:p-4' %}
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="type-data-sm text-ink-300" aria-hidden="true">{% if card_index < 10 %}0{% endif %}{{ card_index }}</span>
+                      <span class="type-data-sm uppercase text-ink-300">{{ 'home.directory.items' | t: count: card_collection.products_count }}</span>
+                    </div>
+                    <a href="{{ card_url | escape }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ card_title | escape }}">
+                      {% block 'image', fallback_image: card_image, aspect_ratio: 'aspect-square', sizes: collection_sizes, attributes: image_attributes, alt: card_title, seed: forloop.index, placeholder_kind: 'collection' %}{% endblock %}
+                    </a>
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                      {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ card_title | escape }}{% endblock %}
+                      <span class="inline-flex size-4 shrink-0 items-center justify-center text-ink-300 motion-safe:transition-colors group-hover/card:text-accent rtl:-scale-x-100" aria-hidden="true">{{- 'icon-arrow-right.svg' | inline_asset_content -}}</span>
+                    </div>
+                  {% endblock %}
+                </li>
+              {% endfor %}
+            </ul>
+        </div>
+        <div class="px-3 pt-8 lg:px-5">
+          {% block 'pagination', paginate: paginate %}{% endblock %}
+        </div>
+      {%- else -%}
+        {% block 'text', variant: 'type-body', class: 'text-ink-200 px-4 py-6 lg:px-5' %}{{ 'collections.no_collections' | t }}{% endblock %}
+      {%- endif -%}
+      {%- assign directory_pages = paginate.pages | at_least: 1 -%}
+      <p class="os-page-status mt-auto">
+        <span>{{ 'os.items' | t: count: paginate.items }}</span>
+        <span>{{ 'os.status_page' | t: current: paginate.current_page, total: directory_pages }}</span>
+      </p>
+    {% endblock %}
+  {% endpaginate %}
+  </div>
+{% endblock %}

@@ -1,0 +1,183 @@
+{% doc %}
+  Renders the primary navigation. The desktop `<nav>` uses multi-level
+  `s-nav-dropdown` behavior; the specialized mobile drawer is composed from
+  this block so both presentations use the same selected menu. When no menu is
+  selected, the standard `main-menu` link list is used automatically. If that
+  fallback has no links, the desktop nav is omitted while the mobile drawer
+  remains available for its localization controls. Optional body content
+  renders before the desktop link list.
+
+  @param {string} [class] - Additional CSS classes on the desktop `<nav>` element. Overrides the default desktop layout classes when set.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root `<nav>` element.
+  @param {string} [mobile_nav_close_button] - Unused: the mobile menu is a GRID OS pop-up window with its own close light.
+  @param {string} mobile_nav_localization_submit - Captured layout-owned submit button for the mobile language selector. @required
+
+  @category navigation
+  @renders nav
+
+  @example
+  {%- capture close_attributes -%}aria-label="{{ 'general.close' | t | escape }}"{%- endcapture -%}
+  {%- capture mobile_close -%}
+    {% block 'button', commandfor: 'mobile-nav-drawer', command: 'close', variant: 'button-ghost', class: 'ms-auto size-touch-target rounded hover:bg-transparent hover:opacity-70', attributes: close_attributes %}<span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span>{% endblock %}
+  {%- endcapture -%}
+  {% capture update_button %}
+    {% block 'button', type: 'submit', variant: 'button-secondary' %}{{ 'localization.update_language' | t }}{% endblock %}
+  {% endcapture %}
+  {% block 'main-menu', mobile_nav_close_button: mobile_close, mobile_nav_localization_submit: update_button %}{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign menu = menu | default: linklists.main-menu
+
+  assign variant = variant | default: 'type-body'
+  assign text_color = color
+  assign dropdown_color = dropdown_color
+
+  assign nav_class = class | default: 'hidden md:flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2 mx-8'
+-%}
+
+{% if menu.links.size > 0 %}
+<nav aria-label="{{ 'header.navigation' | t }}" class="{{ nav_class }}" data-desktop-nav {% if attributes != blank %}{{ attributes }}{% endif %}>
+  {{ content }}
+  {%- comment -%} role="list" keeps the list structure exposed to assistive tech (it communicates the navigation hierarchy, and VoiceOver drops list semantics when there is no list-style); display:contents keeps the items as direct flex children of the <nav> so the existing flex-wrap layout is unchanged. {%- endcomment -%}
+  <ul role="list" class="contents">
+  {% for link in menu.links %}
+    {% if link.links.size > 0 %}
+      {%- assign panel_id = 'nav-panel-' | append: forloop.index -%}
+      {%- assign disclosure_title = link.title | escape -%}
+      {%- capture disclosure_label -%}{{ 'header.show_submenu' | t: title: disclosure_title }}{%- endcapture -%}
+      <s-nav-dropdown class="nav-has-dropdown" role="listitem">
+        {%- comment -%} The link goes to the item's page; the separate button shows/hides the submenu (its aria-expanded is kept in sync by s-nav-dropdown.js). The button is only visible on keyboard focus, so mouse users still open the submenu by hovering. {%- endcomment -%}
+        <a href="{{ link.url }}"
+          class="{{ variant }} shrink-0 no-underline{% if text_color == blank %} text-ink-200{% endif %} inline-flex min-h-touch-target items-center border-b-2 border-transparent hover:text-on-surface aria-[current=page]:border-interactive aria-[current=page]:text-on-surface motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm whitespace-nowrap"
+          {%- if text_color != blank %} style="color: {{ text_color }}"{% endif %}
+          {%- if link.current %} aria-current="page"{% endif %}>
+          {{ link.title | escape }}
+        </a>
+        <button type="button" class="nav-disclosure" data-nav-disclosure aria-controls="{{ panel_id }}" aria-expanded="false">
+          <span class="sr-only">{{ disclosure_label }}</span>
+          <span class="nav-disclosure-icon" aria-hidden="true">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+        </button>
+        <div class="nav-dropdown" id="{{ panel_id }}">
+          {%- comment -%} role="list"/role="listitem" convey the submenu hierarchy to assistive tech; the display:contents groups and leaf <li>s keep the existing grid layout. {%- endcomment -%}
+          <div class="nav-dropdown-inner" role="list"{% if dropdown_color != blank %} style="background-color: {{ dropdown_color }}"{% endif %}>
+            {% for sub in link.links %}
+              {% if sub.links.size > 0 %}
+                {%- assign sub_panel_id = panel_id | append: '-' | append: forloop.index -%}
+                {%- assign sub_disclosure_title = sub.title | escape -%}
+                {%- capture sub_disclosure_label -%}{{ 'header.show_submenu' | t: title: sub_disclosure_title }}{%- endcapture -%}
+                <div class="nav-dropdown-group" role="listitem">
+                  {%- comment -%} Split link + disclosure button so the visible title navigates while the chevron button toggles the nested column. {%- endcomment -%}
+                  <div class="nav-dropdown-row">
+                    <a href="{{ sub.url }}"{% if sub.current %} aria-current="page"{% endif %} class="nav-dropdown-item motion-safe:transition-colors">{{ sub.title | escape }}</a>
+                    <button type="button" class="nav-dropdown-disclosure" data-nav-disclosure aria-controls="{{ sub_panel_id }}" aria-expanded="false">
+                      <span class="sr-only">{{ sub_disclosure_label }}</span>
+                      <span class="inline-flex items-center justify-center shrink-0 size-2.5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+                    </button>
+                  </div>
+                  <div class="nav-dropdown-submenu" id="{{ sub_panel_id }}">
+                    <div class="nav-submenu-inner" role="list">
+                      {% for subsub in sub.links %}
+                        {% if subsub.links.size > 0 %}
+                          {%- assign subsub_panel_id = sub_panel_id | append: '-' | append: forloop.index -%}
+                          {%- assign subsub_disclosure_title = subsub.title | escape -%}
+                          {%- capture subsub_disclosure_label -%}{{ 'header.show_submenu' | t: title: subsub_disclosure_title }}{%- endcapture -%}
+                          <div class="nav-dropdown-group" role="listitem">
+                            <div class="nav-dropdown-row">
+                              <a href="{{ subsub.url }}"{% if subsub.current %} aria-current="page"{% endif %} class="nav-dropdown-item motion-safe:transition-colors">{{ subsub.title | escape }}</a>
+                              <button type="button" class="nav-dropdown-disclosure" data-nav-disclosure aria-controls="{{ subsub_panel_id }}" aria-expanded="false">
+                                <span class="sr-only">{{ subsub_disclosure_label }}</span>
+                                <span class="inline-flex items-center justify-center shrink-0 size-2.5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+                              </button>
+                            </div>
+                            <div class="nav-dropdown-submenu" id="{{ subsub_panel_id }}">
+                              <div class="nav-submenu-inner" role="list">
+                                {% for subsubsub in subsub.links %}
+                                  <li role="listitem" class="contents"><a href="{{ subsubsub.url }}"{% if subsubsub.current %} aria-current="page"{% endif %} class="nav-dropdown-item motion-safe:transition-colors">{{ subsubsub.title | escape }}</a></li>
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                        {% else %}
+                          <li role="listitem" class="contents"><a href="{{ subsub.url }}"{% if subsub.current %} aria-current="page"{% endif %} class="nav-dropdown-item motion-safe:transition-colors">{{ subsub.title | escape }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                <li role="listitem" class="contents"><a href="{{ sub.url }}"{% if sub.current %} aria-current="page"{% endif %} class="nav-dropdown-item motion-safe:transition-colors">{{ sub.title | escape }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </s-nav-dropdown>
+    {% else %}
+      <li role="listitem" class="contents">
+        <a href="{{ link.url }}"
+          class="{{ variant }} shrink-0 no-underline{% if text_color == blank %} text-ink-200{% endif %} inline-flex min-h-touch-target items-center border-b-2 border-transparent hover:text-on-surface aria-[current=page]:border-interactive aria-[current=page]:text-on-surface motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm whitespace-nowrap"
+          {%- if text_color != blank %} style="color: {{ text_color }}"{% endif %}
+          {%- if link.current %} aria-current="page"{% endif %}>
+          {{ link.title | escape }}
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+  </ul>
+</nav>
+<script type="module" src="{{ 's-nav-dropdown.js' | asset_url }}"></script>
+{% endif %}
+
+{%- comment -%} The selected menu still drives desktop and mobile; caller-owned controls need no access to that callee-local setting. {%- endcomment -%}
+{% render 'mobile-nav-drawer', menu: menu, close_button: mobile_nav_close_button, localization_submit: mobile_nav_localization_submit %}
+
+{% comment %} Menu UX requires the link list plus top-level typography/color and dropdown surface color so merchants can tune header navigation without code. {% endcomment %}
+{% schema %}
+  {
+    "name": "t:blocks.main_menu",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "t:blocks.menu_settings.menu",
+        "info": "t:blocks.menu_settings.menu_info",
+        "default": "main-menu"
+      },
+      {
+        "type": "select",
+        "id": "variant",
+        "label": "t:general.text_style",
+        "default": "type-body",
+        "options": [
+          { "value": "type-display-xl", "label": "t:variants.text_style.display_xl" },
+          { "value": "type-display", "label": "t:variants.text_style.display" },
+          { "value": "type-title", "label": "t:variants.text_style.title" },
+          { "value": "type-heading-2xl", "label": "t:variants.text_style.heading_2xl" },
+          { "value": "type-heading-xl", "label": "t:variants.text_style.heading_xl" },
+          { "value": "type-heading-lg", "label": "t:variants.text_style.heading_lg" },
+          { "value": "type-heading-md", "label": "t:variants.text_style.heading_md" },
+          { "value": "type-heading-sm", "label": "t:variants.text_style.heading_sm" },
+          { "value": "type-body-lg", "label": "t:variants.text_style.body_lg" },
+          { "value": "type-body", "label": "t:variants.text_style.body" },
+          { "value": "type-body-sm", "label": "t:variants.text_style.body_sm" },
+          { "value": "type-overline-lg", "label": "t:variants.text_style.overline_lg" },
+          { "value": "type-overline", "label": "t:variants.text_style.overline" },
+          { "value": "type-data-lg", "label": "t:variants.text_style.data_lg" },
+          { "value": "type-data", "label": "t:variants.text_style.data" },
+          { "value": "type-data-sm", "label": "t:variants.text_style.data_sm" },
+          { "value": "hud-tag", "label": "t:variants.text_style.tag" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "color",
+        "label": "t:general.color"
+      },
+      {
+        "type": "color",
+        "id": "dropdown_color",
+        "label": "t:blocks.menu_settings.dropdown_color"
+      }
+    ]
+  }
+{% endschema %}

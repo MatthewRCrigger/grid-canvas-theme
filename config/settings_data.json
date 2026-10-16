@@ -1,0 +1,35 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "logo_image": "shopify://shop_images/CRGGR-wordmark-dark_1.svg",
+    "logo_size": "logo-size-custom",
+    "logo_height": 48,
+    "favicon": "shopify://shop_images/CRGGR-favicon-512.png",
+    "color_palette": {
+      "surface": "#000000",
+      "on_surface": "#e4f2f8",
+      "surface_2": "#0c1013",
+      "accent": "#5fcdf3",
+      "interactive": "#f6c56a"
+    },
+    "type_primary_font": "rajdhani_n4",
+    "type_heading_font": "rajdhani_n6",
+    "type_mono_font": "space_mono_n4",
+    "type_scale_paragraph_size": "md",
+    "type_scale_heading_size": "lg",
+    "border_radius_buttons": "sharp",
+    "border_radius_cards": "rounded",
+    "border_radius_forms": "rounded",
+    "wallpaper_motion": "still",
+    "social_linkedin": "https://linkedin.com/in/matthewrcrigger",
+    "social_github": "https://github.com/MatthewRCrigger"
+  }
+}

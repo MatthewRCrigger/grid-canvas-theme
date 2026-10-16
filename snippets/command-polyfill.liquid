@@ -1,0 +1,57 @@
+{% doc %}
+  Inline Invoker Commands API fallback for browsers without
+  `HTMLButtonElement.prototype.commandForElement`. Native-supporting browsers
+  no-op; otherwise a single delegated click listener resolves `commandfor` to an
+  element and applies the `command` (`show-modal`, `close`, `show-popover`,
+  `hide-popover`, `toggle-popover`, or a `--custom` CommandEvent dispatch).
+
+  It stays an inline classic script — not a module asset — so every `commandfor`
+  button works as soon as the document parses, with no extra request and no window
+  where clicking a trigger does nothing.
+
+  @example
+  {% render 'command-polyfill' %}
+{% enddoc %}
+
+<script>
+  if (!HTMLButtonElement.prototype.hasOwnProperty('commandForElement')) {
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[commandfor]');
+      if (!btn) return;
+      const target = document.getElementById(btn.getAttribute('commandfor'));
+      if (!target) return;
+      const command = btn.getAttribute('command') || '';
+      if (command.startsWith('--')) {
+        target.dispatchEvent(
+          Object.assign(new Event('command', { bubbles: false, cancelable: true }), {
+            command,
+            source: btn,
+          })
+        );
+        return;
+      }
+      switch (command) {
+        case 'show-modal': target.showModal?.(); break;
+        case 'close': target.close?.(); break;
+        case 'show-popover':
+          target.showPopover?.();
+          btn.setAttribute('aria-expanded', 'true');
+          break;
+        case 'hide-popover':
+          target.hidePopover?.();
+          btn.setAttribute('aria-expanded', 'false');
+          break;
+        case 'toggle-popover':
+          target.togglePopover?.();
+          btn.setAttribute('aria-expanded', target.matches?.(':popover-open') ? 'true' : 'false');
+          break;
+      }
+      // Sync aria-expanded when popover is toggled by other means (e.g. light-dismiss)
+      if ((command === 'show-popover' || command === 'toggle-popover') && typeof target.addEventListener === 'function') {
+        target.addEventListener('toggle', (evt) => {
+          btn.setAttribute('aria-expanded', evt.newState === 'open' ? 'true' : 'false');
+        }, { once: true });
+      }
+    });
+  }
+</script>

@@ -1,0 +1,148 @@
+{% doc %}
+  Renders the shared collection/search filter toolbar, sort select, active chips,
+  persistent dialog, and their named partials. Page templates own the form and
+  capture each independently editable button block before rendering this utility.
+  Only the dialog's filter-list partial is replaced, so its open state survives.
+
+  @param {string} page_type - 'collection' or 'search'. @required
+  @param {object} resource - The collection or search drop. @required
+  @param {string} drawer_id - Stable ID targeted by the captured command buttons. @required
+  @param {string} filter_trigger - Captured button block that opens the dialog. @required
+  @param {string} toolbar_submit - Captured no-JavaScript toolbar submit button. @required
+  @param {string} [close_button] - Unused: the filter drawer is a GRID OS pop-up window with its own close light.
+  @param {string} show_results_button - Captured dialog show-results button block. @required
+  @param {string} drawer_submit - Captured no-JavaScript dialog submit button. @required
+  @param {string} [search_terms] - Sanitized, unescaped search terms; only for search.
+
+  @example
+  {% capture filter_trigger %}
+    {% block 'button', commandfor: 'collection-filter-drawer', command: 'show-modal' %}{{ 'collections.filter' | t }}{% endblock %}
+  {% endcapture %}
+  {% render 'filters', page_type: 'collection', resource: collection, drawer_id: 'collection-filter-drawer', filter_trigger: filter_trigger, toolbar_submit: submit_button, close_button: close_button, show_results_button: show_results_button, drawer_submit: drawer_submit %}
+{% enddoc %}
+
+{%- liquid
+  assign selected_sort = resource.sort_by | default: resource.default_sort_by
+  assign show_toolbar = true
+  if page_type == 'search'
+    assign show_toolbar = false
+    if resource.performed and resource.terms != blank
+      assign show_toolbar = true
+    endif
+    assign escaped_terms = search_terms | escape
+    assign encoded_terms = search_terms | url_encode
+    assign clear_url = routes.search_url | append: '?q=' | append: encoded_terms
+  else
+    assign clear_url = resource.url
+  endif
+-%}
+
+{% capture toolbar_markup %}
+  <div class="max-w-page mx-auto px-margin flex flex-wrap items-center gap-4 mb-6">
+    {% if resource.filters.size > 0 %}{{ filter_trigger }}{% endif %}
+    {% if page_type == 'collection' %}
+      {% partial 'collection-count' %}
+        <span data-results-count hidden>{{ resource.products_count }}</span>
+        <span class="type-data-sm uppercase text-ink-300">{{ 'collections.products_count' | t: count: resource.products_count }}</span>
+        <span class="sr-only" data-live-announce>{{ 'collections.products_count' | t: count: resource.products_count }}</span>
+      {% endpartial %}
+    {% else %}
+      <span class="type-data-sm text-ink-300">{{ 'search.results_for' | t: count: resource.results_count, terms: escaped_terms }}</span>
+    {% endif %}
+    {% if resource.sort_options.size > 0 %}
+      <div class="ms-auto flex items-center gap-2">
+        <label for="{{ page_type | escape }}-sort" class="type-overline whitespace-nowrap text-ink-300">{{ 'collections.sort_by' | t }}</label>
+        <div class="relative min-w-0">
+          <select id="{{ page_type | escape }}-sort" name="sort_by" class="appearance-none min-w-0 min-h-touch-target cursor-pointer border border-line-300 rounded-none bg-panel ps-3 pe-9 type-overline text-on-surface hover:border-line-100">
+            {% for option in resource.sort_options %}
+              <option value="{{ option.value | escape }}"{% if option.value == selected_sort %} selected{% endif %}>{{ option.name | escape }}</option>
+            {% endfor %}
+          </select>
+          <span class="pointer-events-none absolute inset-e-3 top-1/2 -translate-y-1/2 size-4" aria-hidden="true">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+        </div>
+      </div>
+    {% endif %}
+    <noscript>{{ toolbar_submit }}</noscript>
+  </div>
+{% endcapture %}
+{% if page_type == 'search' %}
+  {% partial 'search-toolbar' %}
+    {% if show_toolbar %}{{ toolbar_markup }}{% endif %}
+  {% endpartial %}
+{% else %}
+  {{ toolbar_markup }}
+{% endif %}
+
+{%- assign has_active_filters = false -%}
+{%- for filter in resource.filters -%}
+  {%- if filter.type == 'price_range' -%}
+    {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}{%- assign has_active_filters = true -%}{%- endif -%}
+  {%- else -%}
+    {%- for value in filter.values -%}
+      {%- if value.active -%}{%- assign has_active_filters = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+  {%- if has_active_filters -%}{%- break -%}{%- endif -%}
+{%- endfor -%}
+{% capture chips_markup %}
+  {% if has_active_filters %}
+    <div class="max-w-page mx-auto px-margin flex flex-wrap items-center gap-2 mb-6" role="region" aria-label="{{ 'collections.active_filters' | t }}">
+      {% for filter in resource.filters %}
+        {% if filter.type == 'price_range' %}
+          {% if filter.min_value.value != blank or filter.max_value.value != blank %}
+            {%- capture price_label -%}{{ filter.label | escape }}: {{ filter.min_value.value | default: filter.range_min | money }} – {{ filter.max_value.value | default: filter.range_max | money }}{%- endcapture -%}
+            {%- assign remove_label = 'collections.remove_filter' | t: filter: filter.label -%}
+            <a href="{{ filter.url_to_remove | escape }}" aria-label="{{ remove_label | escape }}" class="inline-flex min-h-touch-target items-center gap-2 px-3 rounded-chip border border-line-300 bg-panel type-overline text-on-surface no-underline hover:border-line-100 hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-colors">{{ price_label }}<span class="inline-flex size-4 shrink-0" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span></a>
+          {% endif %}
+        {% else %}
+          {% for value in filter.values %}
+            {% if value.active %}
+              {%- assign remove_label = 'collections.remove_filter' | t: filter: value.label -%}
+              <a href="{{ value.url_to_remove | escape }}" aria-label="{{ remove_label | escape }}" class="inline-flex min-h-touch-target items-center gap-2 px-3 rounded-chip border border-line-300 bg-panel type-overline text-on-surface no-underline hover:border-line-100 hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-colors">{{ value.label | escape }}<span class="inline-flex size-4 shrink-0" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span></a>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+      <a href="{{ clear_url | escape }}" class="inline-flex min-h-touch-target items-center type-overline text-accent rounded-none hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-colors">{{ 'collections.clear_all' | t }}</a>
+    </div>
+  {% endif %}
+{% endcapture %}
+{% if page_type == 'search' %}
+  {% partial 'search-chips' %}
+    {% if show_toolbar %}{{ chips_markup }}{% endif %}
+  {% endpartial %}
+{% else %}
+  {% partial 'collection-chips' %}{{ chips_markup }}{% endpartial %}
+{% endif %}
+
+{% capture filter_groups %}
+  {% for filter in resource.filters %}
+    {% render 'filter-group', filter: filter %}
+  {% endfor %}
+{% endcapture %}
+<s-dialog class="block">
+  {%- comment -%} GRID window (config/styles.css): full-page cover on phones, framed floating panel from 48rem. {%- endcomment -%}
+  <dialog id="{{ drawer_id | escape }}" aria-labelledby="{{ drawer_id | escape }}-title" class="overlay-panel grid-window grid-window-start [--grid-window-width:440px]">
+    {%- capture filter_window -%}
+      <div class="panel-header">
+        <h2 id="{{ drawer_id | escape }}-title" class="type-overline-lg flex-1 truncate text-ink-invert">{{ 'collections.filters' | t }}</h2>
+      </div>
+      <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 md:px-5">
+        {% if page_type == 'search' %}
+          {% partial 'search-filters' %}{{ filter_groups }}{% endpartial %}
+        {% else %}
+          {% partial 'collection-filters' %}{{ filter_groups }}{% endpartial %}
+        {% endif %}
+      </div>
+      <div class="shrink-0 border-t border-line-300 p-4 md:p-5">
+        {{ show_results_button }}
+        <noscript>{{ drawer_submit }}</noscript>
+      </div>
+    {%- endcapture -%}
+    {%- assign filter_window_id = drawer_id | append: '-window' -%}
+    {% render 'os-dialog-window', id: filter_window_id, content: filter_window %}
+  </dialog>
+</s-dialog>
+
+<script type="module" src="{{ 's-live-form.js' | asset_url }}"></script>
+<script type="module" src="{{ 's-dialog.js' | asset_url }}"></script>

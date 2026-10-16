@@ -1,0 +1,186 @@
+{% block 'container' %}
+  {%- comment -%} Keep sanitized text for attribute escaping, and pre-escape the copy interpolated by plain-text translations. {%- endcomment -%}
+  {%- assign search_terms_raw = search.terms | strip_html -%}
+  {%- assign search_terms_escaped = search_terms_raw | escape -%}
+
+  {%- comment -%} debounce applies to text inputs: q typing coalesces to one fetch/replaceState per pause. {%- endcomment -%}
+  <s-live-form
+    class="block os-stage"
+    partial="search-content,search-toolbar,search-chips,search-filters"
+    debounce="300"
+    data-updated-message="{{ 'accessibility.results_updated' | t }}"
+    data-error-message="{{ 'accessibility.update_error' | t }}"
+  >
+    <form action="{{ routes.search_url }}" method="get" role="search" aria-label="{{ 'search.title' | t }}">
+      {%- comment -%} SPOTLIGHT: the query field as a floating bar over the desktop, then the results as a Finder window. {%- endcomment -%}
+      <div class="os-stage-inner">
+        <div class="mx-auto flex max-w-[760px] flex-col items-center gap-4 pb-8 pt-4 md:pt-10">
+          {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'search.overline' | t }}{% endblock %}
+          {% block 'text', tag: 'h1', class: 'sr-only' %}{{ 'search.title' | t }}{% endblock %}
+          {% block 'frame', class: 'os-spotlight w-full' %}
+            <label for="q" class="sr-only">{{ 'search.label' | t }}</label>
+            <div class="relative">
+              <span class="pointer-events-none absolute inset-s-4 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center text-info" aria-hidden="true">{% render 'os-icon', name: 'search', class: 'size-6' %}</span>
+              <input
+                type="search"
+                name="q"
+                id="q"
+                value="{{ search_terms_raw | escape }}"
+                placeholder="{{ 'search.placeholder' | t | escape }}"
+                class="peer h-14 w-full rounded-none border-0 bg-transparent ps-14 pe-14 font-mono text-[18px] md:h-16 md:text-[22px] [&::-webkit-search-cancel-button]:hidden"
+              >
+              <button
+                type="button"
+                data-clear-search
+                class="absolute inset-e-1 top-1/2 inline-flex size-touch-target -translate-y-1/2 cursor-pointer items-center justify-center text-ink-200 motion-safe:transition-colors hover:text-on-surface peer-placeholder-shown:hidden"
+                aria-label="{{ 'general.clear' | t }}"
+              >
+                <span class="inline-flex size-4 shrink-0 items-center justify-center" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span>
+              </button>
+            </div>
+            <p class="os-page-status">
+              {% block 'text', tag: 'span' %}{{ 'os.spotlight_hint' | t }}{% endblock %}
+              <span aria-hidden="true">⌘K</span>
+            </p>
+          {% endblock %}
+        </div>
+      </div>
+
+      {% capture search_filter_trigger %}
+        {% block 'button', commandfor: 'search-filter-drawer', command: 'show-modal', variant: 'button-outline', class: 'h-11 px-4 text-sm rounded-button' %}{{ 'collections.filter' | t }}{% endblock %}
+      {% endcapture %}
+      {% capture search_toolbar_submit %}
+        {% block 'button', type: 'submit', class: 'h-11 px-4 rounded-button' %}{{ 'collections.show_results' | t }}{% endblock %}
+      {% endcapture %}
+
+      {% capture search_results_button %}
+        {% block 'button', commandfor: 'search-filter-drawer', command: 'close', variant: 'button-primary', class: 'h-11 w-full rounded-button' %}{{ 'collections.show_results' | t }}{% endblock %}
+      {% endcapture %}
+      {% capture search_drawer_submit %}
+        {% block 'button', type: 'submit', class: 'h-11 w-full rounded-button' %}{{ 'collections.show_results' | t }}{% endblock %}
+      {% endcapture %}
+      {% render 'filters', page_type: 'search', resource: search, drawer_id: 'search-filter-drawer', filter_trigger: search_filter_trigger, toolbar_submit: search_toolbar_submit, show_results_button: search_results_button, drawer_submit: search_drawer_submit, search_terms: search_terms_raw %}
+
+      {%- comment -%} The query gate prevents blank editor previews from showing the full catalog. {%- endcomment -%}
+      {% partial 'search-content' %}
+        <span data-results-count hidden>{{ search.results_count }}</span>
+        {% if search.performed and search.terms != blank %}
+          {% if search.results_count > 0 %}
+            {%- assign live_announce_text = 'search.live_results_announcement' | t: count: search.results_count, terms: search_terms_escaped -%}
+          {% else %}
+            {%- assign live_announce_text = 'search.live_no_results_announcement' | t: terms: search_terms_escaped -%}
+          {% endif %}
+          <span class="sr-only" data-live-announce>{{ live_announce_text }}</span>
+
+          {% if search.results_count > 0 %}
+            {% paginate search.results by 20 %}
+              {%- comment -%} Account for the 1440px page cap, gutters and panel padding of the 2/3/4-column GRID panel; mirror in snippets/lcp-preload.liquid. {%- endcomment -%}
+              {%- assign result_sizes = '(min-width: 1440px) 320px, (min-width: 990px) calc((100vw - 96px) / 4), (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 64px) / 2)' -%}
+              <div class="mx-auto w-full max-w-page px-margin">
+                {% block 'frame', window: 'page', class: 'mb-8 min-w-0' %}
+                    <div class="panel-header os-pane-bar">
+                      {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'search.panel_title' | t }}{% endblock %}
+                      <span class="os-page-meta">{{ 'search.results_readout' | t: count: search.results_count }}</span>
+                    </div>
+                    <div class="os-finder-toolbar">
+                      {% block 'text', tag: 'span', class: 'type-overline text-ink-300' %}{{ 'os.spotlight_top' | t }}{% endblock %}
+                      <s-finder-view id="search-view" class="os-segment" role="group" aria-label="{{ 'os.view_label' | t | escape }}">
+                        <button type="button" commandfor="search-view" command="--icons" aria-pressed="true" aria-label="{{ 'os.view_icons' | t | escape }}">{% render 'os-icon', name: 'icons' %}</button>
+                        <button type="button" commandfor="search-view" command="--list" aria-pressed="false" aria-label="{{ 'os.view_list' | t | escape }}">{% render 'os-icon', name: 'list' %}</button>
+                      </s-finder-view>
+                    </div>
+                    <ul id="search-results-grid" role="list" class="os-finder-grid -mb-px -me-px">
+                      {% for result in search.results %}
+                        {%- comment -%} The four-slot eager threshold matches one large-screen row; only slot one competes at high priority for LCP. {%- endcomment -%}
+                        {%- if forloop.index <= 4 -%}{%- assign search_lazy = false -%}{%- else -%}{%- assign search_lazy = true -%}{%- endif -%}
+                        {%- if forloop.first -%}{%- assign fetch_priority = 'high' -%}{%- else -%}{%- assign fetch_priority = 'auto' -%}{%- endif -%}
+                        {%- if search_lazy -%}{%- assign search_image_attributes = 'loading="lazy"' -%}{%- else -%}{%- assign search_image_attributes = 'loading="eager"' -%}{%- endif -%}
+                        {%- assign search_image_attributes = search_image_attributes | append: ' fetchpriority="' | append: fetch_priority | append: '"' -%}
+                        {%- assign result_index = paginate.current_offset | plus: forloop.index -%}
+                        <li class="border-b border-e border-line-400 bg-panel">
+                          {% case result.object_type %}
+                            {% when 'product' %}
+                              {%- # theme-check-disable-next-line UnknownFilter %}
+                              <s-view-event class="block h-full" view-event-trigger="intersect" view-event-payload="{{ result | standard_event_data: 'view', context: 'search' | escape }}">
+                                {%- assign card_variant = result.selected_or_first_available_variant -%}
+                                {% block 'card', block.name: 't:blocks.product_card', url: result.url, aria_label: result.title, class: 'h-full p-3 md:p-4' %}
+                                  <div class="flex items-center justify-between gap-2">
+                                    <span class="type-data-sm text-ink-300" aria-hidden="true">{% if result_index < 10 %}0{% endif %}{{ result_index }}</span>
+                                    {%- if result.available -%}
+                                      <span class="badge badge-success">{{ 'home.status.in_stock' | t }}</span>
+                                    {%- else -%}
+                                      <span class="badge badge-danger">{{ 'home.status.sold_out' | t }}</span>
+                                    {%- endif -%}
+                                  </div>
+                                  <a href="{{ result.url | escape }}" style="view-transition-name: pimg-{{ result.id }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ result.title | escape }}">
+                                    {% block 'image', fallback_image: result.featured_image, aspect_ratio: 'aspect-square', sizes: result_sizes, attributes: search_image_attributes, alt: result.title, seed: forloop.index %}{% endblock %}
+                                    {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>
+                                  </a>
+                                  <div class="flex flex-col gap-1 pt-1">
+                                    {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ result.title | escape }}{% endblock %}
+                                    {% block 'price', price: card_variant.price, compare_at_price: card_variant.compare_at_price, price_min: result.price_min, price_max: result.price_max, variant: 'type-data', class: 'self-start' %}{% endblock %}
+                                  </div>
+                                  {% render 'compare-toggle', product: result %}
+                                {% endblock %}
+                              </s-view-event>
+                            {% else %}
+                              {%- liquid
+                                assign card_url = result.url | default: routes.root_url
+                                assign card_title = result.title
+                                case result.object_type
+                                  when 'article'
+                                    assign card_image = result.image
+                                    assign card_kind = 'article'
+                                    assign card_type_label = 'search.type_article' | t
+                                  when 'collection'
+                                    assign card_image = result.image | default: result.products.first.featured_image
+                                    assign card_kind = 'collection'
+                                    assign card_type_label = 'search.type_collection' | t
+                                  else
+                                    assign card_image = result.image
+                                    assign card_kind = 'article'
+                                    assign card_type_label = 'search.type_page' | t
+                                endcase
+                              -%}
+                              {% block 'card', url: card_url, aria_label: card_title, class: 'h-full p-3 md:p-4' %}
+                                <div class="flex items-center justify-between gap-2">
+                                  <span class="type-data-sm text-ink-300" aria-hidden="true">{% if result_index < 10 %}0{% endif %}{{ result_index }}</span>
+                                  <span class="badge badge-info">{{ card_type_label }}</span>
+                                </div>
+                                {%- comment -%} Reserve result geometry even when the entry has no image so the grid stays even. {%- endcomment -%}
+                                <a href="{{ card_url | escape }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ card_title | escape }}">
+                                  {% block 'image', fallback_image: card_image, aspect_ratio: 'aspect-square', sizes: result_sizes, alt: card_title, attributes: search_image_attributes, seed: forloop.index, placeholder_kind: card_kind %}{% endblock %}
+                                </a>
+                                <div class="flex flex-col gap-1 pt-1">
+                                  {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ card_title | escape }}{% endblock %}
+                                </div>
+                              {% endblock %}
+                          {% endcase %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                {% endblock %}
+              </div>
+              <div class="mx-auto max-w-page px-margin">
+                {% block 'pagination', paginate: paginate %}{% endblock %}
+              </div>
+            {% endpaginate %}
+          {% else %}
+            <div class="mx-auto max-w-page px-margin py-8">
+              <div class="flex flex-col items-start gap-3 border-t border-line-400 pt-6">
+                <span class="badge badge-danger">{{ 'search.results_readout' | t: count: 0 }}</span>
+                {% block 'text', variant: 'type-body', class: 'text-ink-200' %}{{ 'search.no_results' | t: terms: search_terms_escaped }}{% endblock %}
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="mx-auto max-w-[760px] px-margin py-4 text-center">
+            {% block 'text', variant: 'type-body', class: 'text-ink-300' %}{{ 'search.no_query' | t }}{% endblock %}
+          </div>
+        {% endif %}
+      {% endpartial %}
+
+    </form>
+  </s-live-form>
+
+{% endblock %}

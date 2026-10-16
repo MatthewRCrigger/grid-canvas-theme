@@ -1,0 +1,209 @@
+{% doc %}
+  A GRID frame around caller content: the full window frame (2px ring, 4px gap, 1px
+  inner box), a single hairline border, or no border. A `.panel-header` strip written
+  as the first child of the body is the frame's title bar and can be hidden from the editor.
+
+  Compositional: the caller writes the body (title strip, copy, lists, media) inside the call.
+
+  @param {string} [tag] - Wrapper element. Default: 'div'.
+  @param {string} [class] - Layout utilities on the outer frame (grid spans, sticky, margins).
+  @param {string} [inner_class] - Layout utilities on the inner box (flex direction, height).
+  @param {string} [attributes] - Extra attributes on the outer frame (aria-*).
+  @param {string} [id] - Element id. Give desktop windows one so desktop icons can open them; other windows get one from the block id.
+  @param {string} [window] - none, page, pane, open, closed or dialog (see the Window setting). Every GRID OS window is this block; dialog is the window inside a pop-up <dialog> (cart, search, compare).
+
+  @category layout
+  @renders div|section|aside
+
+  @example
+  {% block 'frame', class: 'lg:col-span-7', inner_class: 'flex h-full flex-col' %}
+    <div class="panel-header">
+      {% block 'text', tag: 'span', variant: 'type-overline' %}Spec{% endblock %}
+    </div>
+    <div class="p-4">…</div>
+  {% endblock %}
+  {% block 'frame', variant: 'frame-hairline', class: 'hud-viewport' %}…{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign tag = tag | default: 'div'
+  assign variant = variant | default: 'frame-grid'
+  assign header = header | default: 'shown'
+  assign frame_bg = background
+  assign frame_line = border_color
+  assign entrance = entrance | default: 'draw'
+  assign readout = readout | default: 'none'
+  assign span = span | default: 'auto'
+  # Window: every GRID OS window is this block. page = the main window of a page (close goes to the
+  # Desktop), pane = a side window (close and minimize send it to the dock), open/closed = a floating
+  # desktop window (drag, zoom; closed ones open from a desktop icon). All render <s-window>.
+  assign window = window | default: 'none'
+  assign window_id = id
+  if window != 'none'
+    assign tag = 's-window'
+    if window_id == blank
+      assign window_id = 'win-' | append: block.id | handleize
+    endif
+  endif
+  assign window_mode = 'float'
+  if window == 'page' or window == 'pane'
+    assign window_mode = 'static'
+  elsif window == 'dialog'
+    assign window_mode = 'dialog'
+  endif
+
+  # A dark frame color would hide the dark title-bar text on a filled bar, so flip it light.
+  assign bar_ink = ''
+  if frame_line != blank and header == 'shown'
+    assign line_brightness = frame_line | color_brightness
+    if line_brightness < 128
+      assign bar_ink = 'light'
+    endif
+  endif
+
+  assign frame_style = ''
+  if frame_bg != blank
+    assign frame_style = frame_style | append: '--frame-bg: ' | append: frame_bg | append: ';'
+  endif
+  if frame_line != blank
+    assign frame_style = frame_style | append: ' --frame-line: ' | append: frame_line | append: ';'
+  endif
+-%}
+
+<{{ tag }}
+  class="frame {{ variant }} {{ class }}"
+  {% if window_id != blank %}id="{{ window_id }}"{% endif %}
+  {%- if window_mode == 'static' %} data-window data-mode="static" data-role="{{ window }}" data-state="open" data-default-state="open" data-close-url="{{ routes.root_url }}"{% if window == 'page' %} data-active{% endif %}
+  {%- elsif window_mode == 'dialog' %} data-window data-mode="dialog" data-role="dialog" data-state="open" data-active
+  {%- elsif window != 'none' %} data-window data-state="{{ window }}" data-default-state="{{ window }}"{% endif %}
+  data-header="{{ header }}"
+  {% if entrance != 'none' %}data-entrance="{{ entrance }}"{% endif %}
+  {% if readout != 'none' %}data-readout="{{ readout }}"{% endif %}
+  {% if span != 'auto' %}data-span="{{ span }}"{% endif %}
+  {% if bar_ink != blank %}data-bar-ink="{{ bar_ink }}"{% endif %}
+  {% if frame_style != blank %}style="{{ frame_style | strip }}"{% endif %}
+  {{ attributes }}
+  {{ block.shopify_attributes }}
+>
+  <div class="frame-inner {{ inner_class }}">
+    {%- if window != 'none' -%}
+      {% render 'os-window-controls', id: window_id, role: window %}
+    {%- endif -%}
+    {%- if readout != 'none' -%}
+      <span class="frame-readout" aria-hidden="true">
+        {%- case readout -%}
+          {%- when 'status' -%}
+            <span class="grid-status-dot"></span>{{ 'frame.readout_status' | t }}
+          {%- when 'alert' -%}
+            <span class="grid-status-dot grid-status-dot-alert"></span>{{ 'frame.readout_alert' | t }}
+          {%- when 'clock' -%}
+            <s-clock>--:--:--</s-clock>
+          {%- when 'scroll' -%}
+            {{ 'frame.readout_scroll' | t }} <s-clock mode="scroll">000%</s-clock>
+        {%- endcase -%}
+      </span>
+    {%- endif -%}
+    {{ content }}
+  </div>
+</{{ tag }}>
+
+{% comment %} Eight settings (over the usual three): the merchant is building a modular window system, so each frame owns its style, color, fill, title bar, entrance motion, live readout, grid width and desktop window state. Selects rather than checkboxes because checkbox settings did not save from Canvas on this theme. {% endcomment %}
+{% schema %}
+  {
+    "name": "t:blocks.frame",
+    "settings": [
+      {
+        "type": "select",
+        "id": "variant",
+        "label": "t:blocks.frame_settings.variant",
+        "default": "frame-grid",
+        "options": [
+          { "value": "frame-grid", "label": "t:blocks.frame_settings.variant_grid" },
+          { "value": "frame-hairline", "label": "t:blocks.frame_settings.variant_hairline" },
+          { "value": "frame-none", "label": "t:blocks.frame_settings.variant_none" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "t:blocks.frame_settings.border_color",
+        "info": "t:blocks.frame_settings.border_color_info"
+      },
+      {
+        "type": "color",
+        "id": "background",
+        "label": "t:general.background",
+        "info": "t:blocks.frame_settings.background_info"
+      },
+      {
+        "type": "select",
+        "id": "header",
+        "label": "t:blocks.frame_settings.header",
+        "info": "t:blocks.frame_settings.header_info",
+        "default": "shown",
+        "options": [
+          { "value": "shown", "label": "t:blocks.frame_settings.header_filled" },
+          { "value": "outline", "label": "t:blocks.frame_settings.header_outline" },
+          { "value": "hidden", "label": "t:blocks.frame_settings.header_hidden" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "entrance",
+        "label": "t:blocks.frame_settings.entrance",
+        "info": "t:blocks.frame_settings.entrance_info",
+        "default": "draw",
+        "options": [
+          { "value": "none", "label": "t:blocks.frame_settings.entrance_none" },
+          { "value": "draw", "label": "t:blocks.frame_settings.entrance_draw" },
+          { "value": "scan", "label": "t:blocks.frame_settings.entrance_scan" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "readout",
+        "label": "t:blocks.frame_settings.readout",
+        "info": "t:blocks.frame_settings.readout_info",
+        "default": "none",
+        "options": [
+          { "value": "none", "label": "t:blocks.frame_settings.readout_none" },
+          { "value": "status", "label": "t:blocks.frame_settings.readout_status" },
+          { "value": "clock", "label": "t:blocks.frame_settings.readout_clock" },
+          { "value": "scroll", "label": "t:blocks.frame_settings.readout_scroll" },
+          { "value": "alert", "label": "t:blocks.frame_settings.readout_alert" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "span",
+        "label": "t:blocks.frame_settings.span",
+        "info": "t:blocks.frame_settings.span_info",
+        "default": "auto",
+        "options": [
+          { "value": "auto", "label": "t:blocks.frame_settings.span_auto" },
+          { "value": "4", "label": "t:blocks.frame_settings.span_4" },
+          { "value": "5", "label": "t:blocks.frame_settings.span_5" },
+          { "value": "6", "label": "t:blocks.frame_settings.span_6" },
+          { "value": "7", "label": "t:blocks.frame_settings.span_7" },
+          { "value": "8", "label": "t:blocks.frame_settings.span_8" },
+          { "value": "12", "label": "t:blocks.frame_settings.span_12" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "window",
+        "label": "t:blocks.frame_settings.window",
+        "info": "t:blocks.frame_settings.window_info",
+        "default": "none",
+        "options": [
+          { "value": "none", "label": "t:blocks.frame_settings.window_none" },
+          { "value": "page", "label": "t:blocks.frame_settings.window_page" },
+          { "value": "pane", "label": "t:blocks.frame_settings.window_pane" },
+          { "value": "open", "label": "t:blocks.frame_settings.window_open" },
+          { "value": "closed", "label": "t:blocks.frame_settings.window_closed" },
+          { "value": "dialog", "label": "t:blocks.frame_settings.window_dialog" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

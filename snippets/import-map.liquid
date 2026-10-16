@@ -1,0 +1,29 @@
+{% doc %}
+  Declares the storefront module import map: the external `@shopify/standard-events`
+  module plus versioned `@theme/*` specifiers for cross-module imports between
+  assets/*.js files. Internal targets render through asset_url so every dependency
+  shares Shopify's current `?v=` cache key with direct module scripts.
+
+  Render this first in the layout <head> — before content_for_header and before any
+  `<script type="module">` — because browsers ignore an import map that appears
+  after the first module script. The spec audit validates the entries in this file
+  against actual `@theme/*` imports in assets/*.js.
+
+  @example
+  {% render 'import-map' %}
+{% enddoc %}
+
+<script type="importmap">
+{
+  "imports": {
+    "@shopify/standard-events": "https://cdn.shopify.com/storefront/standard-events.js",
+    "@theme/cart-feedback": "{{ 'cart-feedback.js' | asset_url }}",
+    "@theme/live-region": "{{ 'live-region.js' | asset_url }}",
+    "@theme/page-view-event": "{{ 'page-view-event.js' | asset_url }}",
+    "@theme/quantity-rules": "{{ 'quantity-rules.js' | asset_url }}",
+    "@theme/s-compare": "{{ 's-compare.js' | asset_url }}",
+    "@theme/s-view-event": "{{ 's-view-event.js' | asset_url }}",
+    "@theme/view-transition": "{{ 'view-transition.js' | asset_url }}"
+  }
+}
+</script>

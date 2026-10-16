@@ -1,0 +1,199 @@
+{% doc %}
+  Renders video content: Shopify-hosted video via video_tag, or external
+  YouTube/Vimeo via deferred iframe loading. Shows a poster image with play
+  button; the `<s-video>` Web Component handles click-to-load for external videos.
+  The caller owns an image block in the external poster body. Hosted video ignores the body.
+  @param {string} [caption_url] - URL of a WebVTT captions file. When provided, adds a <track> element inside the Shopify-hosted video.
+  @param {string} [class] - Additional CSS classes applied to the top-level element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category content
+  @renders s-video
+
+  @example
+  {% block 'video', video: product.media[0] %}{% endblock %}
+  {% block 'video', youtube_id: 'dQw4w9WgXcQ' %}
+    {% block 'image', image: product.featured_image, loading: 'lazy', placeholder_kind: 'surface' %}{% endblock %}
+  {% endblock %}
+  {% block 'video', vimeo_id: '123456789', class: 'aspect-4/3' %}
+    {% block 'image', loading: 'lazy', placeholder_kind: 'surface' %}{% endblock %}
+  {% endblock %}
+  {% block 'video', youtube_id: 'abc123' %}
+    {% block 'image', image: image, loading: 'eager', sizes: 'auto', placeholder_kind: 'surface' %}{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign video = video
+  assign youtube_id = youtube_id
+  assign vimeo_id = vimeo_id
+  assign ratio = ratio
+
+  assign autoplay = autoplay | default: false
+  assign loop = loop | default: false
+  assign muted = muted | default: false
+  assign plays_inline = plays_inline | default: false
+  assign pause_on_hover = pause_on_hover | default: false
+
+  assign _s_video_class = 'relative block overflow-hidden'
+  if ratio != blank
+    assign _s_video_class = _s_video_class | append: ' ' | append: ratio
+  endif
+  if autoplay
+    assign _s_video_class = _s_video_class | append: ' autoplay'
+  endif
+  if plays_inline
+    assign _s_video_class = _s_video_class | append: ' plays-inline'
+  endif
+  if pause_on_hover
+    assign _s_video_class = _s_video_class | append: ' pause-on-hover'
+  endif
+  if class != blank
+    assign _s_video_class = _s_video_class | append: ' ' | append: class
+  endif
+
+  assign _video_id = 'video-' | append: block.id
+  if video == blank
+    if youtube_id != blank
+      # YouTube — deferred iframe. Keep autoplay=1 so click-to-load starts playback; the autoplay setting controls whether the iframe is loaded immediately.
+      assign _iframe_src = 'https://www.youtube-nocookie.com/embed/' | append: youtube_id | append: '?autoplay=1&rel=0'
+      if loop
+        assign _iframe_src = _iframe_src | append: '&loop=1&playlist=' | append: youtube_id
+      endif
+      if muted
+        assign _iframe_src = _iframe_src | append: '&mute=1'
+      endif
+      if plays_inline
+        assign _iframe_src = _iframe_src | append: '&playsinline=1'
+      endif
+      if pause_on_hover
+        assign _iframe_src = _iframe_src | append: '&enablejsapi=1'
+      endif
+      assign _preconnect_origin = 'https://www.youtube-nocookie.com'
+      assign _iframe_allow = 'autoplay; encrypted-media'
+    elsif vimeo_id != blank
+      # Vimeo — deferred iframe. Keep autoplay=1 so click-to-load starts playback; the autoplay setting controls whether the iframe is loaded immediately.
+      assign _iframe_src = 'https://player.vimeo.com/video/' | append: vimeo_id | append: '?autoplay=1'
+      if loop
+        assign _iframe_src = _iframe_src | append: '&loop=1'
+      endif
+      if muted
+        assign _iframe_src = _iframe_src | append: '&muted=1'
+      endif
+      if plays_inline
+        assign _iframe_src = _iframe_src | append: '&playsinline=1'
+      endif
+      if pause_on_hover
+        assign _iframe_src = _iframe_src | append: '&api=1'
+      endif
+      assign _preconnect_origin = 'https://player.vimeo.com'
+      assign _iframe_allow = 'autoplay; fullscreen'
+    endif
+  endif
+-%}
+
+{%- comment -%} <s-video> implements click-to-load + preconnect-on-hover for embedded video. It reads [data-play][data-preconnect], template[data-video], and data-caption-url / data-video-title. Command: --play (custom, not native). See assets/s-video.js class JSDoc. {%- endcomment -%}
+{%- comment -%} `overflow-hidden` clips the JS-injected iframe (which has no border-radius of its own) to whatever rounded corners the caller passes via `class`. Removing this leaves squared iframe corners poking out of rounded containers. {%- endcomment -%}
+<s-video id="{{ _video_id }}" class="{{ _s_video_class }}" data-video-title="{{ 'general.video_player' | t | escape }}"{% if caption_url != blank %} data-caption-url="{{ caption_url | escape }}" data-caption-srclang="{{ request.locale.iso_code | escape }}" data-caption-label="{{ 'general.captions' | t | escape }}"{% endif %}{% if attributes != blank %} {{ attributes }}{% endif %}>
+  {%- if video != blank -%}
+    {%- comment -%}Shopify-hosted video{%- endcomment -%}
+    {{ video | video_tag: autoplay: autoplay, loop: loop, muted: muted, controls: true, preload: 'none', class: 'size-full object-cover' }}
+  {%- elsif _iframe_src -%}
+    {%- comment -%} `<button>` used (not `<div>`) so keyboard/screen-reader users get native play semantics; `border-0 bg-transparent p-0` strip default UA button chrome so the poster image fills the element edge-to-edge. {%- endcomment -%}
+    <button
+      type="button"
+      data-play
+      commandfor="{{ _video_id }}"
+      command="--play"
+      data-preconnect="{{ _preconnect_origin | escape }}"
+      class="group absolute inset-0 size-full cursor-pointer border-0 bg-transparent p-0 motion-safe:transition-transform motion-safe:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-interactive-text"
+      aria-label="{{ 'general.play_video' | t }}"
+    >
+      {{ content }}
+      <span class="absolute inset-0 flex items-center justify-center">
+        <span class="size-16 rounded-full bg-overlay-strong text-interactive-text flex items-center justify-center motion-safe:transition-transform motion-safe:group-hover:scale-110">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </span>
+    </button>
+    <template data-video>
+      <iframe
+        src="{{ _iframe_src | escape }}"
+        title="{{ 'general.video_player' | t }}"
+        class="absolute inset-0 size-full border-0"
+        allow="{{ _iframe_allow }}"
+        allowfullscreen
+      ></iframe>
+    </template>
+  {%- endif -%}
+</s-video>
+<script type="module" src="{{ 's-video.js' | asset_url }}"></script>
+
+{%- comment -%}
+  Video UX requires source, ratio and playback controls; external poster selection belongs to the caller's independently editable image block.
+  youtube_id and vimeo_id are theme-only extras kept after the primary video controls.
+{%- endcomment -%}
+{% schema %}
+  {
+    "name": "t:blocks.video",
+    "settings": [
+      {
+        "type": "video",
+        "id": "video",
+        "label": "t:general.video"
+      },
+      {
+        "type": "select",
+        "id": "ratio",
+        "label": "t:blocks.video_settings.ratio",
+        "default": "aspect-auto",
+        "options": [
+          { "value": "aspect-auto", "label": "t:blocks.video_settings.ratio_auto" },
+          { "value": "aspect-square", "label": "t:blocks.video_settings.ratio_square" },
+          { "value": "aspect-video", "label": "t:blocks.video_settings.ratio_video" },
+          { "value": "aspect-[3/4]", "label": "t:blocks.video_settings.ratio_portrait" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "t:blocks.video_settings.autoplay",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "t:blocks.video_settings.loop",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "muted",
+        "label": "t:blocks.video_settings.muted",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "plays_inline",
+        "label": "t:blocks.video_settings.plays_inline",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "pause_on_hover",
+        "label": "t:blocks.video_settings.pause_on_hover",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "youtube_id",
+        "label": "t:blocks.video_settings.youtube_id"
+      },
+      {
+        "type": "text",
+        "id": "vimeo_id",
+        "label": "t:blocks.video_settings.vimeo_id"
+      }
+    ]
+  }
+{% endschema %}

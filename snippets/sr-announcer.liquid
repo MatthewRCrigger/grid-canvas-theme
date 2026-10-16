@@ -1,0 +1,21 @@
+{% doc %}
+  Renders the shared `#sr-announcer` polite live region plus the translated cart
+  feedback strings components read from its `data-*` attributes. Render once per
+  layout; `live-region.js` clears and re-sets its text so screen readers repeat
+  identical messages reliably.
+
+  @example
+  {% render 'sr-announcer' %}
+{% enddoc %}
+
+<div
+  aria-live="polite"
+  aria-atomic="true"
+  class="sr-only"
+  id="sr-announcer"
+  data-added-message="{{ 'product.added_to_cart' | t }}"
+  data-removed-message="{{ 'cart.item_removed' | t }}"
+  data-updated-message="{{ 'cart.updated' | t }}"
+  data-update-error="{{ 'cart.update_error' | t }}"
+  data-refresh-error="{{ 'cart.refresh_error' | t }}"
+></div>

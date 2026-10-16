@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Hintergrund",
+    "buttons": "Buttons",
+    "cards": "Karten",
+    "color": "Farbe",
+    "collection": "Kollektion",
+    "default": "Standard",
+    "forms": "Formulare",
+    "link": "Link",
+    "pill": "Pille",
+    "rounded": "Abgerundet",
+    "sharp": "Eckig",
+    "size": "Größe",
+    "small": "Klein",
+    "style": "Stil",
+    "text_style": "Textstil",
+    "transparent": "Transparent",
+    "video": "Video",
+    "alignment": "Ausrichtung",
+        "none": "Keine",
+    "medium": "Mittel",
+    "large": "Groß",
+    "corner_radius": "Eckenradius",
+    "extra_small": "Extra klein",
+    "extra_large": "Extra groß"
+  },
+  "settings": {
+    "border_radius": "Eckenradius",
+    "colors": "Farben",
+    "fonts": "Schriftarten",
+    "type_styles": "Schriftstile"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Display",
+      "heading_xl": "Überschrift XL",
+      "heading_lg": "Überschrift LG",
+      "heading_md": "Überschrift MD",
+      "heading_sm": "Überschrift SM",
+      "body_lg": "Fließtext LG",
+      "body": "Fließtext",
+      "body_sm": "Fließtext Klein",
+      "overline": "Überschrift"
+    },
+    "quantity_selector": {
+      "outlined": "Umrandet",
+      "filled": "Gefüllt"
+    },
+    "button": {
+      "custom": "Benutzerdefiniert",
+      "outline": "Umrandung",
+      "plain": "Einfach",
+      "primary": "Primär",
+      "secondary": "Sekundär"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Farbmuster",
+        "buttons": "Buttons",
+        "dropdown": "Dropdown"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Button",
+    "container": "Container",
+    "container_settings": {
+      "fill": "Füllung",
+      "fill_info": "Automatisch behält den vorhandenen Hintergrund bei.",
+      "fill_automatic": "Automatisch",
+      "background_image": "Hintergrundbild",
+      "padding": "Padding",
+      "padding_small": "Klein",
+      "padding_medium": "Mittel",
+      "padding_large": "Groß",
+      "padding_extra_large": "Extra groß"
+    },
+    "featured_collection": "Vorgestellte Kategorie",
+    "image": "Bild",
+    "link": "Link",
+    "image_settings": {
+      "image": "Bild",
+      "aspect_ratio": "Seitenverhältnis",
+      "auto": "Automatisch",
+      "square": "Quadratisch",
+      "portrait": "Hochformat"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Logobild",
+      "image_info": "Benutzerdefiniertes Logobild für diese Platzierung.",
+      "height_info": "Wird nur angewendet, wenn die Option für benutzerdefinierte Größe ausgewählt ist.",
+      "size": "Größe",
+      "size_small": "Klein",
+      "size_medium": "Mittel",
+      "size_large": "Groß",
+      "size_custom": "Benutzerdefiniert",
+      "height": "Logohöhe"
+    },
+    "main_menu": "Hauptmenü",
+    "basic_menu": "Einfaches Menü",
+    "header": "Kopfzeile",
+    "footer": "Fußzeile",
+    "menu_settings": {
+      "menu": "Menü",
+      "menu_info": "Wähle das anzuzeigende Navigationsmenü aus.",
+      "dropdown_color": "Dropdown-Farbe"
+    },
+    "card": "Karte",
+    "product_card": "Produktkarte",
+    "collection_card": "Kollektionskarte",
+    "article_card": "Artikelkarte",
+    "text": "Text",
+    "richtext": "Rich Text",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo-ID",
+      "youtube_id": "YouTube-ID",
+      "ratio": "Seitenverhältnis",
+      "ratio_auto": "Automatisch",
+      "ratio_square": "Quadratisch",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Hochformat (3:4)",
+      "autoplay": "Autoplay",
+      "loop": "Schleife",
+      "muted": "Stummgeschaltet",
+      "plays_inline": "Inline-Wiedergabe",
+      "pause_on_hover": "Pause bei Hover"
+    },
+    "pagination": "Seitennummerierung",
+    "predictive_search": "Vorausschauende Suche",
+    "price": "Preis",
+    "quantity_selector": "Mengenauswahl",
+    "quantity_selector_settings": {
+      "button_color": "Button-Farbe"
+    },
+    "variant_picker_settings": {
+      "shape": "Form",
+      "shape_square": "Quadratisch",
+      "shape_rounded": "Abgerundet",
+      "shape_circle": "Kreis"
+    },
+    "variant_picker": "Variantenauswahl",
+    "gift_card": "Gutschein"
+  },
+  "type_styles": {
+    "paragraph_size": "Absatzgröße",
+    "heading_size": "Überschriftengröße"
+  },
+  "typography": {
+    "primary_font": "Primäre Schriftart",
+    "secondary_font": "Sekundäre Schriftart"
+  },
+  "direction": {
+    "start": "Links",
+    "center": "Zentriert",
+    "end": "Rechts"
+  }
+}

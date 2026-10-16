@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Tausta",
+    "buttons": "Painikkeet",
+    "cards": "Kortit",
+    "color": "Väri",
+    "collection": "Kokoelma",
+    "default": "Oletus",
+    "forms": "Lomakkeet",
+    "link": "Linkki",
+    "pill": "Pilleri",
+    "rounded": "Pyöristetty",
+    "sharp": "Terävä",
+    "size": "Koko",
+    "small": "Pieni",
+    "style": "Tyyli",
+    "text_style": "Tekstityyli",
+    "transparent": "Läpinäkyvä",
+    "video": "Video",
+    "alignment": "Tasaus",
+        "none": "Ei mitään",
+    "medium": "Keskikokoinen",
+    "large": "Suuri",
+    "corner_radius": "Kulman säde",
+    "extra_small": "Erittäin pieni",
+    "extra_large": "Erittäin suuri"
+  },
+  "settings": {
+    "border_radius": "Reunuksen säde",
+    "colors": "Värit",
+    "fonts": "Fontit",
+    "type_styles": "Tekstityylit"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Näyttö",
+      "heading_xl": "Otsikko XL",
+      "heading_lg": "Otsikko LG",
+      "heading_md": "Otsikko MD",
+      "heading_sm": "Otsikko SM",
+      "body_lg": "Leipäteksti LG",
+      "body": "Leipäteksti",
+      "body_sm": "Leipäteksti pieni",
+      "overline": "Yläviiva"
+    },
+    "quantity_selector": {
+      "outlined": "Reunustettu",
+      "filled": "Täytetty"
+    },
+    "button": {
+      "custom": "Mukautettu",
+      "outline": "Reunustettu",
+      "plain": "Pelkistetty",
+      "primary": "Ensisijainen",
+      "secondary": "Toissijainen"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Näyte",
+        "buttons": "Painikkeet",
+        "dropdown": "Pudotusvalikko"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Painike",
+    "container": "Säilö",
+    "container_settings": {
+      "fill": "Täyttö",
+      "fill_info": "Automaattinen säilyttää nykyisen taustan.",
+      "fill_automatic": "Automaattinen",
+      "background_image": "Taustakuva",
+      "padding": "Reunatäyte",
+      "padding_small": "Pieni",
+      "padding_medium": "Keskikokoinen",
+      "padding_large": "Suuri",
+      "padding_extra_large": "Erittäin suuri"
+    },
+    "featured_collection": "Esittelyssä oleva kokoelma",
+    "image": "Kuva",
+    "link": "Linkki",
+    "image_settings": {
+      "image": "Kuva",
+      "aspect_ratio": "Kuvasuhde",
+      "auto": "Automaattinen",
+      "square": "Neliö",
+      "portrait": "Pysty"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Logokuva",
+      "image_info": "Mukautettu logokuva tälle sijoittelulle.",
+      "height_info": "Sovelletaan vain, kun mukautettu koko on valittu.",
+      "size": "Koko",
+      "size_small": "Pieni",
+      "size_medium": "Keskikokoinen",
+      "size_large": "Suuri",
+      "size_custom": "Mukautettu",
+      "height": "Logon korkeus"
+    },
+    "main_menu": "Päävalikko",
+    "basic_menu": "Perusvalikko",
+    "header": "Ylätunniste",
+    "footer": "Alatunniste",
+    "menu_settings": {
+      "menu": "Valikko",
+      "menu_info": "Valitse näytettävä navigointivalikko.",
+      "dropdown_color": "Pudotusvalikon väri"
+    },
+    "card": "Kortti",
+    "product_card": "Tuotekortti",
+    "collection_card": "Kokoelmakortti",
+    "article_card": "Artikkelikortti",
+    "text": "Teksti",
+    "richtext": "Rich text",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo-tunnus",
+      "youtube_id": "YouTube-tunnus",
+      "ratio": "Kuvasuhde",
+      "ratio_auto": "Automaattinen",
+      "ratio_square": "Neliö",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Pysty (3:4)",
+      "autoplay": "Automaattinen toisto",
+      "loop": "Toista jatkuvasti",
+      "muted": "Mykistetty",
+      "plays_inline": "Toistetaan upotettuna",
+      "pause_on_hover": "Tauota osoittimen kohdalla"
+    },
+    "pagination": "Sivunumerointi",
+    "predictive_search": "Ennakoiva haku",
+    "price": "Hinta",
+    "quantity_selector": "Määrän valitsin",
+    "quantity_selector_settings": {
+      "button_color": "Painikkeen väri"
+    },
+    "variant_picker_settings": {
+      "shape": "Muoto",
+      "shape_square": "Neliö",
+      "shape_rounded": "Pyöristetty",
+      "shape_circle": "Ympyrä"
+    },
+    "variant_picker": "Versionvalitsin",
+    "gift_card": "Lahjakortti"
+  },
+  "type_styles": {
+    "paragraph_size": "Kappaleen koko",
+    "heading_size": "Otsikon koko"
+  },
+  "typography": {
+    "primary_font": "Ensisijainen fontti",
+    "secondary_font": "Toissijainen fontti"
+  },
+  "direction": {
+    "start": "Vasen",
+    "center": "Keskitetty",
+    "end": "Oikea"
+  }
+}

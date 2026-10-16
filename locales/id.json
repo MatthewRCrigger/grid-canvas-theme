@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Halaman tidak ditemukan",
+    "not_found": "Halaman tidak ditemukan.",
+    "back_to_shopping": "Jelajahi koleksi",
+    "suggestions_heading": "Cara lain untuk melangkah maju.",
+    "recovery_body": "Halaman ini tidak dapat ditemukan. Masih banyak yang bisa dijelajahi."
+  },
+  "general": {
+    "skip_to_content": "Lompat ke konten",
+    "play_video": "Putar video",
+    "video_player": "Pemutar video",
+    "captions": "Takarir",
+    "clear": "Hapus",
+    "back": "Kembali",
+    "close": "Tutup",
+    "dismiss": "Tutup",
+    "drawer": "Laci",
+    "placeholder_image": "Gambar placeholder",
+    "account": "Akun",
+    "search": "Cari",
+    "pagination": {
+      "label": "Paginasi",
+      "previous_page": "Halaman sebelumnya",
+      "next_page": "Halaman selanjutnya",
+      "page": "Halaman {{ number }}",
+      "current_page": "Halaman {{ number }}, halaman saat ini"
+    },
+    "meta": {
+      "tagged": "diberi tag \"{{ tags }}\"",
+      "page": "Halaman {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Hasil diperbarui",
+    "variant_updated": "Pilihan diperbarui",
+    "update_error": "Terjadi kesalahan. Silakan coba lagi."
+  },
+  "blog": {
+    "articles_heading": "Artikel",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Komentar",
+    "comment_form_email": "Email",
+    "comment_form_name": "Nama",
+    "comment_form_submit": "Posting",
+    "comment_form_title": "Tambahkan komentar",
+    "comments_count": {
+      "one": "1 komentar",
+      "other": "{{ count }} komentar"
+    },
+    "no_articles": "Belum ada artikel."
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "title": "Keranjang",
+    "remove": "Hapus: {{ title }}",
+    "empty": "Keranjang Anda kosong.",
+    "empty_description": "Sepertinya Anda belum menambahkan apa pun ke keranjang Anda.",
+    "icon_label": {
+      "one": "Keranjang (1 item)",
+      "other": "Keranjang ({{ count }} item)"
+    },
+    "item_count": {
+      "one": "1 item di keranjang",
+      "other": "{{ count }} item di keranjang"
+    },
+    "item_removed": "Item dihapus dari keranjang",
+    "updated": "Keranjang diperbarui",
+    "note_label": "Catatan pesanan",
+    "note_placeholder": "Tambahkan instruksi khusus untuk pesanan Anda",
+    "taxes_and_shipping_at_checkout": "Pajak dan pengiriman dihitung saat checkout",
+    "discount_list": "Diskon yang diterapkan",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Kode diskon",
+    "discount_title": "Diskon: {{ title }}",
+    "update_error": "Tidak dapat memperbarui keranjang. Silakan coba lagi.",
+    "refresh_error": "Keranjang telah diperbarui, tetapi tampilan mungkin sudah tidak terbaru. Muat ulang halaman untuk melihat keranjang terbaru.",
+    "continue_shopping": "Lanjutkan berbelanja",
+    "checkout_description": "Lanjut ke checkout aman",
+    "discount_placeholder": "Masukkan kode",
+    "discount_apply": "Terapkan",
+    "note_accordion_label": "Instruksi khusus",
+    "total_label": "Estimasi total"
+  },
+  "contact": {
+    "name": "Nama",
+    "email": "Email",
+    "phone": "Nomor telepon (opsional)",
+    "message": "Pesan",
+    "submit": "Kirim pesan",
+    "success": "Terima kasih telah menghubungi kami. Kami akan segera membalasnya."
+  },
+  "collections": {
+    "all_collections": "Semua koleksi",
+    "browse_heading": "Jelajahi koleksi",
+    "products_heading": "Produk",
+    "placeholder_title": "Judul koleksi",
+    "no_collections": "Tidak ada koleksi yang ditemukan.",
+    "no_products": "Tidak ada produk yang cocok dengan filter yang dipilih.",
+    "products_count": {
+      "one": "1 produk",
+      "other": "{{ count }} produk"
+    },
+    "filter": "Filter",
+    "filters": "Filter",
+    "active_filters": "Filter aktif",
+    "clear_all": "Hapus semua",
+    "remove_filter": "Hapus {{ filter }}",
+    "show_results": "Tampilkan hasil",
+    "value_unavailable": "Unavailable",
+    "price_min": "Harga min",
+    "price_max": "Harga maks",
+    "price_to": "hingga",
+    "sort_by": "Urutkan berdasarkan",
+    "filtering": {
+      "show_more": "Tampilkan lebih banyak"
+    },
+    "view_all": "Lihat semua"
+  },
+  "header": {
+    "menu": "Menu",
+    "mobile_navigation": "Navigasi seluler",
+    "navigation": "Navigasi utama",
+    "show_submenu": "Tampilkan submenu {{ title }}"
+  },
+  "footer": {
+    "quick_links": "Tautan cepat",
+    "policies": "Kebijakan"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Tambahkan ke Dompet Apple",
+    "card": "Kartu hadiah",
+    "expired": "Kartu hadiah ini sudah kedaluwarsa",
+    "expires_on": "Kedaluwarsa pada {{ expires_on }}",
+    "use_at_checkout": "Gunakan kartu hadiah ini saat checkout",
+    "a_gift_for_you": "Hadiah untuk Anda",
+    "available": "{{ amount }} tersedia",
+    "a_little_something": "Hadiah kecil untuk Anda",
+    "card_label": "Kartu hadiah {{ shop }}",
+    "copy_code": "Salin kode",
+    "copied": "Kode disalin",
+    "copy_error": "Tidak dapat menyalin secara otomatis. Salin kode secara manual.",
+    "disabled": "Kartu hadiah ini tidak berlaku lagi",
+    "start_shopping": "Mulai belanja"
+  },
+  "page": {
+    "content_heading": "Konten halaman"
+  },
+  "password": {
+    "title": "Toko ini bersifat privat",
+    "eyebrow": "Segera dibuka",
+    "launch_description": "Lihat lebih awal apa yang akan hadir.",
+    "enter": "Masuk",
+    "enter_with_password": "Masuk dengan kata sandi",
+    "enter_store": "Masuk ke toko",
+    "show": "Tampilkan",
+    "hide": "Sembunyikan",
+    "error": "Kata sandi salah. Silakan coba lagi.",
+    "field_label": "Kata sandi",
+    "placeholder": "Masukkan kata sandi",
+    "get_updates": "Dapatkan kabar pembukaan",
+    "updates_description": "Jadilah yang pertama tahu saat kami buka.",
+    "updates_submit": "Beri tahu saya",
+    "updates_success": "Terima kasih telah berlangganan."
+  },
+  "product": {
+    "details": "Detail produk",
+    "placeholder_title": "Judul produk",
+    "quantity": "Jumlah",
+    "quantity_decrease": "Kurangi jumlah: {{ title }}",
+    "quantity_increase": "Tambah jumlah: {{ title }}",
+    "quantity_input": "Jumlah untuk {{ title }}",
+    "add_to_cart": "Tambahkan ke keranjang",
+    "added_to_cart": "Ditambahkan ke keranjang",
+    "sold_out": "Habis terjual",
+    "description": "Deskripsi",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Harga",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "Kisaran harga",
+      "regular_price": "Harga normal",
+      "sale_price": "Harga diskon",
+      "savings": "Hemat {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Kurangi jumlah",
+      "increase": "Tambah jumlah",
+      "input_label": "Jumlah"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 filter aktif",
+      "other": "{{ count }} filter aktif"
+    }
+  },
+  "forms": {
+    "required": "wajib",
+    "form_errors_title": "Harap perbaiki kesalahan berikut:"
+  },
+  "search": {
+    "title": "Pencarian",
+    "label": "Cari",
+    "placeholder": "Cari",
+    "products_heading": "Produk",
+    "results_heading": "Hasil pencarian",
+    "view_all_results": "Lihat semua hasil",
+    "results_count_announcement": {
+      "one": "1 hasil tersedia",
+      "other": "{{ count }} hasil tersedia"
+    },
+    "no_results_announcement": "Tidak ada hasil yang ditemukan untuk {{ terms }}",
+    "results_for": "{{ count }} hasil ditemukan untuk {{ terms }}",
+    "no_results": "Tidak ada hasil yang ditemukan untuk {{ terms }}",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Perbarui"
+  },
+  "home": {
+    "hero": {
+      "title": "Produk terbaru",
+      "subtitle": "Jelajahi koleksi"
+    }
+  }
+}

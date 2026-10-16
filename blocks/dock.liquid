@@ -1,0 +1,33 @@
+{% doc %}
+  The GRID OS dock: a framed bar fixed to the bottom centre of the screen (a full-width bar on
+  phones). Caller dock items sit in the list; the tray after the divider holds minimized windows,
+  filled by s-window-manager. Tiles magnify on hover from tablet width up.
+
+  Compositional: the caller writes dock-item blocks inside the call.
+
+  @param {string} [class] - Extra utilities on the nav.
+  @param {string} [attributes] - Extra attributes on the nav.
+
+  @category navigation
+  @renders nav
+
+  @example
+  {% block 'dock' %}
+    {% block 'dock-item', icon: 'finder', url: routes.root_url %}…{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+<nav class="os-dock {{ class }}" aria-label="{{ 'os.dock_label' | t | escape }}" {{ attributes }} {{ block.shopify_attributes }}>
+  <ul role="list" class="os-dock-list">
+    {{ content }}
+  </ul>
+  {%- comment -%} s-window-manager fills this tray with one button per minimized window; it stays hidden while empty. {%- endcomment -%}
+  <div class="os-dock-tray" role="group" aria-label="{{ 'os.dock_minimized' | t | escape }}" data-os-tray hidden></div>
+</nav>
+
+{% schema %}
+  {
+    "name": "t:blocks.dock",
+    "settings": []
+  }
+{% endschema %}

@@ -1,0 +1,64 @@
+{% doc %}
+  Renders the store's social profile links.
+  Brand platforms come from the Brand settings in the admin
+  (`shop.brand.metafields.social_links.<platform>.value`), so they stay in sync
+  with every channel. Platforms Brand doesn't support come from theme settings:
+  GitHub (`settings.social_github`) and LinkedIn (`settings.social_linkedin`,
+  used only when Brand has no LinkedIn link). Outputs nothing when no links are set.
+
+  @param {string} [class] - Extra utilities for the list.
+{% enddoc %}
+
+{%- liquid
+  assign brand_links = shop.brand.metafields.social_links
+  assign platforms = 'twitter,instagram,tiktok,youtube,facebook,pinterest,snapchat,tumblr,vimeo,linkedin,github' | split: ','
+
+  capture social_items
+    for platform in platforms
+      assign social_url = brand_links[platform].value
+      if platform == 'linkedin' and social_url == blank
+        assign social_url = settings.social_linkedin
+      elsif platform == 'github'
+        assign social_url = settings.social_github
+      endif
+      if social_url == blank
+        continue
+      endif
+
+      case platform
+        when 'twitter'
+          assign social_label = 'footer.social.x' | t
+        when 'instagram'
+          assign social_label = 'footer.social.instagram' | t
+        when 'tiktok'
+          assign social_label = 'footer.social.tiktok' | t
+        when 'youtube'
+          assign social_label = 'footer.social.youtube' | t
+        when 'facebook'
+          assign social_label = 'footer.social.facebook' | t
+        when 'pinterest'
+          assign social_label = 'footer.social.pinterest' | t
+        when 'snapchat'
+          assign social_label = 'footer.social.snapchat' | t
+        when 'tumblr'
+          assign social_label = 'footer.social.tumblr' | t
+        when 'vimeo'
+          assign social_label = 'footer.social.vimeo' | t
+        when 'linkedin'
+          assign social_label = 'footer.social.linkedin' | t
+        when 'github'
+          assign social_label = 'footer.social.github' | t
+      endcase
+
+      echo '<li><a href="' | append: social_url | append: '" rel="me noopener">' | append: social_label | append: '</a></li>'
+    endfor
+  endcapture
+-%}
+
+{%- if social_items != blank -%}
+  <nav aria-label="{{ 'footer.social.label' | t | escape }}">
+    <ul role="list" class="os-footer-links{% if class != blank %} {{ class }}{% endif %}">
+      {{- social_items -}}
+    </ul>
+  </nav>
+{%- endif -%}

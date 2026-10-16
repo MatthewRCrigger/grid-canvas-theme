@@ -1,0 +1,86 @@
+{% doc %}
+  Renders one platform-generated collection/search facet, including price ranges
+  and text, color, or image values. These data-driven controls are internal to
+  the filter drawer, not independently authored merchant blocks. Native details
+  keep the group usable without JavaScript.
+
+  @param {object} filter - A member of collection.filters or search.filters. @required
+
+  @example
+  {% for filter in collection.filters %}
+    {% render 'filter-group', filter: filter %}
+  {% endfor %}
+{% enddoc %}
+
+{%- liquid
+  assign active_count = 0
+  for value in filter.values
+    if value.active
+      assign active_count = active_count | plus: 1
+    endif
+  endfor
+  if filter.type == 'price_range'
+    if filter.min_value.value != blank or filter.max_value.value != blank
+      assign active_count = 1
+    endif
+  endif
+  assign show_more_limit = 8
+  if filter.presentation == 'swatch'
+    assign show_more_limit = 20
+  elsif filter.presentation == 'image'
+    assign show_more_limit = 6
+  endif
+  assign filter_id = filter.param_name | handleize
+-%}
+<details open class="group border-b border-line-400 last:border-b-0">
+  <summary class="flex w-full min-h-touch-target items-center justify-between py-3 type-overline-lg text-on-surface cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden motion-safe:transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+    <span class="inline-flex items-center gap-2">
+      {{ filter.label | escape }}
+      {% if active_count > 0 %}
+        <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 border border-accent rounded-chip font-mono text-[12px] leading-none text-accent" aria-hidden="true">{{ active_count }}</span>
+        <span class="sr-only">{{ 'filters.active_count' | t: count: active_count }}</span>
+      {% endif %}
+    </span>
+    <span class="inline-flex items-center justify-center shrink-0 size-4 text-ink-300 group-open:rotate-180 motion-safe:transition-transform motion-safe:duration-150 motion-safe:ease-ui" aria-hidden="true">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+  </summary>
+
+  <div class="pb-4">
+    {% if filter.type == 'price_range' %}
+      {%- assign min_label = 'collections.price_min' | t -%}
+      {%- assign max_label = 'collections.price_max' | t -%}
+      {%- comment -%} Shopify supplies price filter bounds in subunits; the form URL expects major currency units. {%- endcomment -%}
+      <div class="flex items-center gap-3 pt-1">
+        <div class="flex-1 min-w-0">
+          <label for="{{ filter_id }}-gte" class="sr-only">{{ min_label }}</label>
+          <input type="number" id="{{ filter_id }}-gte" name="{{ filter.param_name }}.gte" min="0" step="any" max="{{ filter.range_max | divided_by: 100.0 | ceil }}"{% if filter.min_value.value != blank %} value="{{ filter.min_value.value | divided_by: 100.0 }}"{% endif %} placeholder="{{ min_label | escape }}" class="w-full h-11 rounded-none border border-line-300 bg-surface-secondary px-3 font-mono text-[13px] text-on-surface placeholder:font-body placeholder:text-ink-300 hover:border-line-200 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent">
+        </div>
+        <span class="type-overline text-ink-300">{{ 'collections.price_to' | t }}</span>
+        <div class="flex-1 min-w-0">
+          <label for="{{ filter_id }}-lte" class="sr-only">{{ max_label }}</label>
+          <input type="number" id="{{ filter_id }}-lte" name="{{ filter.param_name }}.lte" min="0" step="any" max="{{ filter.range_max | divided_by: 100.0 | ceil }}"{% if filter.max_value.value != blank %} value="{{ filter.max_value.value | divided_by: 100.0 }}"{% endif %} placeholder="{{ max_label | escape }}" class="w-full h-11 rounded-none border border-line-300 bg-surface-secondary px-3 font-mono text-[13px] text-on-surface placeholder:font-body placeholder:text-ink-300 hover:border-line-200 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent">
+        </div>
+      </div>
+    {% else %}
+      <fieldset class="border-0 p-0 m-0">
+        <legend class="sr-only">{{ filter.label | escape }}</legend>
+        {%- assign values_class = 'pt-1' -%}
+        {% if filter.presentation == 'swatch' or filter.presentation == 'image' %}{% assign values_class = 'flex flex-wrap gap-2.5 pt-2' %}{% endif %}
+        <ul class="{{ values_class }}">
+          {% for value in filter.values limit: show_more_limit %}
+            {% render 'filter-value', filter: filter, value: value %}
+          {% endfor %}
+        </ul>
+        {% if filter.values.size > show_more_limit %}
+          <details>
+            <summary class="inline-flex min-h-touch-target items-center type-overline text-accent cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:text-on-surface motion-safe:transition-colors">{{ 'collections.filtering.show_more' | t }}</summary>
+            <ul class="{{ values_class }}">
+              {% for value in filter.values offset: show_more_limit %}
+                {% render 'filter-value', filter: filter, value: value %}
+              {% endfor %}
+            </ul>
+          </details>
+        {% endif %}
+      </fieldset>
+    {% endif %}
+  </div>
+</details>

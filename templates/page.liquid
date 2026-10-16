@@ -1,0 +1,21 @@
+{% block 'container', class: 'os-stage' %}
+  {%- comment -%} PAGE: an open document window; the handle reads as the file name in the title bar. {%- endcomment -%}
+  <div class="mx-auto w-full max-w-[1040px] px-margin">
+    {% block 'frame', window: 'page', class: 'os-page', inner_class: 'flex flex-col' %}
+      <div class="panel-header os-page-bar">
+        <span class="truncate">{{ page.title | escape }}</span>
+        <span class="os-page-meta">{{ page.handle | escape }}.txt</span>
+      </div>
+      <div class="border-b border-line-400 px-4 py-8 md:px-10 md:py-12">
+        {% block 'text', tag: 'span', variant: 'type-overline', class: 'mb-3 block text-ink-300' %}{{ 'page.overline' | t }}{% endblock %}
+        {% block 'text', tag: 'h1', variant: 'type-title', class: 'max-w-full break-words text-on-surface' %}{{ page.title | escape }}{% endblock %}
+      </div>
+      <div class="px-4 py-8 md:px-10 md:py-10">
+        <h2 class="sr-only">{{ 'page.content_heading' | t }}</h2>
+        {%- if page.content != blank -%}
+          <div class="richtext type-body max-w-[68ch]">{{ page.content }}</div>
+        {%- endif -%}
+      </div>
+    {% endblock %}
+  </div>
+{% endblock %}

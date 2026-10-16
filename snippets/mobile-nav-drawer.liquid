@@ -1,0 +1,118 @@
+{% doc %}
+  Renders the specialized left-side mobile navigation drawer: a stacked-panel
+  `<s-mobile-nav>` over the primary menu (up to three levels), the mobile
+  localization accordion, and the drawer header with contextual back/title
+  controls for nested panels. Loads `s-mobile-nav.js` at this call site.
+
+  Open it from anywhere with `commandfor="mobile-nav-drawer" command="show-modal"`.
+  The public `main-menu` block renders this snippet with its resolved menu so
+  desktop and mobile navigation cannot diverge.
+
+  @param {object} menu - Primary navigation link list resolved by the main-menu block.
+  @param {string} [close_button] - Unused: the menu is a GRID OS pop-up window whose close light closes it.
+  @param {string} localization_submit - Captured layout-owned language submit control forwarded to localization-form. @required
+
+  @category interactive
+  @renders s-mobile-nav
+
+  @example
+  {% capture update_button %}{% block 'button', type: 'submit', variant: 'button-secondary' %}{{ 'localization.update_language' | t }}{% endblock %}{% endcapture %}
+  {% render 'mobile-nav-drawer', menu: menu, localization_submit: update_button %}
+{% enddoc %}
+
+{%- capture mobile_nav_header -%}
+  {%- comment -%} Pop-up window title bar: window lights (seated by the window), back box (nested panels only), caps title. s-mobile-nav toggles `hidden`/`flex` on the back button and `hidden` on #mobile-nav-title; the root label shows while the panel title is hidden. {%- endcomment -%}
+  <div class="panel-header">
+    <button type="button" id="mobile-nav-back" commandfor="mobile-nav" command="--pop" class="hidden size-touch-target shrink-0 items-center justify-center border-e border-line-300 text-ink-invert cursor-pointer motion-safe:transition-[background-color,transform] motion-safe:duration-150 motion-safe:ease-ui hover:bg-line-200 motion-safe:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-ink-invert" aria-label="{{ 'general.back' | t }}">
+      <span class="inline-flex items-center justify-center shrink-0 size-4 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-left.svg' | inline_asset_content -}}</span>
+    </button>
+    {%- comment -%} The root title still names the dialog for assistive technology; nested panels show their own title here. {%- endcomment -%}
+    <span class="peer hidden min-w-0 flex-1 truncate type-overline-lg text-ink-invert" id="mobile-nav-title" aria-live="polite">{{ 'header.mobile_navigation' | t }}</span>
+    <span class="hidden flex-1 type-overline-lg text-ink-invert peer-[.hidden]:block" aria-hidden="true">{{ 'header.menu' | t }}</span>
+  </div>
+{%- endcapture -%}
+
+{%- capture mobile_nav_content -%}
+  {%- comment -%} <s-mobile-nav> requires an ancestor <dialog> (for the contextual #mobile-nav-title / #mobile-nav-back header and the 'close' event). It reads [id$="-root"], [id^="mobile-nav-panel-"], [data-mobile-nav-push], and <details><summary><ul> for animated disclosures. Command: --pop. See assets/s-mobile-nav.js class JSDoc. {%- endcomment -%}
+  {%- comment -%} Mobile nav lists reset global unclassed list defaults so disclosure rows measure and stack predictably. {%- endcomment -%}
+  <s-mobile-nav id="mobile-nav" class="block relative h-full overflow-hidden">
+    <div id="mobile-nav-panel-root" class="absolute inset-0 overflow-y-auto motion-safe:transition-transform motion-safe:duration-280 motion-safe:ease-ui transform-[translateX(0)]">
+      <nav aria-label="{{ 'header.mobile_navigation' | t }}">
+        <ul role="list" class="m-0 flex list-none flex-col space-y-0 p-0 border-t border-line-400">
+          {% for link in menu.links %}
+            <li class="m-0">
+              {% if link.links.size > 0 %}
+                {%- comment -%} aria-expanded is toggled by s-mobile-nav.js on push/pop so SR users hear open/closed state. No aria-haspopup — these sub-panels are link lists (disclosure pattern), not ARIA menus. {%- endcomment -%}
+                <button type="button" aria-expanded="false" data-mobile-nav-push="mobile-nav-panel-{{ forloop.index }}-{{ link.handle | handleize }}" data-panel-title="{{ link.title | escape }}" class="grid-nav-row">
+                  <span class="grid-nav-index" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><span class="grid-nav-label">{{ link.title | escape }}</span>
+                  <span class="inline-flex items-center justify-center shrink-0 size-4 text-on-surface-secondary rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+                </button>
+              {% else %}
+                <a href="{{ link.url }}" class="grid-nav-row"{% if link.current %} aria-current="page"{% endif %}>
+                  <span class="grid-nav-index" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><span class="grid-nav-label">{{ link.title | escape }}</span>
+                </a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+
+    {% for link in menu.links %}
+      {% if link.links.size > 0 %}
+        <div id="mobile-nav-panel-{{ forloop.index }}-{{ link.handle | handleize }}" data-panel-title="{{ link.title | escape }}" class="absolute inset-0 overflow-y-auto motion-safe:transition-transform motion-safe:duration-280 motion-safe:ease-ui transform-[translateX(100%)] rtl:transform-[translateX(-100%)]">
+          <ul role="list" class="m-0 flex list-none flex-col space-y-0 p-0 border-t border-line-400">
+            {% for sub in link.links %}
+              <li class="m-0">
+                {% if sub.links.size > 0 %}
+                  {%- comment -%} Third-level mobile groups use push panels instead of details so disclosure content cannot overlap during height animation. {%- endcomment -%}
+                  <button type="button" aria-expanded="false" data-mobile-nav-push="mobile-nav-panel-{{ forloop.parentloop.index }}-{{ link.handle | handleize }}-{{ sub.handle | handleize }}" data-panel-title="{{ sub.title | escape }}" class="grid-nav-row grid-nav-row-sub">
+                    <span class="grid-nav-index" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><span class="grid-nav-label">{{ sub.title | escape }}</span>
+                    <span class="inline-flex items-center justify-center shrink-0 size-4 text-on-surface-secondary rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+                  </button>
+                {% else %}
+                  <a href="{{ sub.url }}" class="grid-nav-row grid-nav-row-sub"{% if sub.current %} aria-current="page"{% endif %}>
+                    <span class="grid-nav-index" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><span class="grid-nav-label">{{ sub.title | escape }}</span>
+                  </a>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        {% for sub in link.links %}
+          {% if sub.links.size > 0 %}
+            <div id="mobile-nav-panel-{{ forloop.parentloop.index }}-{{ link.handle | handleize }}-{{ sub.handle | handleize }}" data-panel-title="{{ sub.title | escape }}" class="absolute inset-0 overflow-y-auto motion-safe:transition-transform motion-safe:duration-280 motion-safe:ease-ui transform-[translateX(100%)] rtl:transform-[translateX(-100%)]">
+              <ul role="list" class="m-0 flex list-none flex-col space-y-0 p-0 border-t border-line-400">
+                {% for subsub in sub.links %}
+                  <li class="m-0">
+                    <a href="{{ subsub.url }}" class="grid-nav-row grid-nav-row-sub"{% if subsub.current %} aria-current="page"{% endif %}>
+                      <span class="grid-nav-index" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><span class="grid-nav-label">{{ subsub.title | escape }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </s-mobile-nav>
+{%- endcapture -%}
+
+{%- comment -%} Region and language sit in the drawer's pinned footer so they stay anchored to the bottom on every menu panel. {%- endcomment -%}
+{%- capture mobile_nav_footer -%}
+  {% render 'localization-form', show_country: true, id: 'mobile-nav-localization', class: 'block', presentation: 'accordion', show_labels: true, submit_button: localization_submit %}
+{%- endcapture -%}
+
+{% render 'drawer',
+  id: 'mobile-nav-drawer',
+  position: 'left',
+  header: mobile_nav_header,
+  content: mobile_nav_content,
+  footer: mobile_nav_footer,
+  close_on_navigate: true,
+  attributes: 'aria-labelledby="mobile-nav-title"'
+%}
+<script type="module" src="{{ 's-mobile-nav.js' | asset_url }}"></script>

@@ -1,0 +1,2840 @@
+@import "tailwindcss" source(none);
+@source "../assets/*.js";
+@source "../blocks/**/*.liquid";
+@source "../snippets/**/*.liquid";
+@source "../templates/**/*.liquid";
+@source "../layout/**/*.liquid";
+
+/* =============================================================================
+   DESIGN TOKENS
+   Custom properties registered with Tailwind v4's `@theme` directive.
+   These generate utility classes like bg-surface, text-on-surface,
+   border-border, text-sale, rounded-lg, etc.
+   ============================================================================= */
+
+@theme {
+  /* GRID surfaces — page → panel → inset well → hover fill. Palette-backed ones are re-emitted by theme-styles. */
+  --color-surface: #000000;
+  --color-surface-secondary: #0c1013;
+  --color-panel: #060809;
+  --color-hover: #141a1e;
+  --color-on-surface: #e4f2f8;
+  --color-on-surface-secondary: #a8bcc6; /* GRID ink-200: AA on surface-0/1/2 */
+  --color-border: #202a2f; /* GRID line-400 */
+
+  /* GRID lines: one 1px weight, four brightnesses */
+  --color-line-100: #d6eaf2;
+  --color-line-200: #8fa8b4;
+  --color-line-300: #4a5a63;
+  --color-line-400: #202a2f;
+
+  /* GRID ink */
+  --color-ink-200: #a8bcc6;
+  --color-ink-300: #6b7c85; /* meta text: only on surface-0/1 */
+  --color-ink-400: #47555c;
+  --color-ink-invert: #000000;
+
+  /* Brand & Accent — accent slot is GRID cyan (live, links, focus) */
+  --color-accent: #5fcdf3;
+
+  /* Interactive — GRID amber, the one primary action per view */
+  --color-interactive: #f6c56a;
+  --color-interactive-text: #000000;
+
+  /* Button variants — defaults mirror the built-in variant styling below. */
+  --color-button-primary: var(--color-interactive);
+  --color-button-primary-text: var(--color-interactive-text);
+  --color-button-secondary: transparent;
+  --color-button-secondary-text: var(--color-on-surface);
+  --color-button-outline-border: var(--color-line-200);
+  --color-button-outline-text: var(--color-on-surface);
+
+  /* Commerce — sale price is amber, compare-at is ink-300 */
+  --color-sale: #f6c56a;
+  --color-compare: #6b7c85;
+
+  /* Semantic States (GRID signals) */
+  --color-success: #5edca9;
+  --color-warning: #f6c56a;
+  --color-warning-text: #000000;
+  --color-critical: #f1604c;
+  --color-info: #5fcdf3;
+  --color-special: #e6a6f2;
+
+  /* Overlay — GRID flat scrim, never a gradient */
+  --color-overlay: rgb(0 0 0 / 0.78);
+  --color-overlay-strong: rgb(0 0 0 / 0.78);
+  --color-overlay-subtle: rgb(0 0 0 / 0.55);
+
+  /* Radius — square everywhere; panels 8/4, chips 2 */
+  --radius-sm: 2px;
+  --radius: 0;
+  --radius-lg: 0;
+  --radius-button: 0;
+  --radius-card: 0;
+  --radius-input: 0;
+  --radius-panel: 8px;
+  --radius-panel-inner: 4px;
+  --radius-chip: 2px;
+
+  /* Typography — Rajdhani for human words, Space Mono for machine data */
+  --font-body: "Rajdhani", "Arial Narrow", sans-serif;
+  --font-heading: "Rajdhani", "Arial Narrow", sans-serif;
+  --font-mono: "Space Mono", ui-monospace, Menlo, monospace;
+
+  /* Motion — quiet polish: decelerating curves, short durations, entries slower than exits. */
+  --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  --default-transition-duration: 150ms;
+
+  /* Layout spacing */
+  --spacing-page: 90rem; /* 1440px */
+  --spacing-margin: max(1rem, var(--safe-area-inset-inline));
+  --spacing-touch-target: 2.75rem;
+  --spacing-dialog-max-height: 85dvh;
+  --spacing-hero: 86dvh;
+  --spacing-drawer-width: 480px;
+  --spacing-panel-header: 26px;
+  --spacing-notification-width: min(
+    400px,
+    calc(100vw - max(1.5rem, var(--safe-area-inset-inline)) - max(1.5rem, var(--safe-area-inset-inline)))
+  );
+
+  /* Shadows — GRID has none */
+  --shadow: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+
+  /* Aspect ratios */
+  --aspect-landscape: 16/9;
+}
+:root {
+  /* `viewport-fit=cover` lets backgrounds fill the physical viewport. These zero-fallback
+     variables keep content and controls inside the usable viewport on notched devices. */
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-inline: max(var(--safe-area-inset-left), var(--safe-area-inset-right));
+  --safe-area-inset-inline-start: var(--safe-area-inset-left);
+  --safe-area-inset-inline-end: var(--safe-area-inset-right);
+
+  --type-paragraph-lg-font: var(--font-body);
+  --type-paragraph-lg-size: 16.52px;
+  --type-paragraph-font: var(--font-body);
+  --type-paragraph-size: 14px;
+  --type-paragraph-sm-font: var(--font-body);
+  --type-paragraph-sm-size: 11.48px;
+  --type-heading-2xl-font: var(--font-heading);
+  --type-heading-2xl-size: 48.75px;
+  --type-heading-xl-font: var(--font-heading);
+  --type-heading-xl-size: 39px;
+  --type-heading-lg-font: var(--font-heading);
+  --type-heading-lg-size: 31.2px;
+  --type-heading-md-font: var(--font-heading);
+  --type-heading-md-size: 25.35px;
+  --type-heading-sm-font: var(--font-heading);
+  --type-heading-sm-size: 19.5px;
+  --type-subheading-font: var(--font-body);
+  --type-subheading-size: 10.92px;
+}
+
+[dir="rtl"] {
+  --safe-area-inset-inline-start: var(--safe-area-inset-right);
+  --safe-area-inset-inline-end: var(--safe-area-inset-left);
+}
+
+/* =============================================================================
+   UTILITIES (@utility)
+   Tailwind v4 custom utilities for patterns requiring nested selectors,
+   pseudo-elements, or @starting-style that cannot be expressed inline.
+   ============================================================================= */
+
+/* Shared missing-media treatment, not a generic utility: repeated image/card/hero
+   consumers share gradients while Liquid supplies positions and runtime tokens supply colors. */
+@layer components {
+  .placeholder-texture {
+    background-color: var(--color-surface-secondary);
+    background-image:
+      radial-gradient(
+        ellipse 90% 82% at var(--placeholder-accent-x) var(--placeholder-accent-y),
+        color-mix(in oklab, var(--color-accent) 44%, var(--color-surface)) 0%,
+        transparent 76%
+      ),
+      linear-gradient(
+        var(--placeholder-angle),
+        color-mix(in oklab, var(--color-accent) 10%, var(--color-surface)) 0%,
+        color-mix(in oklab, var(--color-on-surface) 22%, var(--color-surface)) 100%
+      );
+    background-position: center, center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%, 140% 140%;
+  }
+}
+
+/* Fallback intrinsic ratio so a placeholder without a sized parent doesn't collapse to zero
+   height (the former SVG carried width/height). In @layer base so explicit aspect-ratio and
+   height utilities win; full-bleed positioned callers pair their insets with aspect-auto. */
+@layer base {
+  .placeholder-texture { aspect-ratio: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   COMPONENT VARIANT TOKENS
+   Defined in @layer components so that Tailwind utility classes passed via
+   the `class` parameter can reliably override variant styles.
+   Cascade priority: base < components < utilities.
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  /* Collection-card overlay intensity variants — applied to an absolute inset-0 div over the card image.
+     Gradient runs from bottom (opaque) to top (transparent) so text at the bottom stays legible. */
+
+  /* Swatch size presets — map to the playground's Small/Medium/Large size steps. */
+  .swatch-sm { width: 1.5rem; height: 1.5rem; }   /* w-6 h-6 */
+  .swatch-md { width: 2rem;   height: 2rem;   }   /* w-8 h-8 */
+  .swatch-lg { width: 2.5rem; height: 2.5rem; }   /* w-10 h-10 */
+
+  /* GRID buttons: square, caps, wide tracking, 1px lines; hover is an 120ms var(--ease-ui) colour change. */
+  :where(.button-primary, .button-secondary, .button-outline, .button-surface) {
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    border-radius: 0;
+    transition: color 120ms var(--ease-ui), background-color 120ms var(--ease-ui), border-color 120ms var(--ease-ui);
+  }
+
+  .button-primary {
+    background: var(--color-button-primary);
+    color: var(--color-button-primary-text);
+    border: 1px solid var(--color-button-primary);
+    @media (hover: hover) { &:hover { background: color-mix(in oklch, var(--color-button-primary) 12%, transparent); color: var(--color-button-primary); } }
+  }
+
+  .button-secondary {
+    background: transparent;
+    color: var(--color-on-surface);
+    border: 1px solid var(--color-line-200);
+    @media (hover: hover) { &:hover { background: var(--color-hover); border-color: var(--color-line-100); } }
+  }
+
+  .button-outline {
+    background: transparent;
+    color: var(--color-button-outline-text);
+    border: 1px solid var(--color-button-outline-border);
+    @media (hover: hover) { &:hover { background: var(--color-hover); border-color: var(--color-line-100); } }
+  }
+
+  .button-ghost {
+    background: transparent;
+    color: var(--color-ink-200);
+    transition: color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { color: var(--color-on-surface); } }
+  }
+
+  .button-surface {
+    background: var(--color-panel);
+    color: var(--color-on-surface);
+    border: 1px solid var(--color-line-300);
+    @media (hover: hover) { &:hover { background: var(--color-hover); border-color: var(--color-line-100); } }
+  }
+
+  /* GRID panel: 2px strong outer ring, 4px frame gap, 1px subtle inner box, filled caps header strip. */
+  .panel {
+    display: block;
+    border: 2px solid var(--color-line-100);
+    border-radius: var(--radius-panel);
+    padding: 4px;
+    background: var(--color-panel);
+  }
+  .panel-inner {
+    display: block;
+    height: 100%;
+    border: 1px solid var(--color-line-300);
+    border-radius: var(--radius-panel-inner);
+    overflow: hidden;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: var(--spacing-panel-header);
+    padding: 0 12px;
+    background: var(--color-line-100);
+    color: var(--color-ink-invert);
+    font: 600 14px/1 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* GRID frame block: the editable version of .panel. frame-grid = .panel, frame-hairline = a
+     single 1px line-300 border, frame-none = no border. Background follows --frame-bg (merchant
+     color) then --frame-fallback (per call site) then the panel tone. */
+  .frame {
+    display: block;
+    background: var(--frame-bg, var(--frame-fallback, var(--color-panel)));
+  }
+  .frame-inner { display: block; height: 100%; }
+  .frame-grid {
+    border: 2px solid var(--frame-line, var(--color-line-100));
+    border-radius: var(--radius-panel);
+    padding: 4px;
+    & > .frame-inner {
+      border: 1px solid var(--color-line-300);
+      border-radius: var(--radius-panel-inner);
+      overflow: hidden;
+    }
+  }
+  .frame-hairline { border: 1px solid var(--frame-line, var(--color-line-300)); }
+  .frame-none { border: 0; }
+  /* Title bar: Filled (shown) paints the frame color; No fill (outline) drops the strip to the
+     frame background with a hairline under it and re-points ink-invert so its text stays legible. */
+  .frame[data-header="shown"] > .frame-inner > .panel-header { background: var(--frame-line, var(--color-line-100)); }
+  .frame[data-bar-ink="light"] > .frame-inner > .panel-header { --color-ink-invert: var(--color-on-surface); }
+  .frame[data-header="outline"] > .frame-inner > .panel-header {
+    --color-ink-invert: var(--color-on-surface);
+    background: transparent;
+    border-bottom: 1px solid var(--frame-line, var(--color-line-300));
+  }
+  .frame[data-header="hidden"] > .frame-inner > .panel-header { display: none; }
+
+  /* GRID status badge: 20px, 1px signal border + signal text, 12px caps. */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 20px;
+    padding: 0 6px;
+    border: 1px solid var(--color-line-200);
+    color: var(--color-ink-200);
+    font: 600 12px/1 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge-success { border-color: var(--color-success); color: var(--color-success); }
+  .badge-info { border-color: var(--color-info); color: var(--color-info); }
+  .badge-accent { border-color: var(--color-interactive); color: var(--color-interactive); }
+  .badge-danger { border-color: var(--color-critical); color: var(--color-critical); }
+
+  /* GRID HUD viewport: frames drawn over artwork. Corner brackets, numbered target
+     markers placed by --x/--y percentages, reticle boxes, and opaque framed tags.
+     All 1px, flat, static. */
+  .hud-viewport { position: relative; isolation: isolate; overflow: hidden; }
+  .hud-brackets { position: absolute; inset: 12px; pointer-events: none; z-index: 1; }
+  @media (min-width: 768px) { .hud-brackets { inset: 20px; } }
+  .hud-brackets > span { position: absolute; width: 24px; height: 24px; border-color: var(--color-line-100); border-style: solid; border-width: 0; }
+  .hud-brackets > span:nth-child(1) { inset-block-start: 0; inset-inline-start: 0; border-block-start-width: 1px; border-inline-start-width: 1px; }
+  .hud-brackets > span:nth-child(2) { inset-block-start: 0; inset-inline-end: 0; border-block-start-width: 1px; border-inline-end-width: 1px; }
+  .hud-brackets > span:nth-child(3) { inset-block-end: 0; inset-inline-start: 0; border-block-end-width: 1px; border-inline-start-width: 1px; }
+  .hud-brackets > span:nth-child(4) { inset-block-end: 0; inset-inline-end: 0; border-block-end-width: 1px; border-inline-end-width: 1px; }
+  .hud-brackets-accent > span { border-color: var(--color-info); }
+  .hud-marker {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--color-info);
+    background: var(--color-surface);
+    color: var(--color-info);
+    font: 400 12px/1 var(--font-mono);
+  }
+  /* GRID hotspot: hud-marker look on a 44px hit area; open state fills cyan. Readout is a
+     popover anchored to the marker from 48rem (anchor positioning), docked as a bottom sheet otherwise. */
+  .hotspot {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 3;
+    transform: translate(-50%, -50%);
+  }
+  .hotspot-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-touch-target);
+    height: var(--spacing-touch-target);
+    cursor: pointer;
+    &:focus-visible { outline: none; }
+    &:focus-visible .hotspot-marker { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  }
+  .hotspot-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-info);
+    background: var(--color-surface);
+    color: var(--color-info);
+    font: 400 12px/1 var(--font-mono);
+    transition: background-color 120ms var(--ease-ui), color 120ms var(--ease-ui), transform 150ms var(--ease-ui);
+  }
+  @media (hover: hover) {
+    .hotspot-trigger:hover .hotspot-marker { background: var(--color-hover); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hotspot-trigger:active .hotspot-marker { transform: scale(0.94); }
+  }
+  .hotspot:has(.hotspot-panel:popover-open) .hotspot-marker {
+    background: var(--color-info);
+    color: var(--color-ink-invert);
+  }
+  .hotspot-panel {
+    /* Phones / no anchor support: framed sheet docked 8px off the bottom edge. */
+    position: fixed;
+    inset: auto calc(8px + var(--safe-area-inset-inline-end)) calc(8px + var(--safe-area-inset-bottom)) calc(8px + var(--safe-area-inset-inline-start));
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface);
+    overflow: visible;
+    opacity: 0;
+    translate: 0 8px;
+    transition: opacity 200ms var(--ease-ui), translate 200ms var(--ease-ui), overlay 200ms allow-discrete, display 200ms allow-discrete;
+    &:popover-open { opacity: 1; translate: 0 0; }
+    @starting-style { &:popover-open { opacity: 0; translate: 0 8px; } }
+  }
+  @media (min-width: 48rem) {
+    @supports (anchor-name: --a) {
+      .hotspot-panel {
+        inset: auto;
+        width: 300px;
+        position-area: block-end span-inline-end;
+        position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+        margin: 6px 0 0 -14px;
+        translate: 0 -6px;
+        &:popover-open { translate: 0 0; }
+        @starting-style { &:popover-open { translate: 0 -6px; } }
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hotspot-panel { transition: none; translate: none; }
+  }
+  .hotspot-product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-top: 1px solid var(--color-line-400);
+    text-decoration: none;
+    transition: background-color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { background: var(--color-hover); } }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  }
+  .hud-reticle { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); z-index: 1; pointer-events: none; }
+  .hud-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+    padding: 4px 8px;
+    border: 1px solid var(--color-line-300);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font: 400 12px/1.2 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .quantity-selector-outlined { border: 1px solid var(--color-border); background: transparent; }
+  .quantity-selector-filled   { background: var(--color-surface-secondary); border: 1px solid transparent; }
+
+  /* type-* is the single typography vocabulary. Heading variants balance line lengths;
+     body variants avoid lone trailing words, and utilities still win per call site. */
+  /* GRID type: Rajdhani caps headings at 0.04em, 16px body at 1.55, 12px caps labels at 0.18em, Space Mono data. */
+  .type-display-xl { font-size: clamp(96px, 14vw, 200px); font-family: var(--font-heading); font-weight: 600; line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; }
+  .type-display    { font-size: clamp(40px, 9vw, 112px); font-family: var(--font-heading); font-weight: 600; line-height: 1.08; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; @media (min-width: 64rem) { font-size: clamp(48px, 5.4vw, 96px); } }
+  .type-title      { font-size: clamp(40px, 9vw, 72px); font-family: var(--font-heading); font-weight: 600; line-height: 1.08; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; @media (min-width: 64rem) { font-size: clamp(40px, 4vw, 72px); } }
+  .type-heading-2xl { font-size: clamp(36px, 3.6vw, 56px); font-family: var(--font-heading); font-weight: 600; line-height: 1.08; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; }
+  .type-heading-xl { font-size: clamp(32px, 4vw, 40px); font-family: var(--font-heading); font-weight: 600; line-height: 1.08; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; }
+  .type-heading-lg { font-size: clamp(24px, 3vw, 32px); font-family: var(--font-heading); font-weight: 600; line-height: 1.08; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; }
+  .type-heading-md { font-size: 24px; font-family: var(--font-heading); font-weight: 600; line-height: 1.25; letter-spacing: 0.04em; text-transform: uppercase; text-wrap: balance; }
+  .type-heading-sm { font-size: 14px; font-family: var(--font-heading); font-weight: 600; line-height: 1.25; letter-spacing: 0.12em; text-transform: uppercase; text-wrap: balance; }
+  .type-body-lg    { font-size: 18px; font-family: var(--font-body); line-height: 1.55; text-wrap: pretty; }
+  .type-body       { font-size: max(16px, var(--type-paragraph-size)); font-family: var(--font-body); line-height: 1.55; text-wrap: pretty; }
+  .type-body-sm    { font-size: 13px; font-family: var(--font-body); font-weight: 500; line-height: 1.4; text-wrap: pretty; }
+  .type-overline-lg { font-size: 14px; font-family: var(--font-body); font-weight: 600; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.18em; text-wrap: pretty; }
+  .type-overline   { font-size: 12px; font-family: var(--font-body); font-weight: 600; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.18em; text-wrap: pretty; }
+  .type-data       { font-size: 13px; font-family: var(--font-mono); font-weight: 400; line-height: 1.65; letter-spacing: 0.02em; }
+  .type-data-lg    { font-size: 20px; font-family: var(--font-mono); font-weight: 400; line-height: 1.4; letter-spacing: 0.02em; }
+  .type-data-sm    { font-size: 12px; font-family: var(--font-mono); font-weight: 400; line-height: 1.65; letter-spacing: 0.02em; }
+}
+
+@layer base {
+  h1 { line-height: 1.2; }
+
+  /* `text-wrap` inherits, so one body default keeps orphans out of every paragraph, label,
+     and rich-text body without per-element utilities; the zero-specificity heading rule
+     balances merchant-authored rich-text headings. Variants and utilities override both. */
+  body { text-wrap: pretty; }
+  :where(h1, h2, h3, h4, h5, h6) { text-wrap: balance; }
+
+  /* Restore browser-default styles for rich-text-editor output. Tailwind Preflight
+     strips structural defaults (heading sizes, list bullets, paragraph margins, link
+     underline) that admin rich text relies on. The :not([class]) guard scopes these
+     to truly unclassed elements — content authored by merchants who never add classes —
+     so theme code using utilities or .type-* / .richtext stays in control. */
+  :where(h1, h2, h3, h4, h5, h6):not([class]) {
+    font-family: var(--font-heading);
+    font-weight: 300;
+    line-height: 1.25;
+  }
+  h1:not([class]) { font-size: var(--type-heading-xl-size); }
+  h2:not([class]) { font-size: var(--type-heading-lg-size); }
+  h3:not([class]) { font-size: var(--type-heading-md-size); }
+  h4:not([class]) { font-size: var(--type-heading-sm-size); }
+  h5:not([class]) { font-size: var(--type-paragraph-lg-size); }
+  h6:not([class]) { font-size: var(--type-paragraph-size); }
+
+  ul:not([class]) { list-style: disc; padding-inline-start: 1.5rem; }
+  ol:not([class]) { list-style: decimal; padding-inline-start: 1.5rem; }
+  :where(ul, ol):not([class]) { margin-block: 1rem; }
+  li:not([class]) { margin-block: 0.25rem; }
+
+  p:not([class]) { margin-block: 1rem; }
+
+  :where(strong, b):not([class]) {
+    font-weight: 700;
+  }
+
+  :where(em, i):not([class]) {
+    font-style: italic;
+  }
+
+  a:not([class]) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   BROWSER RESET UTILITIES
+   Named utilities for browser-specific resets that would otherwise require
+   Tailwind arbitrary-value escape hatches inline.
+   --------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   PRODUCT GRID LAYOUT
+   Product detail layout: single column on mobile, 2fr/1fr (roughly 67/33 split)
+   at md breakpoint (768px) with image gallery on the inline-start and product
+   info on the inline-end.
+   --------------------------------------------------------------------------- */
+
+@utility product-grid {
+  @media (min-width: 768px) {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   RICHTEXT / PROSE
+   Shared components-layer treatment for repeated Liquid-rendered merchant HTML
+   (product descriptions, blog posts, pages), not a generic utility or block-local CSS.
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  .richtext {
+    display: block;
+    @apply text-on-surface leading-relaxed;
+
+    /* GRID: authored headings speak in Rajdhani caps; body copy holds a 68ch reading width. */
+    max-width: 68ch;
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-wrap: balance;
+      @apply text-on-surface leading-tight;
+    }
+
+    h1 { @apply text-4xl mt-10 mb-4; }
+    h2 { @apply text-3xl mt-10 mb-3; }
+    h3 { @apply text-2xl mt-8 mb-3; }
+    h4 { @apply text-xl mt-6 mb-2; }
+    h5, h6 { font-size: 14px; letter-spacing: 0.18em; @apply mt-6 mb-2; }
+
+    code, kbd, pre { font-family: var(--font-mono); font-size: 13px; }
+    pre { @apply mb-4 overflow-x-auto border border-line-400 bg-surface-secondary p-4; }
+
+    p {
+      @apply mb-4;
+    }
+
+    strong, b {
+      font-weight: 700;
+    }
+
+    :where(h1, h2, h3, h4, h5, h6) :where(strong, b) {
+      font-weight: 800;
+    }
+
+    em, i {
+      font-style: italic;
+    }
+
+    ul {
+      @apply list-disc ps-6 mb-4 space-y-1;
+    }
+
+    ol {
+      @apply list-decimal ps-6 mb-4 space-y-1;
+    }
+
+    li {
+      @apply text-on-surface;
+    }
+
+    a {
+      @apply text-accent underline underline-offset-2;
+      transition: color 120ms var(--ease-ui);
+
+      @media (hover: hover) {
+        &:hover {
+          @apply text-on-surface;
+        }
+      }
+    }
+
+    blockquote {
+      @apply border-s border-line-300 ps-4 my-6 text-ink-200;
+    }
+
+    img {
+      @apply max-w-full h-auto my-4 border border-line-400;
+    }
+
+    table {
+      @apply w-full border-collapse mb-4;
+
+      th {
+        @apply text-start border-b border-line-300 px-3 py-2 text-ink-300;
+        font: 600 12px/1.25 var(--font-body);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      td {
+        @apply border-b border-border px-3 py-2;
+      }
+
+      tr:last-child td {
+        @apply border-b-0;
+      }
+    }
+
+    hr {
+      @apply border-0 border-t border-border my-8;
+    }
+
+    > *:first-child {
+      @apply mt-0;
+    }
+
+    > *:last-child {
+      @apply mb-0;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   NOTIFICATION TOAST
+   Toast items created by <s-notification> JS component. Each variant gets
+   a distinct background from the semantic colour tokens. Uses @starting-style
+   for interruptible enter transition and opacity/transform for dismiss.
+   --------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   OVERLAY PANELS (drawers + modal dialogs)
+   `overlay-panel` (components layer) owns the chrome every native-dialog
+   surface shares: element reset, surface background, shadow, fade/slide
+   transition, backdrop fade, @starting-style entry, and reduced-motion
+   zeroing. Position treatments use utilities (defined below or composed at
+   their owner) so placement, radius, max-height, and zoom override the base.
+   Motion is parameterized: variants set --panel-closed-transform (closed and
+   @starting-style pose) and --panel-backdrop (open backdrop color).
+   Call sites pair overlay-panel with their position treatment.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  /* showModal() makes the page inert but still lets wheel/touch scroll reach the document
+     behind the backdrop. Lock the root while any modal dialog is open; overflow keeps the
+     scroll offset, so closing lands on the exact prior position. Deliberately no
+     scrollbar-gutter here: a modal-only gutter shifts fixed UI on pages that had no scrollbar. */
+  html:has(dialog:modal) {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .overlay-panel {
+    border: none;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    max-height: none;
+    overflow: hidden;
+    /* Scroll inside a panel body must never chain into the locked document. */
+    overscroll-behavior: contain;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xl);
+    /* Drawers slide in on a smooth deceleration (300ms) and leave faster (200ms); the scrim fades with them. */
+    transform: var(--panel-closed-transform, none);
+    opacity: var(--panel-closed-opacity, 1);
+    transition: transform 200ms var(--ease-drawer), opacity 200ms var(--ease-drawer), display 200ms allow-discrete, overlay 200ms allow-discrete;
+
+    &[open] {
+      /* `none` (not an identity transform) so the open panel is not a containing
+         block for fixed descendants — keeps the toast portal and skip targets
+         viewport-anchored. Do not change to translate(0). */
+      transform: none;
+      opacity: 1;
+      transition-duration: 300ms;
+    }
+
+    &::backdrop {
+      background: var(--panel-backdrop, var(--color-overlay));
+      opacity: 0;
+      transition: opacity 200ms var(--ease-drawer), display 200ms allow-discrete, overlay 200ms allow-discrete;
+    }
+    &[open]::backdrop {
+      opacity: 1;
+      transition-duration: 300ms;
+    }
+
+    /* s-dialog plays the exit with WAAPI, then closes; no CSS transition may replay after it. */
+    &[data-closing],
+    &[data-closing]::backdrop {
+      transition: none;
+    }
+
+    @starting-style {
+      &[open] {
+        transform: var(--panel-closed-transform, none);
+        opacity: var(--panel-closed-opacity, 1);
+      }
+      &[open]::backdrop { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition-duration: 0s;
+      &[open] { transition-duration: 0s; }
+      &::backdrop { transition-duration: 0s; }
+      &[open]::backdrop { transition-duration: 0s; }
+    }
+  }
+
+  /* GRID window: the cart, filter and nav drawers. Every size floats as a framed panel
+     (2px line-100 ring, 4px gap, 1px line-300 inner box) held
+     8px off the screen edges on phones (plus safe areas) and 16px from 48rem, with a filled title bar. Width per call site via --grid-window-width. */
+  .grid-window {
+    /* Phones: the same framed window, held 8px off the screen edges (plus any notch / home-bar inset). */
+    --grid-window-gap: 8px;
+    position: fixed;
+    inset-block: calc(var(--grid-window-gap) + var(--safe-area-inset-top)) calc(var(--grid-window-gap) + var(--safe-area-inset-bottom));
+    inset-inline: calc(var(--grid-window-gap) + var(--safe-area-inset-inline-start)) calc(var(--grid-window-gap) + var(--safe-area-inset-inline-end));
+    width: auto;
+    height: auto;
+    padding: 4px;
+    border: 2px solid var(--color-line-100);
+    border-radius: var(--radius-panel);
+    background: var(--color-panel);
+    color: var(--color-on-surface);
+    box-shadow: none;
+    --panel-closed-transform: translateX(calc(100% + 24px));
+    &:dir(rtl) { --panel-closed-transform: translateX(calc(-100% - 24px)); }
+  }
+  .grid-window-start {
+    --panel-closed-transform: translateX(calc(-100% - 24px));
+    &:dir(rtl) { --panel-closed-transform: translateX(calc(100% + 24px)); }
+  }
+  .grid-window-frame {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-line-300);
+    border-radius: var(--radius-panel-inner);
+  }
+  .grid-window-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    min-height: var(--spacing-touch-target);
+    padding-inline-start: 16px;
+    background: var(--color-line-100);
+    color: var(--color-ink-invert);
+  }
+  .grid-window-close {
+    flex-shrink: 0;
+    width: var(--spacing-touch-target);
+    height: var(--spacing-touch-target);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Part of the title bar: same light strip, a hairline divider, one step darker on hover. */
+    background: transparent;
+    color: var(--color-ink-invert);
+    border-inline-start: 1px solid var(--color-line-300);
+    transition: background-color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { background: var(--color-line-200); color: var(--color-ink-invert); } }
+    &:focus-visible { outline-offset: -4px; }
+  }
+
+  @media (min-width: 48rem) {
+    .grid-window {
+      --grid-window-gap: 16px;
+      inset-inline: auto 16px;
+      width: min(var(--grid-window-width, 520px), calc(100vw - 32px));
+    }
+    .grid-window-start {
+      inset-inline: 16px auto;
+    }
+  }
+}
+
+/* GRID menu rows (mobile menu window): hairline-ruled list, mono index, Rajdhani caps label.
+   Hover and the current page go cyan; no opacity fades. */
+@layer components {
+  .grid-nav-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 52px;
+    padding-inline: 4px 8px;
+    border-bottom: 1px solid var(--color-line-400);
+    font: 600 16px/1.2 var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-align: start;
+    text-decoration: none;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    transition: background-color 120ms var(--ease-ui), color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { background: var(--color-hover); color: var(--color-accent); } }
+    &[aria-current="page"] { color: var(--color-accent); }
+    &[aria-current="page"] .grid-nav-index { color: var(--color-accent); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  }
+  .grid-nav-row-sub {
+    min-height: 48px;
+    font-size: 14px;
+  }
+  .grid-nav-index {
+    flex-shrink: 0;
+    min-width: 2ch;
+    font: 400 11px/1 var(--font-mono);
+    letter-spacing: 0.04em;
+    color: var(--color-on-surface-secondary);
+    transition: color 120ms var(--ease-ui);
+  }
+  .grid-nav-label {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* GRID search window: a centred modal that rises and fades in. Framed 8px off the edges on phones;
+   from 48rem the same framed panel as .grid-window, held 64px from the top. */
+@layer components {
+  .grid-window-modal {
+    /* Phones: framed window held 8px off the screen edges (plus notch / home-bar insets). */
+    position: fixed;
+    inset-block: calc(8px + var(--safe-area-inset-top)) calc(8px + var(--safe-area-inset-bottom));
+    inset-inline: calc(8px + var(--safe-area-inset-inline-start)) calc(8px + var(--safe-area-inset-inline-end));
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 4px;
+    border: 2px solid var(--color-line-100);
+    border-radius: var(--radius-panel);
+    background: var(--color-panel);
+    color: var(--color-on-surface);
+    box-shadow: none;
+    /* Rises 12px and fades in; exits quicker via .overlay-panel. */
+    --panel-closed-transform: translateY(12px) scale(0.98);
+    --panel-closed-opacity: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .grid-window-modal {
+      inset: 64px 0 auto;
+      margin-inline: auto;
+      width: min(var(--grid-window-width, 880px), calc(100vw - 32px));
+      max-height: calc(100dvh - 96px);
+    }
+    .grid-window-modal .grid-window-frame {
+      height: auto;
+      max-height: calc(100dvh - 108px);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   COMBOBOX ACTIVE OPTION (Predictive Search)
+   Visual indicator for the active option during arrow-key navigation
+   in the predictive-search combobox (WCAG 2.4.7 Focus Visible).
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  [role="option"] {
+    @media (prefers-reduced-motion: no-preference) {
+      transition: background-color 0.15s var(--ease-ui), color 0.15s var(--ease-ui);
+    }
+  }
+
+  [role="option"][aria-selected="true"] {
+    background-color: var(--color-surface-secondary);
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* =============================================================================
+   ELEMENT STYLES
+   Base styles targeting HTML elements and custom elements directly.
+   These are not class-based — they style elements by tag/attribute.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   POPOVER (native Popover API)
+   Uses [popover] attribute, :popover-open pseudo-class, and @starting-style
+   for entry/exit animations. Triggered via popovertarget on buttons.
+   In @layer base so Tailwind utilities can override these defaults.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  [popover] {
+    border: none;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    background: transparent;
+    opacity: 0;
+    transform: translateY(4px);
+    transform-origin: var(--popover-origin, center);
+    transition: opacity 0.1s var(--ease-ui), transform 0.1s var(--ease-ui), display 0.1s allow-discrete, overlay 0.1s allow-discrete;
+  }
+
+  [popover]:popover-open {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.15s var(--ease-ui), transform 0.15s var(--ease-ui), display 0.15s allow-discrete, overlay 0.15s allow-discrete;
+  }
+
+  @starting-style {
+    [popover]:popover-open {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [popover] { transition-duration: 0s; }
+    [popover]:popover-open { transition-duration: 0s; }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FORM FIELD BASE STYLES
+   Shared base for text inputs, textareas, and selects. Provides consistent
+   border, radius, focus ring, and error state via aria-invalid.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  textarea,
+  select {
+    @apply w-full text-on-surface bg-surface-secondary rounded-input;
+    min-height: 2.75rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    appearance: none;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: border-color 0.15s var(--ease-ui), box-shadow 0.15s var(--ease-ui);
+    }
+
+    /* Placeholder colour */
+    &::placeholder {
+      @apply text-on-surface-secondary;
+    }
+
+    /* GRID focus ring is cyan (the accent slot) */
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    @media (hover: hover) { &:hover { border-color: var(--color-line-200); } }
+
+    /* Disabled state */
+    &:disabled {
+      @apply opacity-50 cursor-not-allowed bg-surface-secondary;
+    }
+
+    /* Error state driven by aria-invalid (set by Shopify form validation) */
+    &[aria-invalid="true"] {
+      border-color: var(--color-critical);
+      box-shadow: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   BUTTON SIZE BASE STYLES
+   Default padding and font-size for button variants. `:where()` keeps
+   specificity at 0 so Tailwind utilities passed via `class` (e.g. explicit
+   `px-4 h-11 text-sm`) still win.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  :where(.button-primary, .button-secondary, .button-outline, .button-ghost, .button-surface) {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Select-specific: restore chevron via background image */
+@layer base {
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-inline-end: 2.5rem;
+  }
+
+  /* background-position has no logical equivalent; pin chevron to the inline-start
+     edge in RTL so it stays aligned with the padding gap created by padding-inline-end */
+  [dir="rtl"] select {
+    background-position: left 0.75rem center;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CART REMOVE BUTTON — trash icon animation
+   Top lid tilts up-left; bottom body drops slightly on hover.
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  .remove-icon-top,
+  .remove-icon-bottom {
+    transition: transform 125ms var(--ease-ui);
+  }
+
+  /* GRID: the remove control signals hover with colour only (danger), never a lid tilt. */
+  @media (hover: hover) {
+    [command="--remove"]:hover { color: var(--color-critical); }
+  }
+
+}
+
+/* Textarea: no horizontal resize to respect container width */
+@layer base {
+  textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   VIDEO (s-video custom element)
+   Click-to-load video player with poster image and play button.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  s-video,
+  s-predictive-search,
+  s-cart,
+  s-live-form,
+  s-localization-dropdown,
+  s-mobile-nav,
+  s-variant-picker,
+  s-product-image-zoom {
+    display: block;
+  }
+}
+
+@layer base {
+  s-video {
+    position: relative;
+  }
+
+  s-video iframe,
+  s-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@layer base {
+  @media (min-width: 48rem) {
+    :root { --spacing-margin: max(2.5rem, var(--safe-area-inset-inline)); }
+  }
+}
+
+@layer utilities {
+  [data-header-nav-group] {
+    padding-inline: var(--spacing-margin);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   GRID STAGGER REVEAL
+   Shared components-layer choreography for listing grids, not a generic utility.
+   One-shot batch reveal for collection, search, blog, and homepage items.
+   The first responsive row stays visible immediately so above-the-fold LCP
+   candidates are not delayed by the reveal animation. Protected by the REDUCED
+   MOTION block at the end of this file which zeroes animation duration and
+   delay for all elements. No motion-safe: prefix needed.
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  .stagger-fade-in {
+    & > * { animation: none; }
+    & > *:nth-child(n+2):nth-child(-n+9) { animation: stagger-item 0.4s var(--ease-ui) both; }
+    & > *:nth-child(2) { animation-delay: 0ms; }
+    & > *:nth-child(3) { animation-delay: 50ms; }
+    & > *:nth-child(4) { animation-delay: 100ms; }
+    & > *:nth-child(5) { animation-delay: 150ms; }
+    & > *:nth-child(6) { animation-delay: 200ms; }
+    & > *:nth-child(7) { animation-delay: 250ms; }
+    & > *:nth-child(8) { animation-delay: 300ms; }
+    & > *:nth-child(9) { animation-delay: 350ms; }
+
+    @media (min-width: 48rem) {
+      & > *:nth-child(n+1):nth-child(-n+2) { animation: none; }
+      & > *:nth-child(n+3):nth-child(-n+10) { animation: stagger-item 0.4s var(--ease-ui) both; }
+      & > *:nth-child(3) { animation-delay: 0ms; }
+      & > *:nth-child(4) { animation-delay: 50ms; }
+      & > *:nth-child(5) { animation-delay: 100ms; }
+      & > *:nth-child(6) { animation-delay: 150ms; }
+      & > *:nth-child(7) { animation-delay: 200ms; }
+      & > *:nth-child(8) { animation-delay: 250ms; }
+      & > *:nth-child(9) { animation-delay: 300ms; }
+      & > *:nth-child(10) { animation-delay: 350ms; }
+    }
+
+    @media (min-width: 64rem) {
+      &.lg\:grid-cols-3 > *:nth-child(n+1):nth-child(-n+3) { animation: none; }
+      &.lg\:grid-cols-3 > *:nth-child(n+4):nth-child(-n+11) { animation: stagger-item 0.4s var(--ease-ui) both; }
+      &.lg\:grid-cols-3 > *:nth-child(4) { animation-delay: 0ms; }
+      &.lg\:grid-cols-3 > *:nth-child(5) { animation-delay: 50ms; }
+      &.lg\:grid-cols-3 > *:nth-child(6) { animation-delay: 100ms; }
+      &.lg\:grid-cols-3 > *:nth-child(7) { animation-delay: 150ms; }
+      &.lg\:grid-cols-3 > *:nth-child(8) { animation-delay: 200ms; }
+      &.lg\:grid-cols-3 > *:nth-child(9) { animation-delay: 250ms; }
+      &.lg\:grid-cols-3 > *:nth-child(10) { animation-delay: 300ms; }
+      &.lg\:grid-cols-3 > *:nth-child(11) { animation-delay: 350ms; }
+
+      &.lg\:grid-cols-4 > *:nth-child(n+1):nth-child(-n+4) { animation: none; }
+      &.lg\:grid-cols-4 > *:nth-child(n+5):nth-child(-n+12) { animation: stagger-item 0.4s var(--ease-ui) both; }
+      &.lg\:grid-cols-4 > *:nth-child(5) { animation-delay: 0ms; }
+      &.lg\:grid-cols-4 > *:nth-child(6) { animation-delay: 50ms; }
+      &.lg\:grid-cols-4 > *:nth-child(7) { animation-delay: 100ms; }
+      &.lg\:grid-cols-4 > *:nth-child(8) { animation-delay: 150ms; }
+      &.lg\:grid-cols-4 > *:nth-child(9) { animation-delay: 200ms; }
+      &.lg\:grid-cols-4 > *:nth-child(10) { animation-delay: 250ms; }
+      &.lg\:grid-cols-4 > *:nth-child(11) { animation-delay: 300ms; }
+      &.lg\:grid-cols-4 > *:nth-child(12) { animation-delay: 350ms; }
+    }
+
+    /* Reveal runs once per page load: after the first successful partial apply,
+       s-live-form.js sets data-stagger-settled on the wrapper so refreshed grids
+       render immediately. !important is required because the per-child nth-child
+       rules above carry higher specificity than any ancestor-scoped override. */
+    [data-stagger-settled] & > * {
+      animation: none !important;
+    }
+  }
+}
+
+@keyframes stagger-item {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================================
+   REDUCED MOTION
+   Disables all animations and transitions for users who prefer reduced motion.
+   ============================================================================= */
+
+@layer base {
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =============================================================================
+   DESKTOP NAV DROPDOWN — Version 2
+   Multi-column inline dropdown: sub-items appear as additional grid columns
+   with a vertical divider, triggered on hover.
+   ============================================================================= */
+
+@layer components {
+
+.nav-has-dropdown {
+  position: relative;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  inset-inline-start: -13px;
+  padding-block-start: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s var(--ease-ui), transform 0.15s var(--ease-ui), visibility 0.15s;
+  z-index: 50;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .nav-has-dropdown:hover .nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Suppresses the hover reveal when Escape is pressed while a panel is hovered.
+     Restored on mouseleave (s-nav-dropdown.js clears data-suppress-hover). */
+  .nav-has-dropdown[data-suppress-hover]:hover .nav-dropdown {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    pointer-events: none;
+  }
+}
+
+/* Shows the submenu when the toggle button is pressed: s-nav-dropdown.js sets
+   data-open on press. Only hover (above) and this attribute open the submenu; there
+   is deliberately no :focus-within rule, so tabbing onto the item does not open it. */
+.nav-has-dropdown[data-open] .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Top-level chevron toggle button. Only visible when focused by keyboard on
+   pointer devices, so mouse users keep a clean top bar and open submenus by hovering;
+   positioned absolutely just after the link so showing/hiding it never shifts the
+   top-bar layout. On touch devices, the button is always visible and interactive
+   so tap can open the panel. */
+.nav-disclosure {
+  position: absolute;
+  inset-inline-start: 100%;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  margin-inline-start: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--ease-ui), transform 0.15s var(--ease-ui);
+}
+
+.nav-disclosure:active {
+  transform: translateY(-50%) scale(0.90);
+}
+
+.nav-disclosure:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* On touch devices, make disclosure buttons visible and interactive so users
+   can tap to open submenus (hover reveal is unavailable). */
+@media (hover: none) {
+  .nav-disclosure {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.nav-disclosure-icon {
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  transition: transform 0.15s var(--ease-ui);
+}
+
+.nav-disclosure[aria-expanded='true'] .nav-disclosure-icon {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-inner {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line-300);
+  border-radius: 0;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(120px, max-content);
+  grid-auto-flow: column;
+  gap: 0 16px;
+  min-width: 120px;
+  max-width: calc(100vw - 2rem);
+}
+
+.nav-dropdown-inner:has(.nav-dropdown-group) {
+  padding-inline-end: 14px;
+}
+
+/* Dim the NON-hovered items when anything in the panel is hovered.
+   Targeting :not(:hover) siblings reproduces the original "dim all but the
+   hovered one" effect without the restore rule's !important — which, from
+   @layer components, would override (defeat) any opacity-* utility on these
+   elements due to cascade-layer !important precedence. */
+@media (hover: hover) {
+  .nav-dropdown-inner:hover > li > .nav-dropdown-item:not(:hover),
+  .nav-dropdown-inner:hover > .nav-dropdown-group:not(:hover) > .nav-dropdown-row {
+    opacity: 0.6;
+  }
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-on-surface);
+  text-decoration: none;
+  padding: 3px 0;
+  grid-column: 1;
+  min-width: 120px;
+  max-width: 16rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transition: opacity 0.15s var(--ease-ui);
+}
+
+/* Row holding a parent item's link + its chevron toggle button, so the visible title
+   is a real link and the chevron is a separate button you can tab to. Occupies the
+   left grid column; the submenu stays in column 2. */
+.nav-dropdown-row {
+  grid-column: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nav-dropdown-row > .nav-dropdown-item {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* Nested submenu disclosure button. Padding is sized for a ≥24×24px hit area
+   (WCAG 2.5.5 Target Size, Level AAA; 2.5.8 minimum in WCAG 2.2). Icon stays small. */
+.nav-dropdown-disclosure {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: transform 0.15s var(--ease-ui);
+}
+
+.nav-dropdown-disclosure:active {
+  transform: scale(0.90);
+}
+
+.nav-dropdown-disclosure:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.nav-dropdown-disclosure svg {
+  width: 6px;
+  height: 9px;
+}
+
+/* On touch devices, make nested disclosure buttons visible and interactive. */
+@media (hover: none) {
+  .nav-dropdown-disclosure {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (hover: hover) {
+  /* Bridge the grid gap so pointer travel into the next column keeps the group hovered. */
+  .nav-dropdown-group > .nav-dropdown-row::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: -24px;
+    width: 24px;
+  }
+}
+
+/* Group wraps a first-level item + its submenu column */
+.nav-dropdown-group {
+  display: contents;
+}
+
+/* Second column: hidden by default, shown on group hover */
+.nav-dropdown-submenu {
+  grid-column: 2;
+  grid-row: 1 / span 10;
+  display: none;
+  padding: 16px;
+  margin-block: -16px;
+  border-inline-start: 1px solid var(--color-border);
+  align-self: stretch;
+  flex-direction: row;
+  gap: 24px;
+}
+
+@media (hover: hover) {
+  /* Only reveal the active group; sibling submenus share the same grid cell. */
+  .nav-dropdown-group:hover > .nav-dropdown-submenu {
+    display: flex;
+    animation: navDropdownFadeIn 0.15s var(--ease-ui);
+  }
+
+  /* Suppresses the nested hover reveal when Escape is pressed. */
+  .nav-dropdown-group[data-suppress-hover]:hover > .nav-dropdown-submenu {
+    display: none;
+  }
+}
+
+/* Shows the nested column when its toggle button is pressed (s-nav-dropdown.js sets
+   data-open on the group). No :focus-within rule — tabbing onto the item must not
+   open the column on its own. */
+.nav-dropdown-group[data-open] > .nav-dropdown-submenu {
+  display: flex;
+  animation: navDropdownFadeIn 0.15s var(--ease-ui);
+}
+
+} /* end @layer components (nav dropdown part 1) */
+
+@keyframes navDropdownFadeIn {
+  from { opacity: 0; transform: translateX(-2px) scale(0.99); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@layer components {
+
+/* Submenu inner: second column contents */
+.nav-submenu-inner {
+  display: grid;
+  grid-template-columns: minmax(100px, max-content);
+  grid-auto-flow: column;
+  gap: 0 24px;
+  min-width: 100px;
+  align-content: start;
+}
+
+.nav-submenu-inner > li > .nav-dropdown-item {
+  padding: 3px 0;
+  grid-column: 1;
+  min-width: 100px;
+}
+
+.nav-submenu-inner > .nav-dropdown-group > .nav-dropdown-row {
+  grid-column: 1;
+  min-width: 100px;
+}
+
+/* Dim non-hovered submenu items on hover (see nav-dropdown-inner note above). */
+@media (hover: hover) {
+  .nav-submenu-inner:hover > li > .nav-dropdown-item:not(:hover),
+  .nav-submenu-inner:hover > .nav-dropdown-group:not(:hover) > .nav-dropdown-row {
+    opacity: 0.6;
+  }
+}
+
+/* Third column */
+.nav-submenu-inner > .nav-dropdown-group {
+  display: contents;
+}
+
+.nav-submenu-inner > .nav-dropdown-group > .nav-dropdown-submenu {
+  grid-column: 2;
+  grid-row: 1 / span 10;
+  display: none;
+  padding-inline: 16px;
+  border-inline-start: 1px solid var(--color-border);
+  align-self: flex-start;
+}
+
+@media (hover: hover) {
+  /* Only reveal the active group; sibling submenus share the same grid cell. */
+  .nav-submenu-inner > .nav-dropdown-group:hover > .nav-dropdown-submenu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    animation: navDropdownFadeIn 0.15s var(--ease-ui);
+  }
+
+  /* Suppresses the nested third-column hover reveal when Escape is pressed. */
+  .nav-submenu-inner > .nav-dropdown-group[data-suppress-hover]:hover > .nav-dropdown-submenu {
+    display: none;
+  }
+}
+
+.nav-submenu-inner > .nav-dropdown-group[data-open] > .nav-dropdown-submenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  animation: navDropdownFadeIn 0.15s var(--ease-ui);
+}
+
+.nav-submenu-inner > .nav-dropdown-group > .nav-dropdown-submenu .nav-submenu-inner {
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.nav-submenu-inner > .nav-dropdown-group > .nav-dropdown-submenu .nav-dropdown-item {
+  padding: 3px 0;
+}
+
+} /* end @layer components (nav dropdown part 2) */
+
+/* ---------------------------------------------------------------------------
+   GRID SHELL
+   Gutter widens to 24px from 750px; inputs take the GRID subtle line; focus is
+   always the cyan ring; the global link colour is cyan.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  @media (min-width: 750px) {
+    :root { --spacing-margin: max(1.5rem, var(--safe-area-inset-inline)); }
+  }
+
+  :root { --icon-stroke-width: 1.25; }
+
+  /* clip (not hidden) stops sideways scroll on phones without creating a scroll container, so sticky and dialogs keep working. */
+  body { font-size: 16px; line-height: 1.55; overflow-x: clip; }
+
+  :where(input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select) {
+    border-color: var(--color-line-300);
+  }
+
+  :where(a, button, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection { background: color-mix(in oklch, var(--color-accent) 30%, transparent); }
+}
+
+/* ===========================================================================
+   GRID OS LAYER — the store as a wireframe operating system.
+   Motion is quiet and decelerating; everything here stops under reduced motion.
+   =========================================================================== */
+
+/* Product image morph: cards and the product viewport share view-transition-name
+   `pimg-<product id>`, so cross-document navigation grows the card image into place. */
+@view-transition { navigation: auto; }
+::view-transition-group(*) { animation-duration: 320ms; animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+@keyframes grid-frame-draw {
+  from { clip-path: inset(0 100% calc(100% - 2px) 0); }
+  45%  { clip-path: inset(0 0 calc(100% - 2px) 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes grid-frame-scan {
+  from { clip-path: inset(0 0 100% 0); opacity: 0.2; }
+  to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+@keyframes grid-bar-type {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes grid-blink { 50% { opacity: 0.15; } }
+@keyframes grid-cursor { 50% { opacity: 0; } }
+@keyframes grid-ticker { to { transform: translateX(-100%); } }
+@keyframes grid-blip {
+  0%, 35% { outline-color: var(--color-info); color: var(--color-info); }
+  100%    { outline-color: transparent; }
+}
+
+@layer components {
+  /* Frame entrance: plays once. <s-entrance> marks each frame data-entered="play" the first
+     time it scrolls into view (frames already on screen at load get "static" and skip it),
+     so scrolling back up never rewinds a frame. */
+  @media (prefers-reduced-motion: no-preference) {
+    .frame[data-entrance="draw"][data-entered="play"] {
+      animation: grid-frame-draw 700ms cubic-bezier(0.32, 0.72, 0, 1) backwards;
+    }
+    .frame[data-entrance="draw"][data-entered="play"] > .frame-inner > .panel-header {
+      animation: grid-bar-type 500ms cubic-bezier(0.32, 0.72, 0, 1) 250ms backwards;
+    }
+    .frame[data-entrance="scan"][data-entered="play"] {
+      animation: grid-frame-scan 600ms cubic-bezier(0.32, 0.72, 0, 1) backwards;
+    }
+  }
+
+  /* Live title-bar readout: centred in the title strip, mono, never interactive. */
+  .frame[data-readout] > .frame-inner { position: relative; }
+  .frame-readout {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    z-index: 1;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    height: var(--spacing-panel-header);
+    font: 400 11px/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-invert);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  @media (min-width: 48rem) { .frame-readout { display: inline-flex; } }
+  .frame[data-header="outline"] .frame-readout,
+  .frame[data-bar-ink="light"] .frame-readout { color: var(--color-on-surface); }
+  .frame[data-header="hidden"] .frame-readout { display: none; }
+  .grid-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-success);
+  }
+  .grid-status-dot-alert { background: var(--color-critical); }
+  @media (prefers-reduced-motion: no-preference) {
+    .grid-status-dot { animation: grid-blink 1.6s steps(2, jump-none) infinite; }
+    .grid-cursor { animation: grid-cursor 1s steps(2, jump-none) infinite; }
+  }
+  .grid-cursor { display: inline-block; width: 0.6em; height: 1em; translate: 0 0.15em; background: currentColor; }
+
+  /* Tabs window: radio-driven panes (native keyboard support), caps tabs on a hairline rail. */
+  .grid-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, auto) 1fr;
+    border-top: 1px solid var(--color-line-400);
+  }
+  .grid-tabs > input { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+  .grid-tab {
+    grid-row: 1;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-touch-target);
+    padding-inline: 14px;
+    border-bottom: 1px solid var(--color-line-400);
+    border-inline-end: 1px solid var(--color-line-400);
+    color: var(--color-ink-300);
+    cursor: pointer;
+    transition: color 120ms var(--ease-ui), background-color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { color: var(--color-on-surface); background: var(--color-hover); } }
+  }
+  .grid-tabs::after { content: ""; grid-row: 1; grid-column: -2 / -1; border-bottom: 1px solid var(--color-line-400); }
+  .grid-tab-pane { grid-row: 2; grid-column: 1 / -1; display: none; padding-top: 16px; }
+  .grid-tabs > input:nth-of-type(1):checked ~ .grid-tab-pane:nth-of-type(1),
+  .grid-tabs > input:nth-of-type(2):checked ~ .grid-tab-pane:nth-of-type(2),
+  .grid-tabs > input:nth-of-type(3):checked ~ .grid-tab-pane:nth-of-type(3),
+  .grid-tabs > input:nth-of-type(4):checked ~ .grid-tab-pane:nth-of-type(4) { display: block; }
+  .grid-tabs > input:nth-of-type(1):checked ~ .grid-tab:nth-of-type(1),
+  .grid-tabs > input:nth-of-type(2):checked ~ .grid-tab:nth-of-type(2),
+  .grid-tabs > input:nth-of-type(3):checked ~ .grid-tab:nth-of-type(3),
+  .grid-tabs > input:nth-of-type(4):checked ~ .grid-tab:nth-of-type(4) {
+    color: var(--color-accent);
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+  }
+  .grid-tabs > input:nth-of-type(1):focus-visible ~ .grid-tab:nth-of-type(1),
+  .grid-tabs > input:nth-of-type(2):focus-visible ~ .grid-tab:nth-of-type(2),
+  .grid-tabs > input:nth-of-type(3):focus-visible ~ .grid-tab:nth-of-type(3),
+  .grid-tabs > input:nth-of-type(4):focus-visible ~ .grid-tab:nth-of-type(4) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  /* Target lock: cyan corner brackets snap onto a product card image on hover, with a LOCK tag. */
+  .card-lock { inset: 8px !important; opacity: 0; transform: scale(1.06); z-index: 2; }
+  .card-lock-tag {
+    position: absolute;
+    top: 8px;
+    inset-inline-end: 8px;
+    z-index: 2;
+    padding: 2px 6px;
+    border: 1px solid var(--color-info);
+    background: var(--color-surface);
+    color: var(--color-info);
+    font: 400 10px/1.2 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .card-lock { transition: opacity 150ms var(--ease-ui), transform 220ms var(--ease-ui); }
+    .card-lock-tag { transition: opacity 150ms var(--ease-ui) 60ms; }
+  }
+  @media (hover: hover) {
+    .group\/card:hover .card-lock { opacity: 1; transform: none; }
+    .group\/card:hover .card-lock-tag { opacity: 1; }
+  }
+
+  /* Add-to-cart transfer: a cyan data packet flies to the cart trigger, which then blips. */
+  .grid-transfer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2147483000;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--color-info);
+    background: var(--color-info);
+    pointer-events: none;
+  }
+  #header-cart-trigger[data-blip] { outline: 1px solid transparent; outline-offset: -1px; animation: grid-blip 700ms var(--ease-ui); }
+
+  /* Telemetry ticker: a mono log line that scrolls across; pauses on hover, static under reduced motion. */
+  .grid-ticker {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-line-400);
+    background: var(--color-surface);
+    font: 400 12px/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-200);
+  }
+  .grid-ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    white-space: nowrap;
+    padding-inline-start: 100%;
+  }
+  .grid-ticker-track > * { display: inline-flex; align-items: center; gap: 28px; }
+  .grid-ticker-track > *:not(:last-child)::after { content: "//"; color: var(--color-line-200); }
+  @media (prefers-reduced-motion: no-preference) {
+    .grid-ticker-track { animation: grid-ticker var(--ticker-duration, 45s) linear infinite; }
+    .grid-ticker:hover .grid-ticker-track,
+    .grid-ticker:focus-within .grid-ticker-track { animation-play-state: paused; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .grid-ticker { justify-content: center; }
+    .grid-ticker-track { padding-inline-start: 0; overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  /* Status bar (taskbar): pinned to the bottom of the viewport from 48rem. */
+  .grid-statusbar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 30;
+    display: none;
+    align-items: stretch;
+    height: 32px;
+    border-top: 1px solid var(--color-line-300);
+    background: var(--color-surface);
+    font: 400 11px/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-200);
+  }
+  @media (min-width: 48rem) { .grid-statusbar { display: flex; } }
+  .grid-statusbar-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-inline: 12px;
+    border-inline-end: 1px solid var(--color-line-400);
+    white-space: nowrap;
+  }
+  .grid-statusbar-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-inline: 12px;
+    border-inline-start: 1px solid var(--color-line-400);
+    color: var(--color-ink-200);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 120ms var(--ease-ui), color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { background: var(--color-hover); color: var(--color-accent); } }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  }
+  .grid-kbd {
+    display: inline-flex;
+    align-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding-inline: 4px;
+    border: 1px solid var(--color-line-300);
+    border-radius: 2px;
+    color: var(--color-ink-300);
+    font: 400 10px/1 var(--font-mono);
+  }
+  /* Recently viewed: minimized windows in the taskbar. */
+  .recent-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 180px;
+    height: 22px;
+    padding-inline: 4px 8px;
+    border: 1px solid var(--color-line-400);
+    color: var(--color-ink-200);
+    text-decoration: none;
+    transition: border-color 120ms var(--ease-ui), color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { border-color: var(--color-line-100); color: var(--color-on-surface); } }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+    & img { width: 14px; height: 14px; object-fit: cover; }
+    & span { overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  /* Compare toggle on product cards: a small mono switch above the card link. */
+  .compare-toggle {
+    position: relative;
+    z-index: 20;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+    padding-inline: 6px;
+    border: 1px solid var(--color-line-300);
+    color: var(--color-ink-300);
+    font: 400 10px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 120ms var(--ease-ui), color 120ms var(--ease-ui), background-color 120ms var(--ease-ui);
+    @media (hover: hover) { &:hover { border-color: var(--color-info); color: var(--color-info); } }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+    &::before { content: ""; width: 8px; height: 8px; border: 1px solid currentColor; }
+    &[aria-pressed="true"] { border-color: var(--color-info); color: var(--color-info); }
+    &[aria-pressed="true"]::before { background: currentColor; }
+  }
+}
+
+/* Frame width (layout tiling): unlayered so a merchant's choice beats the call site's column span. */
+@media (min-width: 64rem) {
+  .frame[data-span="4"]  { grid-column: span 4 / span 4; }
+  .frame[data-span="5"]  { grid-column: span 5 / span 5; }
+  .frame[data-span="6"]  { grid-column: span 6 / span 6; }
+  .frame[data-span="7"]  { grid-column: span 7 / span 7; }
+  .frame[data-span="8"]  { grid-column: span 8 / span 8; }
+  .frame[data-span="12"] { grid-column: 1 / -1; }
+}
+.grid-ticker-track::before { content: ">"; color: var(--color-info); }
+
+/* ===== GRID OS — product page (config terminal, meters, loupe, dock) ===== */
+@layer components {
+  /* Config terminal: a mono readout of the configured unit, refreshed with the variant. */
+  .grid-terminal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-line-300);
+    background: var(--color-surface);
+    font: 400 12px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+  }
+  .grid-terminal-prompt { color: var(--color-info); }
+  .grid-terminal-sep { color: var(--color-line-200); }
+
+  /* Segmented meter: ten hairline cells, filled cells cyan. */
+  .grid-meter { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+  .grid-meter > span { height: 10px; border: 1px solid var(--color-line-300); }
+  .grid-meter > span[data-on] { border-color: var(--color-info); background: var(--color-info); }
+  @media (prefers-reduced-motion: no-preference) {
+    .frame[data-entered="play"] .grid-meter > span[data-on] { animation: grid-meter-fill 420ms var(--ease-ui) backwards; animation-delay: calc(var(--i, 0) * 40ms + 300ms); }
+  }
+
+  /* Inspection loupe: a square magnifier with crosshair and coordinates, fine pointers only. */
+  .grid-loupe {
+    position: absolute;
+    z-index: 3;
+    width: 180px;
+    height: 180px;
+    border: 1px solid var(--color-info);
+    background-color: var(--color-surface);
+    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 120ms var(--ease-ui);
+  }
+  .grid-loupe[data-active] { opacity: 1; }
+  .grid-loupe::before, .grid-loupe::after { content: ""; position: absolute; background: var(--color-info); opacity: 0.7; }
+  .grid-loupe::before { inset-inline: 0; top: 50%; height: 1px; }
+  .grid-loupe::after { inset-block: 0; left: 50%; width: 1px; }
+  .grid-loupe-readout {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border: 1px solid var(--color-info);
+    background: var(--color-surface);
+    color: var(--color-info);
+    font: 400 10px/1.2 var(--font-mono);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  /* Docked add-to-cart: a slim window docked above the status bar once the buy button scrolls away. */
+  .grid-dock {
+    position: fixed;
+    inset-inline: max(8px, var(--safe-area-inset-left, 0px));
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    z-index: 29;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 6px 6px 8px;
+    border: 1px solid var(--color-line-300);
+    background: var(--color-panel);
+    translate: 0 calc(100% + 48px);
+    visibility: hidden;
+    transition: translate 260ms var(--ease-drawer), visibility 0s linear 260ms;
+  }
+  @media (min-width: 48rem) {
+    .grid-dock { inset-inline: auto 16px; bottom: calc(var(--os-dock-space) + 8px); width: min(460px, calc(100vw - 32px)); }
+  }
+  .grid-dock[data-docked] { translate: 0 0; visibility: visible; transition: translate 300ms var(--ease-drawer), visibility 0s; }
+  @media (prefers-reduced-motion: reduce) { .grid-dock, .grid-dock[data-docked] { transition: visibility 0s; } }
+  .grid-dock img { width: 40px; height: 40px; object-fit: cover; border: 1px solid var(--color-line-400); }
+}
+@keyframes grid-meter-fill { from { opacity: 0; } }
+
+/* ---------------------------------------------------------------------------
+   GRID OS: macOS structure in GRID style. Menu bar (header), dock, desktop, windows.
+   See DESIGN.md §13. Motion stops under reduced motion.
+   --------------------------------------------------------------------------- */
+@layer base {
+  s-window,
+  s-desktop,
+  s-window-manager {
+    display: block;
+  }
+  :root {
+    --os-menubar-h: 44px;
+    --os-dock-space: 96px;
+  }
+  html[data-os-sheet] { overflow: hidden; }
+}
+
+@layer components {
+  /* Menu bar: the focused window's name in the app slot. */
+  .os-menubar-app { display: inline-flex; align-items: center; min-width: 0; max-width: 22ch; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .os-menubar-app [data-os-app-title] { overflow: hidden; text-overflow: ellipsis; }
+
+  /* Dock: phones get a full-width bottom bar of icons; from 48rem a framed floating dock. */
+  .os-dock {
+    position: fixed;
+    z-index: 45;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 6px max(8px, var(--safe-area-inset-inline)) calc(4px + var(--safe-area-inset-bottom));
+    border-top: 1px solid var(--color-line-300);
+    background: var(--color-surface);
+  }
+  .os-dock-list { display: flex; flex: 1; align-items: flex-end; justify-content: space-around; gap: 4px; }
+  .os-dock-item { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .os-dock-tile {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-touch-target);
+    height: var(--spacing-touch-target);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-on-surface);
+    text-decoration: none;
+    cursor: pointer;
+    transform-origin: 50% 100%;
+    transition: scale 200ms var(--ease-ui), translate 200ms var(--ease-ui), border-color 120ms var(--ease-ui), color 120ms var(--ease-ui);
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  }
+  .os-dock-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .os-dock-run { width: 4px; height: 4px; margin-top: 3px; background: transparent; }
+  .os-dock-item[data-running] .os-dock-run { background: var(--color-accent); }
+  .os-dock-item[data-running] .os-dock-tile { color: var(--color-accent); }
+  .os-dock-badge {
+    position: absolute;
+    top: -5px;
+    inset-inline-end: -7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding-inline: 4px;
+    border-radius: var(--radius-chip);
+    background: var(--color-accent);
+    color: var(--color-ink-invert);
+    font: 400 11px/1 var(--font-mono);
+    &[hidden] { display: none; }
+  }
+  .os-dock-tray { display: none; }
+
+  @media (min-width: 48rem) {
+    /* Centred with auto margins so the dock stays centred in both reading directions. */
+    .os-dock {
+      inset-inline: 0;
+      bottom: max(8px, var(--safe-area-inset-bottom));
+      width: fit-content;
+      max-width: calc(100vw - 32px);
+      margin-inline: auto;
+      padding: 4px;
+      border: 2px solid var(--color-line-100);
+      border-radius: var(--radius-panel);
+      background: var(--color-panel);
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border: 1px solid var(--color-line-300);
+        border-radius: var(--radius-panel-inner);
+        pointer-events: none;
+      }
+    }
+    .os-dock-list { flex: none; gap: 6px; padding: 8px 10px 3px; }
+    .os-dock-tile {
+      width: 48px;
+      height: 48px;
+      border-color: var(--color-line-300);
+      background: var(--color-surface);
+      @media (hover: hover) { &:hover { border-color: var(--color-line-100); color: var(--color-accent); } }
+    }
+    /* Tooltip label above the tile; left/translate is a symmetric centring pair. */
+    .os-dock-label {
+      bottom: calc(100% + 12px);
+      left: 50%;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      padding: 5px 8px;
+      background: var(--color-line-100);
+      color: var(--color-ink-invert);
+      font: 600 12px/1 var(--font-heading);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0;
+      translate: -50% 4px;
+      pointer-events: none;
+      transition: opacity 120ms var(--ease-ui), translate 160ms var(--ease-ui);
+      & > * { font: inherit; letter-spacing: inherit; color: inherit; }
+    }
+    .os-dock-tile:hover .os-dock-label,
+    .os-dock-tile:focus-visible .os-dock-label,
+    .os-tray-tile:hover .os-dock-label,
+    .os-tray-tile:focus-visible .os-dock-label { opacity: 1; translate: -50% 0; }
+    .os-dock-tray:not([hidden]) {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-inline-start: 2px;
+      padding: 8px 10px 9px;
+      border-inline-start: 1px solid var(--color-line-300);
+    }
+    /* A minimized window: a tiny window with a title strip and its initials. */
+    .os-tray-tile {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--color-line-200);
+      background: var(--color-surface);
+      color: var(--color-on-surface);
+      cursor: pointer;
+      transform-origin: 50% 100%;
+      transition: scale 200ms var(--ease-ui), translate 200ms var(--ease-ui), margin 200ms var(--ease-ui), border-color 120ms var(--ease-ui);
+      &::before { content: ""; display: block; height: 7px; background: var(--color-line-100); }
+      &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+      @media (hover: hover) { &:hover { border-color: var(--color-accent); } }
+    }
+    .os-tray-glyph { display: grid; flex: 1; place-items: center; font: 400 12px/1 var(--font-mono); text-transform: uppercase; color: var(--color-accent); }
+  }
+  /* Magnification: the hovered tile grows and lifts, its neighbours grow a little. Scale does not take
+     layout space, so the items also widen (padding, part of their hover area so the pointer never
+     falls into a gap) by exactly what the scaled tiles need: the dock opens up instead of overlapping. */
+  @media (min-width: 48rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .os-dock-item { transition: padding 200ms var(--ease-ui); }
+    .os-tray-tile:hover { margin-inline: 7px; }
+    .os-dock-item:hover { padding-inline: 8px; }
+    .os-dock-item:hover + .os-dock-item,
+    .os-dock-item:has(+ .os-dock-item:hover) { padding-inline: 3px; }
+    .os-dock-item:hover .os-dock-tile,
+    .os-tray-tile:hover { scale: 1.3; translate: 0 -6px; }
+    .os-dock-item:hover + .os-dock-item .os-dock-tile,
+    .os-dock-item:has(+ .os-dock-item:hover) .os-dock-tile { scale: 1.12; translate: 0 -2px; }
+    .os-dock-item:hover .os-dock-label,
+    .os-tray-tile:hover .os-dock-label { scale: 0.77; transform-origin: 50% 100%; }
+  }
+
+  /* Desktop. Phones and tablets: a home screen (stacked windows + an app icon grid). */
+  .os-desktop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px var(--spacing-margin) 32px;
+  }
+  .os-desktop-coord,
+  .os-wallpaper-image { display: none; }
+  .os-icons {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 8px;
+    padding: 8px 0;
+  }
+  @media (min-width: 40rem) { .os-icons { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  .os-icon-item { display: flex; justify-content: center; min-width: 0; }
+  .os-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 96px;
+    padding: 4px 2px;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  }
+  .os-icon-glyph {
+    display: block;
+    width: 58px;
+    height: 58px;
+    padding: 13px;
+    border: 1px solid var(--color-line-300);
+    background: var(--color-panel);
+    color: var(--color-line-100);
+    transition: border-color 120ms var(--ease-ui), color 120ms var(--ease-ui), background-color 120ms var(--ease-ui);
+  }
+  .os-icon-glyph[data-icon="folder"] { color: var(--color-accent); }
+  .os-icon-label {
+    max-width: 100%;
+    padding: 2px 4px;
+    font: 400 11px/1.3 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+    color: var(--color-on-surface);
+    & > * { font: inherit; letter-spacing: inherit; color: inherit; }
+  }
+  .os-icon[data-selected] .os-icon-glyph { border-color: var(--color-accent); background: var(--color-hover); color: var(--color-accent); }
+  .os-icon[data-selected] .os-icon-label { background: var(--color-accent); color: var(--color-ink-invert); }
+
+  /* Windows (Frame blocks with Desktop window on). */
+  s-window[data-window][data-state="closed"],
+  s-window[data-window][data-state="minimized"] { display: none; }
+  .frame-grid { --win-inset: 7px; }
+  .frame-hairline { --win-inset: 1px; }
+  .frame-none { --win-inset: 0px; }
+  s-window[data-window]:not([data-mode]) > .frame-inner > .panel-header { position: sticky; top: 0; z-index: 3; }
+  .os-window-controls { display: none; }
+
+  .os-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+    &:focus-visible { outline: 2px solid var(--color-ink-invert); outline-offset: -2px; }
+  }
+  .os-light-dot {
+    display: grid;
+    place-items: center;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--color-ink-invert);
+    border-radius: 2px;
+    transition: background-color 120ms var(--ease-ui);
+    & svg { width: 8px; height: 8px; fill: none; stroke: var(--color-ink-invert); stroke-width: 1.4; opacity: 0; transition: opacity 120ms var(--ease-ui); }
+  }
+  /* Signal lights on the focused window only, like an inactive window greying out its controls. */
+  s-window[data-active] .os-light-close .os-light-dot { background: var(--color-critical); }
+  s-window[data-active] .os-light-min .os-light-dot { background: var(--color-warning); }
+  s-window[data-active] .os-light-zoom .os-light-dot { background: var(--color-success); }
+  .os-window-controls:hover .os-light-dot svg,
+  .os-light:focus-visible .os-light-dot svg { opacity: 1; }
+
+  /* Phones and tablets: a window that started closed opens as a full-screen sheet with a close box. */
+  s-window[data-sheet] {
+    position: fixed;
+    z-index: 60;
+    inset: calc(8px + var(--safe-area-inset-top)) 8px calc(8px + var(--safe-area-inset-bottom));
+    overflow: auto;
+    overscroll-behavior: contain;
+    & > .frame-inner { height: auto; min-height: 100%; }
+    & > .frame-inner > .panel-header { min-height: var(--spacing-touch-target); padding-inline-start: calc(var(--spacing-touch-target) + 12px); }
+    & .os-window-controls { position: absolute; inset-inline-start: var(--win-inset); z-index: 4; display: flex; height: var(--spacing-touch-target); }
+    & .os-light { width: var(--spacing-touch-target); }
+    & .os-light-dot { width: 18px; height: 18px; background: var(--color-critical); }
+    & .os-light-dot svg { opacity: 1; width: 10px; height: 10px; }
+    & .os-light-min,
+    & .os-light-zoom { display: none; }
+  }
+  html[data-os-sheet]::after { content: ""; position: fixed; inset: 0; z-index: 59; background: var(--color-overlay); }
+
+  @media (min-width: 64rem) {
+    .os-desktop {
+      display: block;
+      isolation: isolate;
+      height: calc(100dvh - var(--os-menubar-h));
+      min-height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .os-desktop-coord {
+      position: absolute;
+      z-index: 0;
+      display: block;
+      inset-inline-start: 16px;
+      font: 400 11px/1 var(--font-mono);
+      letter-spacing: 0.08em;
+      color: var(--color-ink-300);
+      pointer-events: none;
+    }
+    .os-desktop-coord-start { top: 12px; }
+    .os-desktop-coord-end { display: none; } /* the footer owns the bottom corners */
+    .os-wallpaper-image { position: absolute; inset: 0; z-index: -1; display: block; width: 100%; height: 100%; object-fit: cover; }
+    /* Grid floor wallpaper: drawn by the shared fixed .os-wallpaper layer (layout/theme.liquid). */
+
+    /* Icons: columns from the end edge, filling downward, the next column toward the start. */
+    .os-icons {
+      position: absolute;
+      z-index: 1;
+      inset-block: 16px var(--os-dock-space);
+      inset-inline-end: 12px;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap-reverse;
+      align-content: flex-start;
+      gap: 2px 4px;
+      width: 304px;
+      padding: 0;
+      pointer-events: none;
+    }
+    .os-icon-item { width: 96px; pointer-events: auto; }
+    .os-icon { padding: 6px 4px; cursor: pointer; }
+    .os-icon-glyph { width: 52px; height: 52px; padding: 3px; border-color: transparent; background: transparent; }
+    .os-icon-label { background: var(--color-surface); }
+
+    s-window[data-window]:not([data-mode]) { resize: both; overflow: hidden; min-width: 260px; min-height: 120px; }
+    .os-desktop s-window[data-window] > .frame-inner {
+      max-height: calc(100svh - var(--os-menubar-h) - var(--os-dock-space) - 24px);
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+    s-window[data-window] > .frame-inner > .panel-header { min-height: 30px; padding-inline-start: 84px; }
+    s-window[data-window] .os-window-controls {
+      position: absolute;
+      inset-inline-start: var(--win-inset);
+      z-index: 4;
+      display: flex;
+      height: 30px;
+      padding-inline: 6px;
+    }
+    s-window[data-dragging] { cursor: grabbing; user-select: none; }
+    s-window[data-window] > .frame-inner > .panel-header { cursor: default; }
+    /* The focused window keeps the bright ring and title strip; the rest step back a tone. */
+    s-window.frame-grid:not([data-active]):not([style*="--frame-line"]):not(.os-window-body s-window) { border-color: var(--color-line-200); }
+    s-window[data-header="shown"]:not([data-active]):not([style*="--frame-line"]):not(.os-window-body s-window) > .frame-inner > .panel-header { background: var(--color-line-200); }
+    s-window[data-zoomed] {
+      position: fixed !important;
+      inset: calc(var(--os-menubar-h) + 8px) 8px var(--os-dock-space) 8px !important;
+      width: auto !important;
+      height: auto !important;
+      resize: none;
+      & > .frame-inner { max-height: none !important; height: 100%; }
+    }
+  }
+
+  /* Page windows opened by s-window-manager. */
+  .os-window-layer {
+    position: fixed;
+    inset: var(--os-menubar-h) 0 0;
+    z-index: 35;
+    pointer-events: none;
+  }
+  /* Inside the desktop the layer must not form its own stack (position: fixed always does), so
+     page windows and desktop windows share one z-order and a new window opens on top. */
+  .os-window-layer[data-in-desktop] { position: absolute; inset: 0; z-index: auto; }
+  .os-window-layer > s-window {
+    position: absolute;
+    min-width: 420px;
+    min-height: 280px;
+    pointer-events: auto;
+    & > .frame-inner { display: flex; flex-direction: column; height: 100%; }
+  }
+  .os-window-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: inherit;
+    letter-spacing: inherit;
+    &:focus { outline: none; }
+  }
+  .os-window-path { max-width: 40%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 400 11px/1 var(--font-mono); letter-spacing: 0.04em; text-transform: none; }
+  .os-window-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 24px;
+    margin-inline-start: -6px;
+    border: 1px solid var(--color-ink-invert);
+    color: var(--color-ink-invert);
+    cursor: pointer;
+    &[hidden] { display: none; }
+    &:focus-visible { outline: 2px solid var(--color-ink-invert); outline-offset: 2px; }
+    &:dir(rtl) svg { scale: -1 1; }
+  }
+  .os-window-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: var(--color-surface);
+    transition: opacity 160ms var(--ease-ui);
+  }
+  s-window[data-loading] .os-window-body { opacity: 0.35; cursor: progress; }
+  /* Fixed page furniture from a loaded page (the product buy dock) has no place inside a window. */
+  .os-window-body .grid-dock { display: none; }
+}
+
+@layer components {
+  /* Desktop windows sit above the icon columns until focus raises one further. */
+  @media (min-width: 64rem) {
+    .os-desktop s-window[data-window] { z-index: 2; }
+  }
+}
+
+@layer components {
+  .os-dock-badge[data-count="0"] { display: none; }
+  /* Desktop icon columns: compact one-line labels so eight icons fit a column at the minimum desktop height. */
+  @media (min-width: 64rem) {
+    .os-icons { width: 200px; gap: 2px 8px; }
+    .os-icon { gap: 4px; padding: 4px 2px; }
+    .os-icon-glyph { width: 40px; height: 40px; padding: 2px; }
+    .os-icon-label { max-width: 96px; }
+  }
+}
+
+@layer components {
+  /* Icon labels stay on one line at every size; long names truncate rather than break mid-word. */
+  .os-icon-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; letter-spacing: 0; }
+}
+
+@layer components {
+  /* Windows take focus when raised; only keyboard focus draws the ring. */
+  s-window:focus { outline: none; }
+  s-window:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+}
+
+@layer components {
+  /* Window controls and the title readout both anchor to the window itself, so a readout
+     never shifts the controls off the title line (grid frames add a 7px inset otherwise). */
+  s-window[data-window] > .frame-inner { position: static; }
+  @media (min-width: 64rem) {
+    s-window[data-window]:not([data-mode]) .frame-readout { display: none; }
+  }
+}
+
+@layer components {
+  /* Window controls live inside the title bar (s-window.js seats them there), so they always share
+     the title's centre line. The title follows them; any trailing readout keeps to the end edge. */
+  s-window[data-window] > .frame-inner > .panel-header:has(> .os-window-controls) {
+    justify-content: flex-start;
+    padding-inline-start: 6px;
+    & > .os-window-controls { position: static; align-self: stretch; height: auto; padding: 0; flex: none; }
+    & > :last-child:not(:nth-child(2)) { margin-inline-start: auto; }
+  }
+  s-window[data-sheet] > .frame-inner > .panel-header:has(> .os-window-controls) { padding-inline-start: 0; }
+  /* Menu bar app slot: one line, truncated (type-overline would otherwise re-enable wrapping). */
+  .os-menubar-app, .os-menubar-app * { text-wrap: nowrap; }
+}
+
+/* ==========================================================================
+   GRID OS: page windows. Every template draws its content as the focused window
+   on the desktop wallpaper. Inside a window-manager window the page chrome folds
+   away, because that window already has a title bar and working controls.
+   ========================================================================== */
+@layer components {
+  .os-stage { position: relative; isolation: isolate; padding-block: 12px 32px; }
+  .os-stage-inner { margin-inline: auto; width: 100%; max-width: var(--spacing-page); padding-inline: var(--spacing-margin); }
+  .os-page { min-width: 0; }
+  .os-page-bar {
+    position: relative;
+    justify-content: flex-start;
+    min-height: 30px;
+    & > :last-child:not(:first-child) { margin-inline-start: auto; }
+  }
+  .os-page-meta { font: 400 12px/1 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-ink-invert); white-space: nowrap; }
+  .os-page-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 32px;
+    padding: 6px 12px;
+    border-block-start: 1px solid var(--color-line-400);
+    font: 400 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-300);
+    & > :last-child:not(:first-child) { margin-inline-start: auto; }
+  }
+
+  @media (min-width: 64rem) {
+    /* The stage is the desktop area between the menu bar and the dock band: nothing ever runs under the dock or footer. */
+    .os-stage { max-height: calc(100dvh - var(--os-menubar-h) - var(--os-dock-space)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-block: 24px 16px; }
+    /* One screen: the page window fills the space between menu bar and dock and scrolls inside, under a pinned title bar. */
+    .os-page, .os-fit { height: calc(100dvh - var(--os-menubar-h) - var(--os-dock-space) - 40px); }
+    .os-page > .frame-inner, .os-fit > .frame-inner { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+    .os-page > .frame-inner > .panel-header, .os-fit > .frame-inner > .panel-header { position: sticky; top: 0; z-index: 3; }
+    .os-page-bar { padding-inline-start: 6px; }
+  }
+
+  /* Wallpaper: a global fixed grid floor behind every page from 64rem (hidden only when the home
+     desktop picks an Image or Plain wallpaper). A STATIC 1px grid on a deep plane (900px perspective,
+     1400px long, 300% wide) fading far into the horizon. No looping motion (merchant: the flyover and
+     scan line strained the eyes). Cursor glow (s-wallpaper.js, mode="live"): the cells near a mouse
+     pointer light cyan; the floor itself never moves. The glow layer is skipped from paint until lit. */
+  .os-wallpaper { display: none; }
+  @media screen and (min-width: 64rem) {
+    .os-wallpaper {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      display: block;
+      overflow: hidden;
+      pointer-events: none;
+      contain: strict;
+    }
+    body:has(.os-desktop:not([data-wallpaper="grid"])) .os-wallpaper { display: none; }
+
+    .os-floor {
+      position: absolute;
+      inset-inline: -100%;
+      bottom: 0;
+      height: 1400px;
+      overflow: hidden;
+      transform-origin: 50% 100%;
+      transform: perspective(900px) rotateX(64deg);
+      mask-image: linear-gradient(to top, #000 0%, #000 12%, rgb(0 0 0 / 0.55) 40%, rgb(0 0 0 / 0.18) 62%, transparent 85%);
+    }
+    .os-floor-grid {
+      position: absolute;
+      inset: -80px 0 0;
+      background-image:
+        linear-gradient(to right, var(--os-floor-line, var(--color-line-300)) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--os-floor-line, var(--color-line-300)) 1px, transparent 1px);
+      background-size: 80px 80px;
+      background-position: 50% 0;
+    }
+    .os-floor-lit {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 600ms var(--ease-ui), visibility 0s linear 600ms;
+      mask-image: radial-gradient(circle 220px at var(--wp-x, -999px) var(--wp-y, -999px), #000 0%, #000 25%, transparent 100%);
+      --os-floor-line: var(--color-accent);
+    }
+    .os-wallpaper[data-lit] .os-floor-lit { opacity: 1; visibility: visible; transition: opacity 300ms var(--ease-ui), visibility 0s; }
+  }
+
+  /* Footer: two quiet mono corner readouts, no links or wordmark. Phones/tablets: one hairline row in
+     flow. From 64rem it is pinned to the bottom corners either side of the centred dock, vertically
+     centred on it, and each side stops short of the dock (wraps to two lines on narrow desktops). */
+  .os-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 24px;
+    padding: 16px var(--spacing-margin);
+    border-top: 1px solid var(--color-line-400);
+    font: 400 11px/1.5 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-300);
+  }
+  .os-footer-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 20px; margin: 0; padding: 0; list-style: none; }
+  .os-footer-links a { display: inline-flex; align-items: center; min-height: 24px; color: var(--color-ink-300); text-decoration: none; transition: color 120ms var(--ease-ui); }
+  .os-footer-links a:hover { color: var(--color-on-surface); }
+  .os-footer-links a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  @media (min-width: 64rem) {
+    .os-footer {
+      position: fixed;
+      z-index: 40;
+      inset-inline: 0;
+      bottom: 0;
+      flex-wrap: nowrap;
+      height: 88px;
+      padding-block: 0 max(0px, var(--safe-area-inset-bottom));
+      border-top: 0;
+      pointer-events: none;
+    }
+    .os-footer > * { max-width: calc(50vw - 270px - var(--spacing-margin)); pointer-events: auto; }
+    .os-footer > :last-child { text-align: end; }
+  }
+
+  /* Opened inside a window-manager window: no second title bar, frame or wallpaper. */
+  .os-window-body .os-stage { padding: 0; }
+  .os-window-body .os-stage-inner { max-width: none; padding-inline: 0; }
+  .os-window-body .os-page { border: 0; border-radius: 0; padding: 0; background: transparent; }
+  .os-window-body .os-page, .os-window-body .os-fit { height: auto; }
+  .os-window-body .os-page > .frame-inner { border: 0; border-radius: 0; min-height: 0; overflow: visible; }
+  .os-window-body .os-page-bar { display: none; }
+
+  /* ---------- Finder (collection, collections list, search results) ---------- */
+  .os-finder { display: flex; flex-direction: column; min-width: 0; }
+  .os-finder-sidebar {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 8px 12px;
+    border-block-end: 1px solid var(--color-line-400);
+    scrollbar-width: none;
+  }
+  .os-finder-sidebar-heading { display: none; }
+  .os-finder-sidebar ul { display: contents; }
+  .os-finder-link {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--spacing-touch-target);
+    padding-inline: 10px;
+    border: 1px solid var(--color-line-400);
+    font: 400 12px/1.2 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-200);
+    white-space: nowrap;
+    transition: color 120ms var(--ease-ui), border-color 120ms var(--ease-ui);
+    & svg { width: 18px; height: 18px; flex: none; color: var(--color-info); }
+    @media (hover: hover) { &:hover { color: var(--color-on-surface); border-color: var(--color-line-200); } }
+    &[aria-current="page"] { color: var(--color-info); border-color: var(--color-info); }
+  }
+  .os-finder-main { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .os-finder-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    min-height: 48px;
+    padding: 6px 12px;
+    border-block-end: 1px solid var(--color-line-400);
+  }
+  .os-path { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; font: 400 12px/1.4 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-ink-300); }
+  .os-path li { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+  .os-path li + li::before { content: "/"; color: var(--color-line-200); }
+  .os-path a { color: var(--color-ink-200); text-underline-offset: 3px; }
+  .os-path a:hover { color: var(--color-info); text-decoration: underline; }
+  .os-path [aria-current] { color: var(--color-on-surface); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .os-segment { display: inline-flex; margin-inline-start: auto; border: 1px solid var(--color-line-300); }
+  .os-segment button {
+    display: inline-grid;
+    place-items: center;
+    width: var(--spacing-touch-target);
+    height: 36px;
+    color: var(--color-ink-300);
+    transition: color 120ms var(--ease-ui), background-color 120ms var(--ease-ui);
+    & + button { border-inline-start: 1px solid var(--color-line-300); }
+    & svg { width: 18px; height: 18px; }
+    &:hover { color: var(--color-on-surface); }
+    &[aria-pressed="true"] { color: var(--color-info); background: var(--color-surface); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  }
+  .os-finder-head { padding: 20px 12px 16px; border-block-end: 1px solid var(--color-line-400); }
+  .os-finder-body { flex: 1; padding-block-start: 16px; }
+
+  /* Product folder: icon view is a hairline grid; list view is a sortable-looking table. */
+  .os-finder-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 48rem) { .os-finder-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 80rem) { .os-finder-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  html[data-finder-view="list"] .os-finder-grid {
+    grid-template-columns: minmax(0, 1fr);
+    & > li > article, & > li > s-view-event > article {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      grid-template-areas: "img meta status" "img meta cmp";
+      align-items: center;
+      column-gap: 16px;
+      row-gap: 6px;
+      padding-block: 8px;
+      & > :nth-child(1) { grid-area: status; justify-self: end; }
+      & > :nth-child(2) { grid-area: img; }
+      & > :nth-child(3) { grid-area: meta; flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: space-between; column-gap: 24px; padding: 0; }
+      & > :nth-child(4) { grid-area: cmp; justify-self: end; }
+      & .card-lock, & .card-lock-tag { display: none; }
+    }
+  }
+  @media (min-width: 48rem) {
+    html[data-finder-view="list"] .os-finder-grid > li > article, html[data-finder-view="list"] .os-finder-grid > li > s-view-event > article {
+      grid-template-columns: 64px minmax(0, 1fr) auto auto;
+      grid-template-areas: "img meta status cmp";
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .os-finder { display: grid; grid-template-columns: 208px minmax(0, 1fr); flex: 1; }
+    .os-finder-sidebar {
+      flex-direction: column;
+      gap: 2px;
+      overflow: visible;
+      padding: 16px 8px;
+      border-block-end: 0;
+      border-inline-end: 1px solid var(--color-line-400);
+    }
+    .os-finder-sidebar ul { display: flex; flex-direction: column; gap: 2px; margin-block-end: 16px; }
+    .os-finder-sidebar-heading { display: block; padding: 0 8px 6px; font: 600 11px/1.2 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-ink-300); }
+    .os-finder-link { min-height: 32px; border-color: transparent; padding-inline: 8px; }
+    .os-finder-link[aria-current="page"] { border-color: var(--color-line-300); background: var(--color-surface); }
+    .os-finder-head { padding: 24px 20px 20px; }
+    .os-finder-toolbar { padding-inline: 20px; }
+  }
+}
+
+@layer components {
+  .os-finder-sidebar ul, .os-finder-sidebar li { list-style: none; margin: 0; padding: 0; }
+}
+
+@layer components {
+  /* Page-window lights: signal colours only on the focused (data-active) window; panes stay hollow. */
+  .os-page .os-light-close .os-light-dot,
+  .os-page .os-light-min .os-light-dot,
+  .os-page .os-light-zoom .os-light-dot { background: transparent; }
+  /* Pane bars: a frame's title strip drawn as a window title bar (lights, title, trailing meta). */
+  .os-pane-bar {
+    justify-content: flex-start;
+    & > :last-child:not(:first-child):not(:nth-child(2)) { margin-inline-start: auto; }
+  }
+  @media (min-width: 64rem) {
+    .os-pane-bar { min-height: 30px; padding-inline-start: 6px; }
+  }
+  .os-window-body s-window .os-window-controls { display: none !important; }
+  .os-window-body .os-pane-bar { padding-inline-start: 12px; }
+}
+
+@layer components {
+  /* Spotlight: the search field as a floating bar; focus lights the frame cyan instead of a ring on the field. */
+  .os-spotlight input:focus-visible { outline: none; }
+  .os-spotlight:has(input:focus-visible) { --frame-line: var(--color-info); }
+  .os-spotlight .os-page-status { justify-content: space-between; }
+}
+
+@layer components {
+  /* Reading progress (Field Report): a 2px cyan line pinned under the menu bar, and a meter in Log.meta. */
+  .os-read-bar {
+    position: fixed;
+    z-index: 41;
+    top: var(--os-menubar-h);
+    inset-inline: 0;
+    height: 2px;
+    background: var(--color-info);
+    transform: scaleX(var(--read-progress, 0));
+    transform-origin: left center;
+    pointer-events: none;
+    &:dir(rtl) { transform-origin: right center; }
+  }
+  .os-read-meter {
+    position: relative;
+    flex: 1;
+    height: 10px;
+    min-width: 0;
+    border: 1px solid var(--color-line-300);
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 1px;
+      inset-inline-start: 1px;
+      width: calc((100% - 2px) * var(--read-progress, 0));
+      background: var(--color-info);
+    }
+  }
+  .os-window-body .os-read-bar { display: none; }
+  .os-read-meter-sm { flex: none; width: 96px; height: 8px; }
+}
+
+@layer components {
+  /* "Full page" chip in streamed window title bars: leaves the desktop for the real page. */
+  .os-window-open {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding-inline: 8px 6px;
+    border: 1px solid var(--color-ink-invert);
+    color: var(--color-ink-invert);
+    font: 600 11px/1 var(--font-heading);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 120ms, color 120ms;
+    &:hover { background: var(--color-ink-invert); color: var(--frame-line, var(--color-line-100)); }
+    &:focus-visible { outline: 2px solid var(--color-ink-invert); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { transition: none; }
+  }
+  s-window[data-loading] .os-window-open { visibility: hidden; }
+}
+
+@layer components {
+  /* Password page: Display scales to its column (not the viewport) so long words fit the split layout. */
+  [data-password-page] .type-display { font-size: clamp(40px, 12cqi, 96px); }
+}
+
+@layer components {
+  /* Page windows and panes (Frame Window: Page window / Pane) sit in the page flow. Their controls
+     work: close (page → Desktop, pane → dock), minimize to the dock, zoom to fill the screen. */
+  @media (min-width: 64rem) {
+    s-window[data-mode="static"][data-zoomed] { z-index: 38; overflow: auto; }
+    s-window[data-mode="static"] > .frame-inner > .panel-header { min-height: 30px; }
+  }
+}
+
+@layer components {
+  /* Pop-up windows (cart, menu, filters, search, compare, password): the native <dialog> only positions and
+     animates; the GRID OS window inside it draws the frame, title bar and working lights. */
+  .grid-window,
+  .grid-window-modal { padding: 0; border: 0; border-radius: 0; background: transparent; overflow: visible; }
+  s-window[data-mode="dialog"] { display: flex; flex-direction: column; height: 100%; min-height: 0; min-width: 0; }
+  s-window[data-mode="dialog"] > .frame-inner { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+  .grid-window-modal s-window[data-mode="dialog"] { height: auto; max-height: calc(100dvh - 16px - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)); }
+  /* Phones and tablets: the close light alone, at full touch size (minimize and zoom need a desktop). */
+  s-window[data-mode="dialog"] > .frame-inner > .panel-header { min-height: var(--spacing-touch-target); }
+  s-window[data-mode="dialog"] .os-window-controls { display: flex; }
+  @media (max-width: 63.99rem) {
+    s-window[data-mode="dialog"] .os-light { width: var(--spacing-touch-target); }
+    s-window[data-mode="dialog"] .os-light-dot { width: 18px; height: 18px; }
+    s-window[data-mode="dialog"] .os-light-dot svg { opacity: 1; width: 10px; height: 10px; }
+    s-window[data-mode="dialog"] .os-light-min,
+    s-window[data-mode="dialog"] .os-light-zoom { display: none; }
+  }
+  @media (min-width: 48rem) {
+    .grid-window-modal s-window[data-mode="dialog"] { max-height: calc(100dvh - 96px); }
+  }
+  @media (min-width: 64rem) {
+    s-window[data-mode="dialog"] > .frame-inner > .panel-header { min-height: 30px; }
+    /* Zoom: the pop-up fills the screen, 16px off every edge. */
+    dialog:has(> s-window[data-zoomed]) {
+      inset: 16px !important;
+      width: auto !important;
+      height: auto !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+    }
+    s-window[data-mode="dialog"][data-zoomed] {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: none !important;
+    }
+  }
+}
+
+@layer components {
+  /* Pop-ups sized by their dialog's max-height (password dialogs) keep the window inside it. */
+  dialog > s-window[data-mode="dialog"] { max-height: inherit; }
+}
+
+@layer components {
+  /* Password page: no dock tray to restore into here, so the LOGIN window has close and zoom only. */
+  [data-password-page] .os-light-min { display: none; }
+}

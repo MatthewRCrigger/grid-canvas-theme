@@ -1,0 +1,54 @@
+{% doc %}
+  Renders a deterministic, theme-colored gradient placeholder for missing images and resources.
+
+  @param {string} [kind] - Placeholder context used to vary the gradient composition. Default: 'image'.
+  @param {number} [seed] - Stable number used to vary the gradient positions. Default: 1.
+  @param {string} [class] - Additional CSS classes on the wrapper. Full-bleed positioned callers should include aspect-auto.
+  @param {string} [attributes] - Additional HTML attributes passed through to the wrapper.
+  @param {string} [aria_label] - Accessible label for the placeholder image.
+  @param {string} [alt] - Fallback accessible label when aria_label is blank.
+
+  @category content
+  @renders div
+
+  @example
+  {% render 'placeholder-texture', kind: 'product', seed: forloop.index, class: 'absolute inset-0 aspect-auto', aria_label: product.title %}
+{% enddoc %}
+
+{%- liquid
+  assign kind_handle = kind | default: 'image' | handleize
+  assign seed_value = seed | default: 1 | plus: 0
+  if seed_value <= 0
+    assign seed_value = 1
+  endif
+
+  case kind_handle
+    when 'product'
+      assign kind_offset = 17
+    when 'collection'
+      assign kind_offset = 37
+    when 'article'
+      assign kind_offset = 53
+    when 'hero'
+      assign kind_offset = 71
+    else
+      assign kind_offset = 11
+  endcase
+
+  assign seed_key = seed_value | times: 97 | plus: kind_offset
+  assign accent_x = seed_key | times: 37 | plus: 11 | modulo: 76 | plus: 12
+  assign accent_y = seed_key | times: 41 | plus: 17 | modulo: 76 | plus: 12
+  assign gradient_angle = seed_key | times: 71 | plus: 47 | modulo: 360
+
+  assign fallback_label = 'general.placeholder_image' | t
+  assign label = aria_label | default: alt | default: fallback_label
+-%}
+
+{%- comment -%} The base-layer square ratio keeps unsized placeholders visible. Full-bleed positioned callers pass aspect-auto because insets alone do not override the ratio. {%- endcomment -%}
+<div
+  class="placeholder-texture overflow-hidden{% if class != blank %} {{ class }}{% endif %}"
+  style="--placeholder-accent-x: {{ accent_x }}%; --placeholder-accent-y: {{ accent_y }}%; --placeholder-angle: {{ gradient_angle }}deg;"
+  role="img"
+  aria-label="{{ label | escape }}"
+  {% if attributes != blank %} {{ attributes }}{% endif %}
+></div>

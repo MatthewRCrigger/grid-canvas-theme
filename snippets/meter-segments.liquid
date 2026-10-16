@@ -1,0 +1,14 @@
+{% doc %}
+  Ten-cell GRID meter. Cells up to `value` render filled (cyan). Decorative: callers
+  supply the accessible value text next to it.
+
+  @param {number} value - Filled cells, 0–10. @required
+
+  @example
+  {% render 'meter-segments', value: 7 %}
+{% enddoc %}
+<span class="grid-meter" aria-hidden="true">
+  {%- for cell in (1..10) -%}
+    <span style="--i: {{ cell }}"{% if cell <= value %} data-on{% endif %}></span>
+  {%- endfor -%}
+</span>

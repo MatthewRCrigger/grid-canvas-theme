@@ -1,0 +1,115 @@
+{% doc %}
+  Renders accessible pagination controls using Shopify's paginate object.
+
+  One numbered treatment is shared by every paginated template so storefront and
+  Canvas presentation stay consistent. The active page uses the theme's
+  interactive tokens; there is no per-block style or color override.
+
+  @param {object} paginate - Shopify paginate object; provided by a `paginate` tag in the calling template. @required
+  @param {string} [class] - Additional classes to apply to the nav element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+  @param {string} [prev] - HTML content to replace the default left-arrow icon inside the previous button wrapper.
+  @param {string} [next] - HTML content to replace the default right-arrow icon inside the next button wrapper.
+  @param {string} [summary] - HTML content rendered before the `<nav>` element (e.g. "Showing 1–24 of 96 results").
+
+  @category layout
+  @renders nav[aria-label=Pagination]
+  @context paginate
+
+  @example
+  {% paginate collection.products by 24 %}
+    {% for product in collection.products %}
+      ...
+    {% endfor %}
+    {% block 'pagination', paginate: paginate %}{% endblock %}
+  {% endpaginate %}
+{% enddoc %}
+
+{%- liquid
+  assign class_append = ''
+  if class != blank
+    assign class_append = ' ' | append: class
+  endif
+-%}
+
+{%- if paginate != blank and paginate.pages > 1 -%}
+  {%- if summary != blank -%}
+    {{ summary }}
+  {%- endif -%}
+
+  <nav aria-label="{{ 'general.pagination.label' | t }}" class="flex items-center justify-center gap-1{{ class_append }}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+    {%- if paginate.previous -%}
+      <a
+        href="{{ paginate.previous.url }}"
+        class="inline-flex items-center justify-center min-w-touch-target min-h-touch-target rounded text-sm hover:bg-surface-secondary motion-safe:transition-[color,background-color,transform] motion-safe:duration-150 motion-safe:active:scale-[0.95]"
+        aria-label="{{ 'general.pagination.previous_page' | t }}"
+      >
+        {%- if prev != blank -%}
+          {{ prev }}
+        {%- else -%}
+          <span class="inline-flex items-center justify-center shrink-0 size-3.5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-left.svg' | inline_asset_content -}}</span>
+        {%- endif -%}
+      </a>
+    {%- else -%}
+      <span class="inline-flex items-center justify-center min-w-touch-target min-h-touch-target rounded text-sm text-on-surface-secondary opacity-40 cursor-not-allowed" role="link" aria-disabled="true" aria-label="{{ 'general.pagination.previous_page' | t }}">
+        {%- if prev != blank -%}
+          {{ prev }}
+        {%- else -%}
+          <span class="inline-flex items-center justify-center shrink-0 size-3.5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-left.svg' | inline_asset_content -}}</span>
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a
+          href="{{ part.url }}"
+          class="inline-flex items-center justify-center min-w-touch-target min-h-touch-target rounded text-sm hover:bg-surface-secondary motion-safe:transition-[color,background-color,transform] motion-safe:duration-150 motion-safe:active:scale-[0.95]"
+          aria-label="{{ 'general.pagination.page' | t: number: part.title }}"
+        >
+          {{- part.title -}}
+        </a>
+      {%- elsif part.title == '&hellip;' or part.title == '…' -%}
+        <span class="min-w-touch-target min-h-touch-target inline-flex items-center justify-center text-on-surface-secondary" aria-hidden="true">
+          &hellip;
+        </span>
+      {%- else -%}
+        <span
+          aria-current="page"
+          class="inline-flex items-center justify-center min-w-touch-target min-h-touch-target rounded text-sm bg-interactive text-interactive-text font-medium"
+        >
+          <span class="sr-only">{{ 'general.pagination.current_page' | t: number: part.title }}</span>
+          <span aria-hidden="true">{{- part.title -}}</span>
+        </span>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if paginate.next -%}
+      <a
+        href="{{ paginate.next.url }}"
+        class="inline-flex items-center justify-center min-w-touch-target min-h-touch-target rounded text-sm hover:bg-surface-secondary motion-safe:transition-[color,background-color,transform] motion-safe:duration-150 motion-safe:active:scale-[0.95]"
+        aria-label="{{ 'general.pagination.next_page' | t }}"
+      >
+        {%- if next != blank -%}
+          {{ next }}
+        {%- else -%}
+          <span class="inline-flex items-center justify-center shrink-0 size-3.5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+        {%- endif -%}
+      </a>
+    {%- else -%}
+      <span class="inline-flex items-center justify-center min-w-touch-target min-h-touch-target rounded text-sm text-on-surface-secondary opacity-40 cursor-not-allowed" role="link" aria-disabled="true" aria-label="{{ 'general.pagination.next_page' | t }}">
+        {%- if next != blank -%}
+          {{ next }}
+        {%- else -%}
+          <span class="inline-flex items-center justify-center shrink-0 size-3.5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "t:blocks.pagination"
+  }
+{% endschema %}

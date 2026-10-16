@@ -1,0 +1,118 @@
+{% doc %}
+  Renders a responsive image using Shopify's image_url and image_tag filters with
+  srcset generation. Base classes are `w-full h-full object-cover` — callers should
+  provide a parent element with a defined height (via aspect ratio or fixed dimensions)
+  for object-cover to take effect.
+
+  Output contract: image, texture-placeholder and opt-in surface-placeholder roots emit data-aspect-ratio
+  from the escaped aspect_ratio value (schema default: 'aspect-auto';
+  missing or empty values emit data-aspect-ratio=""). Parent :has() selectors can use
+  the selected ratio even when an Auto placeholder renders with square geometry.
+
+  @param {image} [fallback_image] - Shopify image fallback used when image is empty.
+  @param {string} [sizes] - Responsive sizes attribute. Default: 'auto'; normalized to '100vw' when loading is eager.
+  @param {string} [loading] - Optional image loading strategy. When omitted, the existing attributes passthrough controls loading.
+  @param {string} [widths] - Comma-separated pixel widths for srcset. Default: '375,550,750,1100,1500'.
+  @param {string} [alt] - Fallback alt text when image.alt is blank
+  @param {number} [seed] - Stable seed for the placeholder texture when image is blank. Default: 1.
+  @param {string} [placeholder_kind] - Placeholder context used to vary the gradient composition. 'surface' opts into the plain video-poster fallback. Default: 'image'.
+  @param {string} [class] - CSS classes applied to the img element (rounding, sizing overrides, etc.)
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element (e.g. 'loading="eager" fetchpriority="high"'). Must be developer-supplied literals — never connected to merchant settings or user input.
+
+  @category content
+  @renders img|div|span
+
+  @example
+  {% block 'image', image: product.featured_image %}{% endblock %}
+  {% block 'image', fallback_image: collections.all.products.first.featured_image, class: 'rounded', sizes: '(min-width: 768px) 50vw, 100vw' %}{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign image     = image | default: fallback_image
+  assign sizes     = sizes     | default: 'auto'
+  # sizes="auto" requires lazy loading; eager posters need a concrete viewport size.
+  if loading == 'eager' and sizes == 'auto'
+    assign sizes = '100vw'
+  endif
+  # Default widths are mirrored by the LCP preload imagesrcset in layout/theme.liquid —
+  # keep both lists identical so preloaded candidates match rendered srcset URLs.
+  assign widths    = widths    | default: '375,550,750,1100,1500'
+
+  assign widths_array = widths | split: ','
+
+  assign aspect_ratio = aspect_ratio
+
+  assign class_append = ''
+  if aspect_ratio != blank
+    assign class_append = ' ' | append: aspect_ratio
+  endif
+  if class != blank
+    assign class_append = class_append | append: ' ' | append: class
+  endif
+  assign placeholder_class = 'size-full' | append: class_append
+  # Placeholder divs have no intrinsic dimensions for aspect-auto to preserve.
+  if aspect_ratio == 'aspect-auto'
+    assign placeholder_class = 'size-full aspect-square ' | append: class | strip
+  endif
+  assign placeholder_seed = seed | default: 1
+-%}
+
+{%- capture aspect_ratio_attributes -%}data-aspect-ratio="{{ aspect_ratio | escape }}"{%- endcapture -%}
+
+{%- unless image -%}
+  {%- if placeholder_kind == 'surface' -%}
+    <span class="block size-full bg-surface-secondary{% if class != blank %} {{ class }}{% endif %}" {{ aspect_ratio_attributes }}></span>
+  {%- else -%}
+    {% render 'placeholder-texture', kind: placeholder_kind, seed: placeholder_seed, class: placeholder_class, attributes: aspect_ratio_attributes, aria_label: alt %}
+  {%- endif -%}
+{%- endunless -%}
+
+{%- if image -%}
+{%- capture srcset -%}
+  {%- for width in widths_array -%}
+    {%- assign w = width | strip | plus: 0 -%}
+    {{ image | image_url: width: w }} {{ w }}w{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+  {%- comment -%} The `attributes` param carries loading="eager" and fetchpriority="high" for LCP images.
+    Callers (e.g. product.liquid) pass these explicitly — do not add default loading/fetchpriority
+    here or it will override the caller's intent and hurt Core Web Vitals. {%- endcomment -%}
+  <img
+    src="{{ image | image_url: width: 750 }}"
+    srcset="{{ srcset | strip }}"
+    sizes="{{ sizes | escape }}"
+    {% if loading != blank %} loading="{{ loading | escape }}"{% endif %}
+    {% if attributes != blank %} {{ attributes }}{% endif %}
+    alt="{{ image.alt | default: alt | escape }}"
+    width="{{ image.width }}"
+    height="{{ image.height }}"
+    class="size-full object-cover{{ class_append }}"
+    {{ aspect_ratio_attributes }}
+  >
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "t:blocks.image",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "t:blocks.image_settings.image"
+      },
+      {
+        "type": "select",
+        "id": "aspect_ratio",
+        "label": "t:blocks.image_settings.aspect_ratio",
+        "default": "aspect-auto",
+        "options": [
+          { "value": "aspect-auto",    "label": "t:blocks.image_settings.auto" },
+          { "value": "aspect-square",  "label": "t:blocks.image_settings.square" },
+          { "value": "aspect-video",   "label": "t:general.video" },
+          { "value": "aspect-[3/4]",   "label": "t:blocks.image_settings.portrait" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

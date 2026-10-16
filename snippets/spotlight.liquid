@@ -1,0 +1,152 @@
+{% doc %}
+  The GRID Spotlight search: Apple Spotlight behaviour in GRID style. One implementation for the
+  homepage Spotlight window and the search pop-up (layout), so both search, list and run commands
+  the same way. Renders <s-spotlight>: a borderless query bar, then a grouped result list. With no
+  query the list shows the caller's top hits and the COMMANDS palette; "/" filters to commands
+  (unknown names show an ERR line); typing fetches live predictive results for every resource type
+  (Top hit, suggested queries, products, collections, journal articles, pages, search all), built
+  from the <template> blueprints below. Callers own all merchant-editable copy and pass it in.
+
+  @param {string} id - Unique id prefix for this instance (input, listbox and option ids).
+  @param {string} [intro] - Caller-rendered markup above the query bar (hidden while querying).
+  @param {string} [top_hits] - Caller-rendered default result group; its wrapper needs role="group" and data-spotlight-default, and each row role="option", a unique id and data-url.
+  @param {string} [footer] - Caller-rendered markup below the results.
+  @param {string} [form_class] - Utilities on the query form (margins).
+  @param {string} [list_class] - Utilities on the result list (max height).
+  @param {boolean} [autofocus] - Autofocus the query field (pop-up use).
+
+  @example
+  {% render 'spotlight', id: 'spotlight', intro: intro, top_hits: top_hits, footer: footer %}
+{% enddoc %}
+
+{%- assign spotlight_search_all = 'home.spotlight.search_all' | t: terms: '%TERMS%' -%}
+  <s-spotlight
+    class="group/spot block"
+    data-suggest-url="{{ routes.predictive_search_url }}"
+    data-search-url="{{ routes.search_url }}"
+    data-currency="{{ cart.currency.iso_code }}"
+    data-label-top-hit="{{ 'home.spotlight.top_hit' | t | escape }}"
+    data-label-suggestions="{{ 'home.spotlight.suggestions' | t | escape }}"
+    data-label-products="{{ 'home.spotlight.products' | t | escape }}"
+    data-label-collections="{{ 'home.spotlight.collections' | t | escape }}"
+    data-label-journal="{{ 'home.spotlight.journal' | t | escape }}"
+    data-label-pages="{{ 'home.spotlight.pages' | t | escape }}"
+    data-search-all="{{ spotlight_search_all | escape }}"
+    data-command-unknown="{{ 'search.command_unknown' | t: command: '%CMD%' | escape }}"
+    data-empty-message="{{ 'home.spotlight.no_results' | t | escape }}"
+    data-error-message="{{ 'accessibility.update_error' | t | escape }}"
+  >
+    {{ intro }}
+
+    {%- comment -%} Query bar: Spotlight's borderless field on a hairline rule that turns cyan on focus. {%- endcomment -%}
+    <form action="{{ routes.search_url }}" method="get" role="search" class="{{ form_class }}">
+      <label for="{{ id }}-input" class="sr-only">{{ 'home.spotlight.label' | t }}</label>
+      <div class="flex min-h-16 items-center gap-3 border-y border-line-300 px-4 motion-safe:transition-colors focus-within:border-b-accent md:min-h-[4.5rem] md:gap-4 md:px-6">
+        <span class="inline-flex size-6 shrink-0 items-center justify-center text-accent md:size-7 [&_svg]:size-full" aria-hidden="true">{{- 'icon-search.svg' | inline_asset_content -}}</span>
+        <input
+          id="{{ id }}-input"
+          type="search"
+          name="q"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-controls="{{ id }}-list"
+          aria-expanded="false"
+          placeholder="{{ 'home.spotlight.placeholder' | t | escape }}"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          {% if autofocus %}autofocus{% endif %}
+          class="type-heading-lg min-w-0 flex-1 border-none bg-transparent text-on-surface outline-none placeholder:text-ink-400 max-md:text-[20px] [&::-webkit-search-cancel-button]:hidden"
+        >
+        <button type="button" data-spotlight-clear class="hidden min-h-touch-target shrink-0 cursor-pointer items-center px-2 type-overline text-ink-200 hover:text-on-surface group-data-[querying]/spot:inline-flex focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent">{{ 'general.clear' | t }}</button>
+        <button type="submit" class="inline-flex min-h-touch-target min-w-touch-target shrink-0 cursor-pointer items-center justify-center text-ink-200 hover:text-on-surface motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent">
+          <span class="sr-only">{{ 'home.spotlight.submit' | t }}</span>
+          <kbd class="grid-kbd" aria-hidden="true">&crarr;</kbd>
+        </button>
+      </div>
+    </form>
+
+      <div id="{{ id }}-list" role="listbox" aria-label="{{ 'home.spotlight.results' | t | escape }}" data-spotlight-list class="min-w-0 overflow-y-auto overscroll-contain py-1 {{ list_class }}">
+        {{ top_hits }}
+        {%- comment -%}
+          COMMANDS — the same command palette as the search pop-up (layout predictive-search):
+          listed under the top hits before a query; typing "/" shows only commands, a partial
+          name narrows them, an unknown name shows the ERR line. data-dialog rows open that
+          window in place; data-url rows navigate.
+        {%- endcomment -%}
+        {%- liquid
+          assign spot_cmds = 'cart~search.command_cart~' | append: routes.cart_url | append: '~cart-drawer~cart|shop~search.command_all~' | append: routes.all_products_collection_url | append: '~~bag|collections~search.command_collections~' | append: routes.collections_url | append: '~~folder|compare~search.command_compare~~compare-window~compare|account~search.command_account~' | append: routes.account_url | append: '~~lock|home~search.command_home~' | append: routes.root_url | append: '~~icons' | split: '|'
+        -%}
+        <div role="group" aria-labelledby="{{ id }}-commands" data-spotlight-commands>
+          <div class="flex min-h-8 items-center justify-between gap-3 px-4 pt-2 md:px-6">
+            <span id="{{ id }}-commands" class="type-overline text-ink-300">{{ 'search.commands_title' | t }}</span>
+            <span class="type-data-sm text-ink-300" aria-hidden="true">{{ spot_cmds.size | prepend: '0' | slice: -2, 2 }}</span>
+          </div>
+          <p data-spotlight-cmd-error hidden class="type-data-sm flex items-center gap-2 px-4 py-2 uppercase text-critical md:px-6"><span class="grid-status-dot grid-status-dot-alert" aria-hidden="true"></span><span data-text></span></p>
+          {%- for cmd in spot_cmds -%}
+            {%- liquid
+              assign cmd_parts = cmd | split: '~'
+              assign cmd_label = cmd_parts[1] | t
+              assign cmd_url = cmd_parts[2]
+              assign cmd_dialog = cmd_parts[3]
+              assign cmd_glyph = cmd_parts[4]
+            -%}
+            <div
+              id="{{ id }}-cmd-{{ cmd_parts[0] }}"
+              role="option"
+              aria-selected="false"
+              data-command="{{ cmd_parts[0] }}"
+              {% if cmd_url != blank %}data-url="{{ cmd_url }}"{% endif %}
+              {% if cmd_dialog != blank %}data-dialog="{{ cmd_dialog }}"{% endif %}
+              class="group/hit border-s-2 border-transparent aria-selected:border-accent aria-selected:bg-hover"
+            >
+              {%- capture cmd_row -%}
+                <span class="grid size-8 place-items-center border border-line-400 bg-surface-secondary text-info [&_svg]:size-5">{% render 'os-icon', name: cmd_glyph %}</span>
+                <span class="type-heading-sm min-w-0 truncate group-aria-selected/hit:text-accent">{{ cmd_label }}</span>
+                <span class="type-data text-[11px] text-info">/{{ cmd_parts[0] }}</span>
+              {%- endcapture -%}
+              {%- if cmd_url != blank -%}
+                <a href="{{ cmd_url }}" tabindex="-1" class="grid min-h-11 grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-1 text-on-surface no-underline md:px-6">{{ cmd_row }}</a>
+              {%- else -%}
+                <button type="button" tabindex="-1" commandfor="{{ cmd_dialog }}" command="show-modal" class="grid min-h-11 w-full cursor-pointer grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-1 text-start text-on-surface md:px-6">{{ cmd_row }}</button>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+        <div data-spotlight-live hidden></div>
+        <p data-spotlight-status hidden class="type-data-sm flex items-center gap-2 px-4 py-5 uppercase text-critical md:px-6"><span class="grid-status-dot grid-status-dot-alert" aria-hidden="true"></span><span data-text></span></p>
+      </div>
+
+    {%- comment -%} Row blueprints and glyphs for live results; s-spotlight fills them with textContent only. {%- endcomment -%}
+    <template data-spotlight-heading>
+      <div role="presentation" class="flex min-h-8 items-center justify-between gap-3 px-4 pt-2 md:px-6">
+        <span data-label class="type-overline text-ink-300"></span>
+        <span data-count class="type-data-sm text-ink-300"></span>
+      </div>
+    </template>
+    <template data-spotlight-row>
+      <div role="option" aria-selected="false" class="group/hit border-s-2 border-transparent aria-selected:border-accent aria-selected:bg-hover">
+        <a tabindex="-1" class="grid min-h-12 grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-1.5 text-on-surface no-underline md:px-6">
+          <span class="relative grid size-8 place-items-center overflow-hidden border border-line-400 bg-surface-secondary text-info [&_svg]:size-5">
+            <img class="absolute inset-0 size-full object-cover" alt="" loading="lazy" width="64" height="64" hidden>
+            <span data-glyph class="contents"></span>
+          </span>
+          <span class="flex min-w-0 flex-col">
+            <span data-title class="type-heading-sm truncate group-aria-selected/hit:text-accent"></span>
+            <span data-sub class="type-data-sm truncate text-ink-300 empty:hidden"></span>
+          </span>
+          <span class="flex items-center gap-3"><span data-sold-out hidden class="badge badge-danger max-md:hidden">{{ 'home.status.sold_out' | t }}</span><span data-end class="type-data text-on-surface empty:hidden"></span></span>
+        </a>
+      </div>
+    </template>
+    <template data-glyph="product">{% render 'os-icon', name: 'bag' %}</template>
+    <template data-glyph="collection">{% render 'os-icon', name: 'folder' %}</template>
+    <template data-glyph="article">{% render 'os-icon', name: 'journal' %}</template>
+    <template data-glyph="page">{% render 'os-icon', name: 'file' %}</template>
+    <template data-glyph="query">{% render 'os-icon', name: 'search' %}</template>
+    <template data-glyph="search">{% render 'os-icon', name: 'search' %}</template>
+
+    {{ footer }}
+  </s-spotlight>
+<script type="module" src="{{ 's-spotlight.js' | asset_url }}"></script>

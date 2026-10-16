@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "背景",
+    "buttons": "ボタン",
+    "cards": "カード",
+    "color": "色",
+    "collection": "コレクション",
+    "default": "デフォルト",
+    "forms": "フォーム",
+    "link": "リンク",
+    "pill": "ピル",
+    "rounded": "丸型",
+    "sharp": "シャープ",
+    "size": "サイズ",
+    "small": "小",
+    "style": "スタイル",
+    "text_style": "テキストスタイル",
+    "transparent": "透明",
+    "video": "動画",
+    "alignment": "配置",
+        "none": "なし",
+    "medium": "中",
+    "large": "大",
+    "corner_radius": "角の丸み",
+    "extra_small": "極小",
+    "extra_large": "特大"
+  },
+  "settings": {
+    "border_radius": "角の丸み",
+    "colors": "色",
+    "fonts": "フォント",
+    "type_styles": "文字スタイル"
+  },
+  "variants": {
+    "text_style": {
+      "display": "ディスプレイ",
+      "heading_xl": "見出し XL",
+      "heading_lg": "見出し LG",
+      "heading_md": "見出し MD",
+      "heading_sm": "見出し SM",
+      "body_lg": "本文 LG",
+      "body": "本文",
+      "body_sm": "本文 Small",
+      "overline": "オーバーライン"
+    },
+    "quantity_selector": {
+      "outlined": "アウトライン",
+      "filled": "塗りつぶし"
+    },
+    "button": {
+      "custom": "カスタム",
+      "outline": "アウトライン",
+      "plain": "プレーン",
+      "primary": "プライマリー",
+      "secondary": "セカンダリー"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "スウォッチ",
+        "buttons": "ボタン",
+        "dropdown": "ドロップダウン"
+      }
+    }
+  },
+  "blocks": {
+    "button": "ボタン",
+    "container": "コンテナ",
+    "container_settings": {
+      "fill": "塗りつぶし",
+      "fill_info": "自動では既存の背景が維持されます。",
+      "fill_automatic": "自動",
+      "background_image": "背景画像",
+      "padding": "余白",
+      "padding_small": "小",
+      "padding_medium": "中",
+      "padding_large": "大",
+      "padding_extra_large": "特大"
+    },
+    "featured_collection": "特集コレクション",
+    "image": "画像",
+    "link": "リンク",
+    "image_settings": {
+      "image": "画像",
+      "aspect_ratio": "比率",
+      "auto": "自動",
+      "square": "正方形",
+      "portrait": "ポートレート"
+    },
+    "logo": "ロゴ",
+    "logo_settings": {
+      "image": "ロゴ画像",
+      "image_info": "この配置のカスタムロゴ画像です。",
+      "height_info": "カスタムサイズオプションが選択されている場合にのみ適用されます。",
+      "size": "サイズ",
+      "size_small": "小",
+      "size_medium": "中",
+      "size_large": "大",
+      "size_custom": "カスタム",
+      "height": "ロゴの高さ"
+    },
+    "main_menu": "メインメニュー",
+    "basic_menu": "基本メニュー",
+    "header": "ヘッダー",
+    "footer": "フッター",
+    "menu_settings": {
+      "menu": "メニュー",
+      "menu_info": "表示するメニューを選択します。",
+      "dropdown_color": "ドロップダウンの色"
+    },
+    "card": "カード",
+    "product_card": "商品カード",
+    "collection_card": "コレクションカード",
+    "article_card": "記事カード",
+    "text": "テキスト",
+    "richtext": "リッチテキスト",
+    "video": "動画",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "比率",
+      "ratio_auto": "自動",
+      "ratio_square": "正方形",
+      "ratio_video": "動画 (16:9)",
+      "ratio_portrait": "ポートレート (3:4)",
+      "autoplay": "自動再生",
+      "loop": "ループ",
+      "muted": "ミュート",
+      "plays_inline": "インライン再生",
+      "pause_on_hover": "ホバー時に一時停止"
+    },
+    "pagination": "ページネーション",
+    "predictive_search": "予測検索",
+    "price": "価格",
+    "quantity_selector": "数量セレクター",
+    "quantity_selector_settings": {
+      "button_color": "ボタンの色"
+    },
+    "variant_picker_settings": {
+      "shape": "形状",
+      "shape_square": "正方形",
+      "shape_rounded": "丸型",
+      "shape_circle": "円形"
+    },
+    "variant_picker": "バリエーションピッカー",
+    "gift_card": "ギフトカード"
+  },
+  "type_styles": {
+    "paragraph_size": "段落サイズ",
+    "heading_size": "見出しサイズ"
+  },
+  "typography": {
+    "primary_font": "プライマリフォント",
+    "secondary_font": "セカンダリフォント"
+  },
+  "direction": {
+    "start": "左",
+    "center": "中央",
+    "end": "右"
+  }
+}

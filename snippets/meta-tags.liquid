@@ -1,0 +1,256 @@
+{% doc %}
+  Renders essential meta tags for SEO, Open Graph, Twitter Cards, structured data, and the page title.
+  Automatically adapts og:type based on the current page type (product, article, or website).
+  Adds noindex,follow robots directives for search, cart, 404, and tag-filtered collection pages.
+  Includes the favicon from theme settings (settings.favicon), falling back to the Brand square logo.
+
+  @example
+  {% render 'meta-tags' %}
+{% enddoc %}
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+{%- liquid
+  assign favicon_image = settings.favicon | default: shop.brand.square_logo
+-%}
+{%- if favicon_image -%}
+  <link rel="icon" type="image/png" href="{{ favicon_image | image_url: width: 32, height: 32 }}">
+  <link rel="apple-touch-icon" href="{{ favicon_image | image_url: width: 180, height: 180 }}">
+{%- endif -%}
+
+{%- liquid
+  assign og_title = page_title | default: shop.name
+  assign og_url = canonical_url | default: request.origin
+  assign og_type = 'website'
+  assign og_description = page_description | default: shop.description | default: shop.name
+
+  assign og_image = page_image
+  assign og_image_alt = nil
+
+  if og_image == nil and request.page_type == 'product' and product.featured_image
+    assign og_image = product.featured_image
+  endif
+
+  if og_image
+    assign og_image_alt = og_image.alt | default: og_title
+  endif
+
+  if request.page_type == 'product'
+    assign og_type = 'product'
+  elsif request.page_type == 'article'
+    assign og_type = 'article'
+  elsif request.page_type == 'password'
+    assign og_url = request.origin
+  endif
+%}
+
+<meta
+  property="og:site_name"
+  content="{{ shop.name | escape }}"
+>
+<meta
+  property="og:url"
+  content="{{ og_url | escape }}"
+>
+<meta
+  property="og:title"
+  content="{{ og_title | escape }}"
+>
+<meta
+  property="og:type"
+  content="{{ og_type }}"
+>
+<meta
+  property="og:description"
+  content="{{ og_description | escape }}"
+>
+
+{%- if og_image -%}
+  <meta
+    property="og:image"
+    content="https:{{ og_image | image_url: width: 1200 }}"
+  >
+  <meta
+    property="og:image:secure_url"
+    content="https:{{ og_image | image_url: width: 1200 }}"
+  >
+  {%- if og_image.width -%}
+    <meta
+      property="og:image:width"
+      content="{{ og_image.width }}"
+    >
+    <meta
+      property="og:image:height"
+      content="{{ og_image.height }}"
+    >
+  {%- endif -%}
+
+  <meta
+    property="og:image:alt"
+    content="{{ og_image_alt | escape }}"
+  >
+{%- endif -%}
+
+{%- if request.page_type == 'product' -%}
+  <script type="application/ld+json">
+    {{ product | structured_data }}
+  </script>
+
+  <meta
+    property="og:price:amount"
+    content="{{ product.price | money_without_currency | strip_html }}"
+  >
+  <meta
+    property="og:price:currency"
+    content="{{ cart.currency.iso_code }}"
+  >
+{%- endif -%}
+
+<meta
+  name="twitter:card"
+  content="summary_large_image"
+>
+<meta
+  name="twitter:title"
+  content="{{ og_title | escape }}"
+>
+<meta
+  name="twitter:description"
+  content="{{ og_description | escape }}"
+>
+
+{%- if og_image -%}
+  <meta
+    name="twitter:image"
+    content="https:{{ og_image | image_url: width: 1200 }}"
+  >
+  <meta
+    name="twitter:image:alt"
+    content="{{ og_image_alt | escape }}"
+  >
+{%- endif -%}
+
+<title>
+  {%- assign title_base = page_title | default: shop.name -%}
+  {{ title_base }}
+  {%- assign joined_tags = current_tags | join: ', ' -%}
+  {%- if current_tags %} &ndash; {{ 'general.meta.tagged' | t: tags: joined_tags }}{% endif -%}
+  {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: number: current_page }}{% endif -%}
+  {%- unless title_base contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+</title>
+
+<link
+  rel="canonical"
+  href="{{ canonical_url | escape }}"
+>
+
+{%- if request.locale -%}
+  {%- liquid
+    # Derive the origin from canonical_url so every alternate stays on its canonical host.
+    # Keep the query opaque and strip a locale root only after matching a complete leading path segment.
+    assign canonical_protocol = canonical_url | split: '://' | first | append: '://'
+    assign canonical_after_protocol = canonical_url | remove_first: canonical_protocol
+    assign canonical_host = canonical_after_protocol | split: '/' | first | split: '?' | first
+    assign canonical_origin = canonical_protocol | append: canonical_host
+    assign canonical_path_and_query = canonical_url | remove_first: canonical_origin
+    assign canonical_path = canonical_path_and_query | split: '?' | first
+    assign canonical_query = canonical_path_and_query | remove_first: canonical_path
+    assign locale_relative_path = canonical_path
+
+    if locale_relative_path == blank
+      assign locale_relative_path = '/'
+    endif
+
+    unless request.locale.root_url == '/'
+      assign source_root_size = request.locale.root_url | size
+      assign source_root_prefix = canonical_path | slice: 0, source_root_size
+      assign source_root_boundary = canonical_path | slice: source_root_size, 1
+
+      if canonical_path == request.locale.root_url
+        assign locale_relative_path = '/'
+      elsif source_root_prefix == request.locale.root_url and source_root_boundary == '/'
+        assign locale_relative_path = canonical_path | remove_first: request.locale.root_url
+      endif
+    endunless
+  -%}
+  {%- for locale in shop.published_locales -%}
+    {%- liquid
+      if locale.root_url == '/'
+        assign alternate_path = locale_relative_path
+      elsif locale_relative_path == '/'
+        assign alternate_path = locale.root_url
+      else
+        assign alternate_path = locale.root_url | append: locale_relative_path
+      endif
+
+      assign alternate_url = canonical_origin | append: alternate_path | append: canonical_query
+    -%}
+    <link
+      rel="alternate"
+      hreflang="{{ locale.iso_code }}"
+      href="{{ alternate_url | escape }}"
+    >
+  {%- endfor -%}
+  <link
+    rel="alternate"
+    hreflang="x-default"
+    href="{{ canonical_url | escape }}"
+  >
+{%- endif -%}
+
+<meta
+  name="description"
+  content="{{ page_description | default: shop.description | default: shop.name | escape }}"
+>
+
+{%- comment -%} Exclude transient/low-value pages from Google's index: search (infinite query permutations), cart (session-specific, no canonical), 404 (not real content), and tag-filtered collection pages (duplicate content). `follow` keeps link equity flowing through. {%- endcomment -%}
+{%- if request.page_type == 'search'
+    or request.page_type == 'cart'
+    or request.page_type == '404'
+    or current_tags -%}
+  <meta name="robots" content="noindex, follow">
+{%- endif -%}
+
+{%- if request.page_type == 'index' -%}
+  {%- capture url_template -%}
+    {{- request.origin -}}
+    {{- routes.search_url -}}
+    ?q={search_term_string}
+  {%- endcapture -%}
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": {{ request.origin | append: '/#website' | json }},
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | append: '/' | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": {{ url_template | json }}
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": {{ request.origin | append: '/#organization' | json }},
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | append: '/' | json }}
+    {%- if shop.brand.logo -%}
+    ,"logo": {
+      "@type": "ImageObject",
+      "url": {{ shop.brand.logo | image_url: width: 600 | prepend: 'https:' | json }}
+    }
+    {%- endif -%}
+  }
+  </script>
+{%- endif -%}

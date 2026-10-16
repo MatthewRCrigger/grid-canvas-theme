@@ -1,0 +1,29 @@
+{% doc %}
+  Global cart drawer shell. The layout owns the rendered header/body/footer
+  captures, including their cart partials and independently editable blocks.
+  This utility keeps the fixed dialog identity, accessible label and script wiring.
+  Render once inside the layout header region; the caller's heading must use
+  the matching heading ID in attributes; cart commands target its supplied s-cart elements.
+
+  @param {string} header - Captured title/count/close-control region. @required
+  @param {string} content - Captured cart body and cart-drawer partial. @required
+  @param {string} footer - Captured cart-drawer-footer partial, including the cart form. @required
+  @param {string} attributes - Drawer attributes including aria-labelledby for the caller-owned header. @required
+
+  @category commerce
+  @renders s-dialog
+
+  @example Layout-owned captures (see layout/theme.liquid for the complete composition)
+  {% render 'cart-drawer', header: cart_drawer_header, content: cart_drawer_content, footer: cart_drawer_footer, attributes: 'aria-labelledby="cart-drawer-title"' %}
+{% enddoc %}
+
+{% render 'drawer',
+  id: 'cart-drawer',
+  position: 'right',
+  header: header,
+  content: content,
+  footer: footer,
+  attributes: attributes
+%}
+
+<script type="module" src="{{ 's-cart.js' | asset_url }}"></script>

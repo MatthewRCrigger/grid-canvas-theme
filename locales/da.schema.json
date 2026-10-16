@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Baggrund",
+    "buttons": "Knapper",
+    "cards": "Kort",
+    "color": "Farve",
+    "collection": "Kollektion",
+    "default": "Standard",
+    "forms": "Formularer",
+    "link": "Link",
+    "pill": "Pille",
+    "rounded": "Afrundet",
+    "sharp": "Skarp",
+    "size": "Størrelse",
+    "small": "Lille",
+    "style": "Stil",
+    "text_style": "Tekststil",
+    "transparent": "Gennemsigtig",
+    "video": "Video",
+    "alignment": "Justering",
+        "none": "Ingen",
+    "medium": "Mellem",
+    "large": "Stor",
+    "corner_radius": "Hjørneradius",
+    "extra_small": "Ekstra lille",
+    "extra_large": "Ekstra stor"
+  },
+  "settings": {
+    "border_radius": "Kantradius",
+    "colors": "Farver",
+    "fonts": "Skrifttyper",
+    "type_styles": "Typografistile"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Display",
+      "heading_xl": "Overskrift XL",
+      "heading_lg": "Overskrift LG",
+      "heading_md": "Overskrift MD",
+      "heading_sm": "Overskrift SM",
+      "body_lg": "Brødtekst stor",
+      "body": "Brødtekst",
+      "body_sm": "Brødtekst lille",
+      "overline": "Overlinje"
+    },
+    "quantity_selector": {
+      "outlined": "Med kontur",
+      "filled": "Udfyldt"
+    },
+    "button": {
+      "custom": "Tilpasset",
+      "outline": "Kontur",
+      "plain": "Almindelig",
+      "primary": "Primær",
+      "secondary": "Sekundær"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Farvepalet",
+        "buttons": "Knapper",
+        "dropdown": "Rullemenu"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Knap",
+    "container": "Beholder",
+    "container_settings": {
+      "fill": "Fyld",
+      "fill_info": "Automatisk bevarer den eksisterende baggrund.",
+      "fill_automatic": "Automatisk",
+      "background_image": "Baggrundsbillede",
+      "padding": "Udfyldning",
+      "padding_small": "Lille",
+      "padding_medium": "Mellem",
+      "padding_large": "Stor",
+      "padding_extra_large": "Ekstra stor"
+    },
+    "featured_collection": "Udvalgt kollektion",
+    "image": "Billede",
+    "link": "Link",
+    "image_settings": {
+      "image": "Billede",
+      "aspect_ratio": "Format",
+      "auto": "Auto",
+      "square": "Kvadratisk",
+      "portrait": "Stående"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Logobillede",
+      "image_info": "Tilpasset logobillede til denne placering.",
+      "height_info": "Anvendes kun, når indstillingen for tilpasset størrelse er valgt.",
+      "size": "Størrelse",
+      "size_small": "Lille",
+      "size_medium": "Mellem",
+      "size_large": "Stor",
+      "size_custom": "Tilpasset",
+      "height": "Logohøjde"
+    },
+    "main_menu": "Hovedmenu",
+    "basic_menu": "Grundlæggende menu",
+    "header": "Sidehoved",
+    "footer": "Sidefod",
+    "menu_settings": {
+      "menu": "Menu",
+      "menu_info": "Vælg, hvilken navigationsmenu der skal vises.",
+      "dropdown_color": "Farve på rullemenu"
+    },
+    "card": "Kort",
+    "product_card": "Produktkort",
+    "collection_card": "Kollektionskort",
+    "article_card": "Artikelkort",
+    "text": "Tekst",
+    "richtext": "Formateret tekst",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo-id",
+      "youtube_id": "YouTube-id",
+      "ratio": "Format",
+      "ratio_auto": "Auto",
+      "ratio_square": "Kvadratisk",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Stående (3:4)",
+      "autoplay": "Automatisk afspilning",
+      "loop": "Sløjfe",
+      "muted": "Lydløs",
+      "plays_inline": "Afspilles indlejret",
+      "pause_on_hover": "Sæt på pause, når markøren holdes over"
+    },
+    "pagination": "Sideinddeling",
+    "predictive_search": "Forudsigende søgning",
+    "price": "Pris",
+    "quantity_selector": "Antalsvælger",
+    "quantity_selector_settings": {
+      "button_color": "Knapfarve"
+    },
+    "variant_picker_settings": {
+      "shape": "Form",
+      "shape_square": "Kvadratisk",
+      "shape_rounded": "Afrundet",
+      "shape_circle": "Cirkel"
+    },
+    "variant_picker": "Variantvælger",
+    "gift_card": "Gavekort"
+  },
+  "type_styles": {
+    "paragraph_size": "Afsnitsstørrelse",
+    "heading_size": "Overskriftsstørrelse"
+  },
+  "typography": {
+    "primary_font": "Primær skrifttype",
+    "secondary_font": "Sekundær skrifttype"
+  },
+  "direction": {
+    "start": "Venstre",
+    "center": "Centreret",
+    "end": "Højre"
+  }
+}

@@ -1,0 +1,27 @@
+{% doc %}
+  Renders the cart-level discount applications and their allocated savings.
+
+  @param {object} cart - Shopify cart object containing discount applications. @required
+  @param {string} [class] - Additional CSS classes for the discount list.
+
+  @category commerce
+  @renders dl
+
+  @example
+  {% render 'cart-discount-list', cart: cart, class: 'mb-4' %}
+{% enddoc %}
+
+{% if cart.cart_level_discount_applications.size > 0 %}
+  <dl class="{{ class }}">
+    {% for discount in cart.cart_level_discount_applications %}
+      <div class="flex items-center justify-between gap-4 py-1">
+        <dt class="flex items-center gap-1.5 type-body-sm text-ink-300">
+          <span class="inline-flex size-4 shrink-0 items-center justify-center" aria-hidden="true">{{- 'icon-tag.svg' | inline_asset_content -}}</span>
+          {%- assign safe_discount_title = discount.title | escape -%}
+          {{ 'cart.discount_title' | t: title: safe_discount_title }}
+        </dt>
+        <dd class="font-mono text-[13px] text-sale"><bdi>-{{ discount.total_allocated_amount | money }}</bdi></dd>
+      </div>
+    {% endfor %}
+  </dl>
+{% endif %}

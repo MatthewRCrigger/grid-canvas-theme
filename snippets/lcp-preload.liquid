@@ -1,0 +1,82 @@
+{% doc %}
+  Emits a template-aware image preload link for the expected LCP image so the
+  browser starts downloading it before the `<img>` element is discovered in the
+  DOM. Renders nothing when the current template has no predictable
+  above-the-fold image. Render from the layout <head> after the compiled
+  stylesheet.
+
+  The per-template `lcp_sizes`/`imagesrcset` parity rules are documented inline
+  below and guarded by tests/suites/contracts/lcp-preload-image-parity.spec.js,
+  which reads this file as its Liquid source of truth.
+
+  @example
+  {% render 'lcp-preload' %}
+{% enddoc %}
+
+{%- liquid
+  # LCP preload: Eagerly fetch above-the-fold media so the browser can
+  # start downloading it before the <img> element is discovered in the DOM.
+  # Each lcp_sizes value must stay byte-identical to the `sizes` of the template's
+  # first rendered image (and imagesrcset widths to blocks/image.liquid defaults),
+  # or the browser fetches a second image instead of reusing the preload.
+  # Paginated listing templates (blog, collection, list-collections, search) preload
+  # only on the first page; subsequent pages have no predictable above-fold image.
+  assign lcp_image = nil
+  assign lcp_sizes = '100vw'
+  if template == 'index'
+    # The homepage lands on the text-first Spotlight window; its imagery is small and lazy, so nothing is preloaded.
+    assign lcp_image = nil
+  elsif template == 'article'
+    assign lcp_image = article.image
+    # Mirrors the hero image `sizes` in templates/article.liquid.
+    assign lcp_sizes = '(min-width: 1008px) 960px, calc(100vw - 48px)'
+  elsif template == 'blog'
+    # Preload only on page one — blog.articles respects the paginate window.
+    if current_page == 1
+      assign lcp_image = blog.articles.first.image
+      # Mirrors the template-owned blog image block `sizes` kwarg in templates/blog.liquid.
+      assign lcp_sizes = '(min-width: 1440px) 440px, (min-width: 990px) calc((100vw - 96px) / 3), (min-width: 750px) calc((100vw - 96px) / 2), calc(100vw - 64px)'
+    endif
+  elsif template == 'collection'
+    # Preload only on page one — collection.products respects the paginate window.
+    if current_page == 1
+      assign lcp_image = collection.products.first.featured_image
+      # Mirrors the contained product_sizes in templates/collection.liquid.
+      assign lcp_sizes = '(min-width: 1440px) 300px, (min-width: 1280px) calc((100vw - 300px) / 4), (min-width: 1024px) calc((100vw - 300px) / 3), (min-width: 768px) calc((100vw - 64px) / 3), calc((100vw - 48px) / 2)'
+    endif
+  elsif template == 'list-collections'
+    # Preload only on page one — subsequent pages would reference an off-screen collection.
+    if current_page == 1
+      # Mirrors templates/list-collections.liquid's default child image fallback; intentional image-picker overrides may differ.
+      assign first_collection = collections.first
+      assign lcp_image = first_collection.image | default: first_collection.products.first.featured_image
+      # Mirrors the contained collection_sizes in templates/list-collections.liquid.
+      assign lcp_sizes = '(min-width: 1440px) 320px, (min-width: 990px) calc((100vw - 96px) / 4), (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 64px) / 2)'
+    endif
+  elsif template == 'product'
+    assign lcp_image = product.featured_media.preview_image | default: product.featured_image
+    # Mirrors templates/product.liquid: the 2fr gallery is split into two columns only for 3+ media.
+    if product.media.size > 2
+      assign lcp_sizes = '(min-width: 1280px) 384px, (min-width: 768px) calc((100vw - 128px) / 3), 100vw'
+    else
+      assign lcp_sizes = '(min-width: 1280px) 768px, (min-width: 768px) calc((100vw - 128px) * 2 / 3), 100vw'
+    endif
+  elsif template == 'search'
+    # Preload only for a nonblank query on page one — search.results respects the paginate window.
+    if current_page == 1 and search.performed and search.terms != blank and search.results.first.object_type == 'product'
+      assign lcp_image = search.results.first.featured_image
+      # Mirrors result_sizes in templates/search.liquid, including non-product card overrides.
+      assign lcp_sizes = '(min-width: 1440px) 320px, (min-width: 990px) calc((100vw - 96px) / 4), (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 64px) / 2)'
+    endif
+  endif
+-%}
+{%- if lcp_image -%}
+  <link
+    rel="preload"
+    as="image"
+    fetchpriority="high"
+    href="{{ lcp_image | image_url: width: 1500 }}"
+    imagesrcset="{{ lcp_image | image_url: width: 375 }} 375w, {{ lcp_image | image_url: width: 550 }} 550w, {{ lcp_image | image_url: width: 750 }} 750w, {{ lcp_image | image_url: width: 1100 }} 1100w, {{ lcp_image | image_url: width: 1500 }} 1500w"
+    imagesizes="{{ lcp_sizes }}"
+  >
+{%- endif -%}

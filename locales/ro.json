@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Pagina nu a fost găsită",
+    "not_found": "Pagina nu a fost găsită.",
+    "back_to_shopping": "Explorați colecția",
+    "suggestions_heading": "Un alt drum înainte.",
+    "recovery_body": "Această pagină nu a putut fi găsită. Mai sunt multe de descoperit."
+  },
+  "general": {
+    "skip_to_content": "Sari la conținut",
+    "play_video": "Redă videoclipul",
+    "video_player": "Player video",
+    "captions": "Subtitrări",
+    "clear": "Șterge",
+    "back": "Înapoi",
+    "close": "Închide",
+    "dismiss": "Ignoră",
+    "drawer": "Sertar",
+    "placeholder_image": "Imagine substituent",
+    "account": "Cont",
+    "search": "Căutare",
+    "pagination": {
+      "label": "Paginare",
+      "previous_page": "Pagina anterioară",
+      "next_page": "Pagina următoare",
+      "page": "Pagina {{ number }}",
+      "current_page": "Pagina {{ number }}, pagina curentă"
+    },
+    "meta": {
+      "tagged": "cu eticheta „{{ tags }}”",
+      "page": "Pagina {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Rezultate actualizate",
+    "variant_updated": "Selecție actualizată",
+    "update_error": "A apărut o eroare. Vă rugăm să încercați din nou."
+  },
+  "blog": {
+    "articles_heading": "Articole",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Comentariu",
+    "comment_form_email": "E-mail",
+    "comment_form_name": "Nume",
+    "comment_form_submit": "Postează",
+    "comment_form_title": "Adaugă un comentariu",
+    "comments_count": {
+      "one": "1 comentariu",
+      "other": "{{ count }} comentarii"
+    },
+    "no_articles": "Niciun articol încă."
+  },
+  "cart": {
+    "checkout": "Plată",
+    "title": "Coș",
+    "remove": "Elimină: {{ title }}",
+    "empty": "Coșul dumneavoastră este gol.",
+    "empty_description": "Se pare că nu ați adăugat nimic în coș încă.",
+    "icon_label": {
+      "one": "Coș (1 articol)",
+      "other": "Coș ({{ count }} articole)"
+    },
+    "item_count": {
+      "one": "1 articol în coș",
+      "other": "{{ count }} articole în coș"
+    },
+    "item_removed": "Articol eliminat din coș",
+    "updated": "Coș actualizat",
+    "note_label": "Note de comandă",
+    "note_placeholder": "Adăugați instrucțiuni speciale pentru comanda dumneavoastră",
+    "taxes_and_shipping_at_checkout": "Taxele și expedierea se calculează la plată",
+    "discount_list": "Reduceri aplicate",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Cod de reducere",
+    "discount_title": "Reducere: {{ title }}",
+    "update_error": "Nu s-a putut actualiza coșul. Vă rugăm să încercați din nou.",
+    "refresh_error": "Coșul a fost actualizat, dar afișarea poate fi învechită. Reîmprospătați pagina pentru a vedea cel mai recent coș.",
+    "continue_shopping": "Continuă cumpărăturile",
+    "checkout_description": "Continuă spre plata securizată",
+    "discount_placeholder": "Introdu codul",
+    "discount_apply": "Aplică",
+    "note_accordion_label": "Instrucțiuni speciale",
+    "total_label": "Total estimat"
+  },
+  "contact": {
+    "name": "Nume",
+    "email": "E-mail",
+    "phone": "Telefon (opțional)",
+    "message": "Mesaj",
+    "submit": "Trimite mesajul",
+    "success": "Vă mulțumim pentru că ne-ați contactat. Vă vom răspunde în curând."
+  },
+  "collections": {
+    "all_collections": "Toate colecțiile",
+    "browse_heading": "Răsfoiește colecțiile",
+    "products_heading": "Produse",
+    "placeholder_title": "Titlu colecție",
+    "no_collections": "Nu a fost găsită nicio colecție.",
+    "no_products": "Niciun produs nu se potrivește cu filtrele selectate.",
+    "products_count": {
+      "one": "1 produs",
+      "other": "{{ count }} produse"
+    },
+    "filter": "Filtrează",
+    "filters": "Filtre",
+    "active_filters": "Filtre active",
+    "clear_all": "Șterge toate",
+    "remove_filter": "Elimină {{ filter }}",
+    "show_results": "Afișează rezultatele",
+    "value_unavailable": "Unavailable",
+    "price_min": "Preț minim",
+    "price_max": "Preț maxim",
+    "price_to": "la",
+    "sort_by": "Sortează după",
+    "filtering": {
+      "show_more": "Afișează mai multe"
+    },
+    "view_all": "Vezi tot"
+  },
+  "header": {
+    "menu": "Meniu",
+    "mobile_navigation": "Navigare pe mobil",
+    "navigation": "Navigare principală",
+    "show_submenu": "Afișează submeniul {{ title }}"
+  },
+  "footer": {
+    "quick_links": "Linkuri rapide",
+    "policies": "Politici"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Adaugă în Portofel Apple",
+    "card": "Card cadou",
+    "expired": "Acest card cadou a expirat",
+    "expires_on": "Expiră la {{ expires_on }}",
+    "use_at_checkout": "Folosește acest card cadou la plată",
+    "a_gift_for_you": "Un cadou pentru tine",
+    "available": "{{ amount }} disponibili",
+    "a_little_something": "O mică atenție pentru tine",
+    "card_label": "Card cadou {{ shop }}",
+    "copy_code": "Copiază codul",
+    "copied": "Cod copiat",
+    "copy_error": "Codul nu a putut fi copiat automat. Copiază-l manual.",
+    "disabled": "Acest card cadou nu mai este valabil",
+    "start_shopping": "Începe cumpărăturile"
+  },
+  "page": {
+    "content_heading": "Conținut pagină"
+  },
+  "password": {
+    "title": "Acest magazin este privat",
+    "eyebrow": "Deschidem în curând",
+    "launch_description": "Descoperă în avans ce urmează.",
+    "enter": "Intră",
+    "enter_with_password": "Intră cu parola",
+    "enter_store": "Intră în magazin",
+    "show": "Afișează",
+    "hide": "Ascunde",
+    "error": "Parolă incorectă. Vă rugăm să încercați din nou.",
+    "field_label": "Parolă",
+    "placeholder": "Introdu parola",
+    "get_updates": "Primește noutăți despre deschidere",
+    "updates_description": "Află primul când deschidem.",
+    "updates_submit": "Anunță-mă",
+    "updates_success": "Îți mulțumim pentru abonare."
+  },
+  "product": {
+    "details": "Detalii produs",
+    "placeholder_title": "Titlu produs",
+    "quantity": "Cantitate",
+    "quantity_decrease": "Scade cantitatea: {{ title }}",
+    "quantity_increase": "Crește cantitatea: {{ title }}",
+    "quantity_input": "Cantitate pentru {{ title }}",
+    "add_to_cart": "Adaugă în coș",
+    "added_to_cart": "Adăugat în coș",
+    "sold_out": "Stoc epuizat",
+    "description": "Descriere",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Preț",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "Interval preț",
+      "regular_price": "Preț obișnuit",
+      "sale_price": "Preț promoțional",
+      "savings": "Economisiți {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Scade cantitatea",
+      "increase": "Crește cantitatea",
+      "input_label": "Cantitate"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 filtru activ",
+      "other": "{{ count }} filtre active"
+    }
+  },
+  "forms": {
+    "required": "obligatoriu",
+    "form_errors_title": "Vă rugăm să remediați următoarele erori:"
+  },
+  "search": {
+    "title": "Căutare",
+    "label": "Căutare",
+    "placeholder": "Caută",
+    "products_heading": "Produse",
+    "results_heading": "Rezultatele căutării",
+    "view_all_results": "Vezi toate rezultatele",
+    "results_count_announcement": {
+      "one": "1 rezultat disponibil",
+      "other": "{{ count }} rezultate disponibile"
+    },
+    "no_results_announcement": "Niciun rezultat găsit pentru {{ terms }}",
+    "results_for": "{{ count }} rezultate găsite pentru {{ terms }}",
+    "no_results": "Niciun rezultat găsit pentru {{ terms }}",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Actualizare"
+  },
+  "home": {
+    "hero": {
+      "title": "Noutăți",
+      "subtitle": "Explorează colecția"
+    }
+  }
+}

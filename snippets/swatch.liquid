@@ -1,0 +1,60 @@
+{% doc %}
+  Internal generated variant swatch radio. The variant-picker owns its size and
+  shape settings and supplies one option value at a time; this is not a public
+  editor-selectable block. Shopify swatch images use a fixed 96px slot with
+  96/192-pixel candidates. No nested block invocation is needed.
+
+  @param {object} swatch - Shopify swatch drop with optional `.color` and `.image`. @required
+  @param {string} name - Radio input name. @required
+  @param {string} value - Radio value and visible accessible label. @required
+  @param {string} size - Picker-resolved swatch size class. @required
+  @param {string} shape - Picker-resolved swatch shape class. @required
+  @param {boolean} [selected] - Pre-select this option value. Default: false.
+  @param {boolean} [disabled] - Disable the radio. Default: false.
+  @param {boolean} [unavailable] - Show the unavailable strike and announcement. Default: false.
+  @param {string} [data_variant_id] - Variant ID consumed by the picker component.
+  @param {string} [class] - Additional label classes for source customizations.
+  @param {string} [attributes] - Developer-authored HTML attributes for the label.
+
+  @category forms
+  @renders label
+
+  @example
+  {% render 'swatch', swatch: value.swatch, name: option.name, value: value, size: 'swatch-md', shape: 'rounded-full', selected: value.selected, data_variant_id: value.variant.id %}
+{% enddoc %}
+
+{%- liquid
+  assign selected = selected | default: false
+  assign disabled = disabled | default: false
+  assign unavailable = unavailable | default: false
+  assign size = size | default: 'swatch-md'
+  assign shape = shape | default: 'rounded-full'
+-%}
+
+<label class="relative inline-flex min-w-touch-target min-h-touch-target items-center justify-center cursor-pointer motion-safe:transition-transform motion-safe:active:scale-[0.93]{% if disabled %} opacity-50 cursor-not-allowed{% endif %}{% if unavailable %} opacity-50{% endif %}{% if class != blank %} {{ class }}{% endif %}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  <input type="radio" name="{{ name | escape }}" value="{{ value | escape }}"
+    class="peer sr-only"
+    {% if data_variant_id %}data-variant-id="{{ data_variant_id | escape }}"{% endif %}
+    {% if selected %}checked{% endif %}
+    {% if disabled %}disabled{% endif %}>
+  <span class="relative {{ size }} {{ shape }} border-2 border-border peer-checked:border-interactive ring-offset-2 peer-focus-visible:ring-2 peer-focus-visible:ring-accent overflow-hidden inline-flex items-center justify-center"
+    {%- if swatch.color %} style="background-color: {{ swatch.color | escape }}"{% endif %}>
+    {%- if swatch.image -%}
+      {%- assign image = swatch.image -%}
+      <img
+        src="{{ image | image_url: width: 96 }}"
+        srcset="{{ image | image_url: width: 96 }} 96w, {{ image | image_url: width: 192 }} 192w"
+        sizes="96px"
+        alt="{{ image.alt | default: value | escape }}"
+        width="{{ image.width }}"
+        height="{{ image.height }}"
+        class="size-full object-cover aspect-auto"
+        data-aspect-ratio="aspect-auto"
+      >
+    {%- endif -%}
+    {%- if unavailable -%}
+      <svg class="absolute inset-0 size-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="4" y1="4" x2="20" y2="20"/></svg>
+    {%- endif -%}
+  </span>
+  <span class="sr-only">{{ value | escape }}{% if unavailable %} ({{ 'product.sold_out' | t }}){% endif %}</span>
+</label>

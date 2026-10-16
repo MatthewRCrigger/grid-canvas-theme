@@ -1,0 +1,122 @@
+{% block 'container' %}
+<s-cart class="block os-stage" id="cart" data-partials="cart-items,cart-count">
+{% partial 'cart-items' %}
+{%- comment -%} standard_event_data encodes the less-than character as <,
+  so a literal closing-script tag in cart line attributes (note, line-item
+  properties) cannot terminate this <script> early. {%- endcomment -%}
+{%- # theme-check-disable UnknownFilter %}
+<script type="application/json" data-view-event-payload>{{ cart | standard_event_data: 'view', context: 'page' }}</script>
+{%- # theme-check-enable UnknownFilter %}
+
+{%- comment -%} GRID header band: cyan overline + mono unit readout, display title, closed by a hairline. {%- endcomment -%}
+<div class="mb-6">
+  <div class="mx-auto max-w-page px-margin pt-2 md:pt-4">
+    <div class="mb-4 flex items-center gap-3">
+      {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-accent' %}{{ 'cart.overline' | t }}{% endblock %}
+      {% if cart.item_count > 0 %}
+        <span class="type-data-sm uppercase text-ink-300">{{ 'home.inventory.units' | t: count: cart.item_count }}</span>
+      {% endif %}
+    </div>
+    {% block 'text', tag: 'h1', variant: 'type-title', class: 'text-on-surface' %}{{ 'cart.title' | t }}{% endblock %}
+  </div>
+</div>
+
+<div class="mx-auto max-w-page px-margin">
+{% if cart.item_count > 0 %}
+  {% form 'cart', cart %}
+    <div class="flex flex-col gap-3 lg:grid lg:grid-cols-[1fr_400px] lg:items-start">
+      {%- comment -%} Line items panel {%- endcomment -%}
+      {% block 'frame', window: 'page', class: 'min-w-0' %}
+          <div class="panel-header os-pane-bar">
+            {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'cart.items_panel' | t }}{% endblock %}
+            <span class="os-page-meta">{{ 'home.inventory.units' | t: count: cart.item_count }}</span>
+          </div>
+          <div class="divide-y divide-line-400 px-4">
+            {% for item in cart.items %}
+              {%- comment -%} First 3 rows eager, rest lazy — above-the-fold threshold {%- endcomment -%}
+              {%- if forloop.index <= 3 -%}{%- assign cart_lazy = false -%}{%- else -%}{%- assign cart_lazy = true -%}{%- endif -%}
+              {%- if cart_lazy -%}{%- assign line_image_attributes = 'loading="lazy"' -%}{%- else -%}{%- assign line_image_attributes = 'loading="eager"' -%}{%- endif -%}
+              {%- capture line_media -%}
+                {% if item.image %}{% block 'image', fallback_image: item.image, sizes: '(min-width: 640px) 104px, 76px', widths: '76,104,152,208', alt: item.product.title, class: 'size-full object-cover aspect-square', attributes: line_image_attributes %}{% endblock %}{% endif %}
+              {%- endcapture -%}
+              {%- capture line_unit_price -%}
+                {% block 'price', price: item.original_price, variant: 'type-data-sm', class: 'mt-1 [&_span]:text-ink-300' %}{% endblock %}
+              {%- endcapture -%}
+              {%- assign remove_label = 'cart.remove' | t: title: item.product.title -%}
+              {%- capture line_remove_attributes -%}aria-label="{{ remove_label | escape }}" data-variant-id="{{ item.variant_id }}" data-line-key="{{ item.key | escape }}"{%- endcapture -%}
+              {%- capture line_remove_button -%}
+                {% block 'button', commandfor: 'cart', command: '--remove', variant: 'button-ghost', class: 'size-touch-target', attributes: line_remove_attributes %}<span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">{{- 'icon-trash.svg' | inline_asset_content -}}</span>{% endblock %}
+              {%- endcapture -%}
+              {% render 'cart-line-item', item: item, cart_id: 'cart', compact: false, media: line_media, unit_price: line_unit_price, remove_button: line_remove_button %}
+            {% endfor %}
+          </div>
+      {% endblock %}
+
+      {%- comment -%} Totals panel: key-value readout, mono figures, the one amber action. {%- endcomment -%}
+      {% block 'frame', window: 'pane', class: 'lg:sticky lg:top-8 [view-transition-name:cart-total]' %}
+          <div class="panel-header os-pane-bar">
+            {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'cart.summary_panel' | t }}{% endblock %}
+          </div>
+          <div class="p-4">
+            {% render 'cart-discount-list', cart: cart, class: 'mb-3 border-b border-line-400 pb-3' %}
+
+            <div class="flex items-baseline gap-3 pb-4">
+              <span class="type-overline text-ink-300">{{ 'cart.total_label' | t }}</span>
+              <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+              <span class="font-mono text-[20px] text-on-surface" data-cart-total><bdi>{{ cart.total_price | money }}</bdi></span>
+            </div>
+
+            <span id="checkout-description" class="sr-only">{{ 'cart.checkout_description' | t }}</span>
+            {% block 'button', type: 'submit', name: 'checkout', variant: 'button-primary', class: 'w-full h-11 text-[13px]', attributes: 'aria-describedby="checkout-description"' %}{{- 'cart.checkout' | t -}}{% endblock %}
+
+            {%- comment -%} Additional checkout buttons are server-rendered by Shopify when accelerated checkout methods are available. The platform class is required by Shopify's injected markup. {%- endcomment -%}
+            {% if additional_checkout_buttons %}
+              <div class="additional-checkout-buttons mt-3 [--shopify-accelerated-checkout-button-block-size:var(--spacing-touch-target)] [--shopify-accelerated-checkout-button-border-radius:0px] [--shopify-accelerated-checkout-button-box-shadow:none] [--shopify-accelerated-checkout-skeleton-background-color:var(--color-surface-secondary)]">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            {% endif %}
+
+            {% block 'text', variant: 'type-body-sm', class: 'mt-3 text-ink-300' %}{{ 'cart.taxes_and_shipping_at_checkout' | t }}{% endblock %}
+
+            {% render 'cart-discount-code', cart_id: 'cart', input_id: 'cart-discount-input', class: 'mt-4' %}
+
+            <details class="group border-t border-line-400">
+              <summary class="flex min-h-touch-target cursor-pointer list-none items-center justify-between type-overline text-ink-200 motion-safe:transition-colors hover:text-on-surface [&::-webkit-details-marker]:hidden">
+                {{ 'cart.note_accordion_label' | t }}
+                <span class="ms-4 inline-flex size-4 shrink-0 items-center justify-center" aria-hidden="true"><span class="group-open:hidden">{{- 'icon-plus.svg' | inline_asset_content -}}</span><span class="hidden group-open:inline-flex">{{- 'icon-minus.svg' | inline_asset_content -}}</span></span>
+              </summary>
+              <div class="pb-2">
+                <label for="cart-note" class="sr-only">{{ 'cart.note_label' | t }}</label>
+                <textarea name="note" id="cart-note" rows="3" class="w-full" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note | escape }}</textarea>
+              </div>
+            </details>
+          </div>
+      {% endblock %}
+    </div>
+  {% endform %}
+{% else %}
+  {%- comment -%} Empty state reads as a system status panel; Browse inventory is the one amber action in view. {%- endcomment -%}
+  {% block 'frame', window: 'page', class: 'mx-auto max-w-xl', readout: 'alert' %}
+      <div class="panel-header os-pane-bar">
+        {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'cart.empty_panel' | t }}{% endblock %}
+        <span class="os-page-meta" aria-hidden="true">00</span>
+      </div>
+      {%- assign empty_cart_image = images['grid-dev-empty-cart.png'] -%}
+      {%- if empty_cart_image -%}
+        {%- assign empty_cart_alt = 'cart.empty_image_alt' | t -%}
+        <div class="border-b border-line-400 bg-surface">
+          {% block 'image', fallback_image: empty_cart_image, aspect_ratio: 'aspect-landscape', sizes: '(min-width: 640px) 576px, calc(100vw - 32px)', alt: empty_cart_alt %}{% endblock %}
+        </div>
+      {%- endif -%}
+      <div class="flex flex-col items-start gap-4 p-6">
+        {% block 'text', variant: 'type-data-sm', class: 'flex items-center gap-2 uppercase text-critical' %}<span class="grid-status-dot grid-status-dot-alert" aria-hidden="true"></span>{{ 'cart.empty_error' | t }}<span class="grid-cursor" aria-hidden="true"></span>{% endblock %}
+        <span class="badge">{{ 'cart.empty' | t }}</span>
+        {% block 'text', variant: 'type-body', class: 'text-ink-200' %}{{ 'cart.empty_description' | t }}{% endblock %}
+        {% block 'button', url: routes.all_products_collection_url, variant: 'button-primary', class: 'h-11 px-5 text-[13px]' %}{{- 'cart.continue_shopping' | t -}}{% endblock %}
+      </div>
+  {% endblock %}
+{% endif %}
+</div>
+{% endpartial %}
+</s-cart>
+{% endblock %}

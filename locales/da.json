@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Siden blev ikke fundet",
+    "not_found": "Siden blev ikke fundet.",
+    "back_to_shopping": "Udforsk kollektionen",
+    "suggestions_heading": "En anden vej frem.",
+    "recovery_body": "Siden kunne ikke findes. Der er stadig masser at gå på opdagelse i."
+  },
+  "general": {
+    "skip_to_content": "Spring til indhold",
+    "play_video": "Afspil video",
+    "video_player": "Videoafspiller",
+    "captions": "Undertekster",
+    "clear": "Ryd",
+    "back": "Tilbage",
+    "close": "Luk",
+    "dismiss": "Luk",
+    "drawer": "Skuffe",
+    "placeholder_image": "Pladsholderbillede",
+    "account": "Konto",
+    "search": "Søg",
+    "pagination": {
+      "label": "Sideinddeling",
+      "previous_page": "Forrige side",
+      "next_page": "Næste side",
+      "page": "Side {{ number }}",
+      "current_page": "Side {{ number }}, nuværende side"
+    },
+    "meta": {
+      "tagged": "tagget \"{{ tags }}\"",
+      "page": "Side {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Resultaterne er opdateret",
+    "variant_updated": "Valg opdateret",
+    "update_error": "Der opstod en fejl. Prøv igen."
+  },
+  "blog": {
+    "articles_heading": "Artikler",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Kommentar",
+    "comment_form_email": "Mail",
+    "comment_form_name": "Navn",
+    "comment_form_submit": "Send",
+    "comment_form_title": "Tilføj en kommentar",
+    "comments_count": {
+      "one": "1 kommentar",
+      "other": "{{ count }} kommentarer"
+    },
+    "no_articles": "Ingen artikler endnu."
+  },
+  "cart": {
+    "checkout": "Gå til betaling",
+    "title": "Indkøbskurv",
+    "remove": "Fjern: {{ title }}",
+    "empty": "Din indkøbskurv er tom.",
+    "empty_description": "Det ser ud til, at du ikke har lagt noget i din indkøbskurv endnu.",
+    "icon_label": {
+      "one": "Indkøbskurv (1 vare)",
+      "other": "Indkøbskurv ({{ count }} varer)"
+    },
+    "item_count": {
+      "one": "1 vare i indkøbskurven",
+      "other": "{{ count }} varer i indkøbskurven"
+    },
+    "item_removed": "Vare fjernet fra indkøbskurv",
+    "updated": "Indkøbskurv opdateret",
+    "note_label": "Ordrenotater",
+    "note_placeholder": "Tilføj særlige instruktioner til din ordre",
+    "taxes_and_shipping_at_checkout": "Skat og forsendelse beregnes på betalingssiden",
+    "discount_list": "Anvendte rabatter",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Rabatkode",
+    "discount_title": "Rabat: {{ title }}",
+    "update_error": "Indkøbskurven kunne ikke opdateres. Prøv igen.",
+    "refresh_error": "Indkøbskurven er opdateret, men visningen er muligvis ikke opdateret. Genindlæs siden for at se den seneste indkøbskurv.",
+    "continue_shopping": "Fortsæt med at shoppe",
+    "checkout_description": "Går videre til sikker betaling",
+    "discount_placeholder": "Indtast kode",
+    "discount_apply": "Anvend",
+    "note_accordion_label": "Særlige instruktioner",
+    "total_label": "Anslået i alt"
+  },
+  "contact": {
+    "name": "Navn",
+    "email": "Mail",
+    "phone": "Telefon (valgfrit)",
+    "message": "Besked",
+    "submit": "Send besked",
+    "success": "Tak for din henvendelse. Vi vender tilbage snart."
+  },
+  "collections": {
+    "all_collections": "Alle kollektioner",
+    "browse_heading": "Gennemse kollektioner",
+    "products_heading": "Produkter",
+    "placeholder_title": "Titel på kollektion",
+    "no_collections": "Der blev ikke fundet nogen kollektioner.",
+    "no_products": "Ingen produkter matcher de valgte filtre.",
+    "products_count": {
+      "one": "1 produkt",
+      "other": "{{ count }} produkter"
+    },
+    "filter": "Filtrer",
+    "filters": "Filtre",
+    "active_filters": "Aktive filtre",
+    "clear_all": "Ryd alle",
+    "remove_filter": "Fjern {{ filter }}",
+    "show_results": "Vis resultater",
+    "value_unavailable": "Unavailable",
+    "price_min": "Min. pris",
+    "price_max": "Maks. pris",
+    "price_to": "til",
+    "sort_by": "Sorter efter",
+    "filtering": {
+      "show_more": "Vis mere"
+    },
+    "view_all": "Se alle"
+  },
+  "header": {
+    "menu": "Menu",
+    "mobile_navigation": "Mobilnavigation",
+    "navigation": "Hovednavigation",
+    "show_submenu": "Vis undermenu for {{ title }}"
+  },
+  "footer": {
+    "quick_links": "Hurtige links",
+    "policies": "Politikker"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Føj til Apple Wallet",
+    "card": "Gavekort",
+    "expired": "Dette gavekort er udløbet",
+    "expires_on": "Udløber den {{ expires_on }}",
+    "use_at_checkout": "Brug dette gavekort på betalingssiden",
+    "a_gift_for_you": "En gave til dig",
+    "available": "{{ amount }} til rådighed",
+    "a_little_something": "En lille gave til dig",
+    "card_label": "Gavekort fra {{ shop }}",
+    "copy_code": "Kopiér kode",
+    "copied": "Koden er kopieret",
+    "copy_error": "Koden kunne ikke kopieres automatisk. Kopiér den manuelt.",
+    "disabled": "Dette gavekort er ikke længere gyldigt",
+    "start_shopping": "Begynd at shoppe"
+  },
+  "page": {
+    "content_heading": "Sideindhold"
+  },
+  "password": {
+    "title": "Denne butik er privat",
+    "eyebrow": "Åbner snart",
+    "launch_description": "Få et tidligt kig på det, der kommer.",
+    "enter": "Log ind",
+    "enter_with_password": "Gå ind med adgangskode",
+    "enter_store": "Gå ind i butikken",
+    "show": "Vis",
+    "hide": "Skjul",
+    "error": "Forkert adgangskode. Prøv igen.",
+    "field_label": "Adgangskode",
+    "placeholder": "Indtast adgangskode",
+    "get_updates": "Få opdateringer om åbningen",
+    "updates_description": "Vær den første til at få besked, når vi åbner.",
+    "updates_submit": "Giv mig besked",
+    "updates_success": "Tak for din tilmelding."
+  },
+  "product": {
+    "details": "Produktoplysninger",
+    "placeholder_title": "Produkttitel",
+    "quantity": "Antal",
+    "quantity_decrease": "Reducer antal for: {{ title }}",
+    "quantity_increase": "Forøg antal for: {{ title }}",
+    "quantity_input": "Antal for {{ title }}",
+    "add_to_cart": "Læg i indkøbskurv",
+    "added_to_cart": "Lagt i indkøbskurven",
+    "sold_out": "Udsolgt",
+    "description": "Beskrivelse",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Pris",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "Prisinterval",
+      "regular_price": "Normalpris",
+      "sale_price": "Udsalgspris",
+      "savings": "Spar {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Reducer antal",
+      "increase": "Forøg antal",
+      "input_label": "Antal"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 aktivt filter",
+      "other": "{{ count }} aktive filtre"
+    }
+  },
+  "forms": {
+    "required": "påkrævet",
+    "form_errors_title": "Ret følgende fejl:"
+  },
+  "search": {
+    "title": "Søg",
+    "label": "Søg",
+    "placeholder": "Søg",
+    "products_heading": "Produkter",
+    "results_heading": "Søgeresultater",
+    "view_all_results": "Se alle resultater",
+    "results_count_announcement": {
+      "one": "1 resultat tilgængeligt",
+      "other": "{{ count }} resultater tilgængelige"
+    },
+    "no_results_announcement": "Ingen resultater fundet for {{ terms }}",
+    "results_for": "{{ count }} resultater fundet for {{ terms }}",
+    "no_results": "Ingen resultater fundet for {{ terms }}",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Opdater"
+  },
+  "home": {
+    "hero": {
+      "title": "Nyheder",
+      "subtitle": "Udforsk kollektionen"
+    }
+  }
+}

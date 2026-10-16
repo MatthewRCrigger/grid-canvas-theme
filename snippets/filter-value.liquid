@@ -1,0 +1,42 @@
+{% doc %}
+  Renders a platform-generated filter checkbox as a text row or visual swatch.
+  Used by both the visible and the expandable value lists in filter-group.
+  The generated values are not independently authored block usages.
+
+  @param {object} filter - Collection/search filter owning the URL parameter. @required
+  @param {object} value - A platform filter value. @required
+
+  @example
+  {% render 'filter-value', filter: filter, value: value %}
+{% enddoc %}
+
+{%- assign is_disabled = false -%}
+{% if value.count == 0 and value.active == false %}{% assign is_disabled = true %}{% endif %}
+<li>
+  {% if filter.presentation == 'swatch' or filter.presentation == 'image' %}
+    {%- capture value_label -%}{{ value.label }}{% if value.count != blank %} ({{ value.count }}){% endif %}{%- endcapture -%}
+    <label class="group/swatch relative inline-flex{% if is_disabled %} opacity-50 cursor-not-allowed{% else %} cursor-pointer{% endif %}" title="{{ value_label | escape }}">
+      <input type="checkbox" name="{{ filter.param_name | escape }}" value="{{ value.value | escape }}"{% if value.active %} checked{% endif %}{% if is_disabled %} disabled{% endif %} class="sr-only">
+      <span class="relative swatch-md rounded-full border-2 border-border shrink-0 overflow-hidden inline-flex items-center justify-center bg-surface-secondary group-has-[:checked]/swatch:border-interactive group-has-[:focus-visible]/swatch:ring-2 group-has-[:focus-visible]/swatch:ring-accent group-has-[:focus-visible]/swatch:ring-offset-2"
+        {% if value.swatch.color %}style="background-color: {{ value.swatch.color | escape }}"{% elsif value.swatch.image %}style="background-image: url('{{ value.swatch.image | image_url: width: 100 | escape }}'); background-size: cover; background-position: center"{% elsif value.image %}style="background-image: url('{{ value.image | image_url: width: 100 | escape }}'); background-size: cover; background-position: center"{% endif %}>
+        <span class="absolute inset-0 flex items-center justify-center opacity-0 group-has-[:checked]/swatch:opacity-100 motion-safe:transition-opacity motion-safe:duration-200 bg-black/25" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        {% if is_disabled %}
+          <svg class="absolute inset-0 size-full text-on-surface" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="4" y1="4" x2="20" y2="20"/></svg>
+        {% endif %}
+      </span>
+      <span class="sr-only">{{ value_label | escape }}{% if is_disabled %} ({{ 'collections.value_unavailable' | t }}){% endif %}</span>
+    </label>
+  {% else %}
+    {%- comment -%} GRID row: square 1px box, amber outline + amber check when selected (Show results stays the only solid amber), mono count. {%- endcomment -%}
+    <label class="group/filter flex min-h-touch-target items-center gap-3 text-[15px] text-on-surface{% if is_disabled %} text-ink-400 cursor-not-allowed{% else %} cursor-pointer hover:text-on-surface{% endif %}">
+      <input type="checkbox" name="{{ filter.param_name | escape }}" value="{{ value.value | escape }}"{% if value.active %} checked{% endif %}{% if is_disabled %} disabled{% endif %} class="sr-only">
+      <span class="flex items-center justify-center size-4 rounded-none border border-line-300 bg-surface-secondary shrink-0 text-interactive motion-safe:transition-colors group-hover/filter:border-line-100 group-has-[:checked]/filter:border-interactive group-has-[:checked]/filter:bg-interactive/12 group-has-[:focus-visible]/filter:outline-2 group-has-[:focus-visible]/filter:outline-offset-2 group-has-[:focus-visible]/filter:outline-accent" aria-hidden="true">
+        <svg class="opacity-0 group-has-[:checked]/filter:opacity-100" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M20 6 9 17l-5-5"/></svg>
+      </span>
+      <span class="flex-1 min-w-0">{{ value.label | escape }}{% if is_disabled %}<span class="sr-only"> ({{ 'collections.value_unavailable' | t }})</span>{% endif %}</span>
+      {% if value.count != blank %}<span class="shrink-0 font-mono text-[12px] text-ink-300">{% if value.count < 10 %}0{% endif %}{{ value.count }}</span>{% endif %}
+    </label>
+  {% endif %}
+</li>

@@ -1,0 +1,54 @@
+{% doc %}
+  Renders the storefront's semantic `<footer>` wrapper as a dedicated Canvas
+  selection surface. It mirrors the container block's background and padding
+  controls without exposing a background image. Body content is composed via
+  `{{ content }}`.
+
+  @param {string} [class] - Tailwind utilities other than vertical padding; the padding setting owns `py-*`, `pt-*`, and `pb-*`.
+  @param {string} [attributes] - Additional HTML attributes passed through to the footer.
+
+  @category layout
+  @renders footer
+
+  @example
+  {% block 'footer', class: 'w-full max-w-page mx-auto px-margin' %}
+    <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</p>
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign composed_class = padding
+  if class != blank
+    assign composed_class = composed_class | append: ' ' | append: class | strip
+  endif
+-%}
+
+<footer {% if composed_class != blank %}class="{{ composed_class }}"{% endif %}{% if attributes != blank %} {{ attributes }}{% endif %}{% if background != blank %} style="background-color: {{ background }}"{% endif %}>
+  {{ content }}
+</footer>
+
+{% schema %}
+  {
+    "name": "t:blocks.footer",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background",
+        "label": "t:general.background"
+      },
+      {
+        "type": "select",
+        "id": "padding",
+        "label": "t:blocks.container_settings.padding",
+        "default": "",
+        "options": [
+          { "value": "", "label": "t:general.none" },
+          { "value": "py-8", "label": "t:blocks.container_settings.padding_small" },
+          { "value": "py-16", "label": "t:blocks.container_settings.padding_medium" },
+          { "value": "py-24", "label": "t:blocks.container_settings.padding_large" },
+          { "value": "py-32", "label": "t:blocks.container_settings.padding_extra_large" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

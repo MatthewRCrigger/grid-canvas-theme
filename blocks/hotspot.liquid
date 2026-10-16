@@ -1,0 +1,124 @@
+{% doc %}
+  A numbered GRID marker pinned to a point on an image. Clicking it opens a small
+  framed readout window with the caller's copy and an optional product row.
+
+  Place it inside a `relative` image frame; `x` and `y` are percentages of that frame,
+  so the marker stays locked to the art at every size. The readout is a native popover
+  (light dismiss + Escape) anchored to the marker from 48rem where CSS anchor
+  positioning is supported; on phones, and in browsers without anchor positioning,
+  it docks to the bottom of the screen as a framed sheet.
+
+  @param {string} [index] - Marker label and readout index, e.g. '01'. Default: '01'.
+  @param {string} [class] - Extra classes on the marker wrapper.
+  @param {string} [attributes] - Extra attributes on the marker wrapper.
+
+  @category media
+  @renders div
+
+  @example
+  <div class="relative aspect-[3/2]">
+    {% block 'image', image: hero_image, class: 'absolute inset-0' %}{% endblock %}
+    {% block 'hotspot', index: '01', x: 55, y: 20 %}
+      {% block 'text', tag: 'span', variant: 'type-heading-sm' %}Topsheet{% endblock %}
+      {% block 'text', variant: 'type-data', class: 'text-ink-200' %}Nylon / matte{% endblock %}
+    {% endblock %}
+  </div>
+{% enddoc %}
+
+{%- liquid
+  assign index = index | default: '01'
+  assign x = x | default: 50
+  assign y = y | default: 50
+  assign hotspot_product = product
+
+  assign uid = block.id | default: index | handleize
+  assign panel_id = 'hotspot-' | append: uid
+  assign anchor = '--hotspot-' | append: uid
+  assign aria_label = 'hotspot.open' | t: index: index
+-%}
+
+<div class="hotspot {{ class }}" style="--x: {{ x }}%; --y: {{ y }}%;" {{ attributes }} {{ block.shopify_attributes }}>
+  <button
+    type="button"
+    class="hotspot-trigger"
+    commandfor="{{ panel_id }}"
+    command="toggle-popover"
+    aria-label="{{ aria_label | escape }}"
+    style="anchor-name: {{ anchor }};"
+  >
+    <span class="hotspot-marker" aria-hidden="true">{{ index | escape }}</span>
+  </button>
+
+  <div
+    id="{{ panel_id }}"
+    popover
+    class="hotspot-panel"
+    role="dialog"
+    aria-label="{{ aria_label | escape }}"
+    style="position-anchor: {{ anchor }};"
+  >
+    <div class="panel">
+      <div class="panel-inner">
+        <div class="panel-header ps-3 pe-0">
+          <span class="type-data-sm text-ink-invert" aria-hidden="true">{{ 'hotspot.readout' | t: index: index }}</span>
+          <button type="button" class="grid-window-close size-10!" commandfor="{{ panel_id }}" command="hide-popover" aria-label="{{ 'general.close' | t | escape }}">
+            <span class="inline-flex items-center justify-center shrink-0 size-4" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span>
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-2 p-4">
+          {{ content }}
+        </div>
+
+        {%- if hotspot_product != blank -%}
+          <a href="{{ hotspot_product.url }}" class="hotspot-product">
+            <span class="relative size-14 shrink-0 overflow-hidden border border-line-300 bg-surface">
+              {%- if hotspot_product.featured_image -%}
+                {{ hotspot_product.featured_image | image_url: width: 112 | image_tag: class: 'absolute inset-0 size-full object-cover', loading: 'lazy', alt: hotspot_product.featured_image.alt | default: hotspot_product.title }}
+              {%- endif -%}
+            </span>
+            <span class="flex min-w-0 flex-1 flex-col gap-1">
+              <span class="type-heading-sm truncate text-on-surface">{{ hotspot_product.title | escape }}</span>
+              <span class="type-data-sm text-ink-200">{{ hotspot_product.price | money }}</span>
+            </span>
+            <span class="type-overline shrink-0 text-accent">{{ 'hotspot.view_product' | t }}</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "t:blocks.hotspot",
+    "settings": [
+      {
+        "type": "range",
+        "id": "x",
+        "label": "t:blocks.hotspot_settings.x",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 50
+      },
+      {
+        "type": "range",
+        "id": "y",
+        "label": "t:blocks.hotspot_settings.y",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 50
+      },
+      {
+        "type": "product",
+        "id": "product",
+        "label": "t:blocks.hotspot_settings.product",
+        "info": "t:blocks.hotspot_settings.product_info"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Strani ni bilo mogoče najti",
+    "not_found": "Strani ni bilo mogoče najti.",
+    "back_to_shopping": "Raziščite kolekcijo",
+    "suggestions_heading": "Drugačna pot naprej.",
+    "recovery_body": "Te strani ni bilo mogoče najti. Še vedno lahko odkrijete veliko."
+  },
+  "general": {
+    "skip_to_content": "Preskoči na vsebino",
+    "play_video": "Predvajaj videoposnetek",
+    "video_player": "Predvajalnik videoposnetkov",
+    "captions": "Podnapisi",
+    "clear": "Počisti",
+    "back": "Nazaj",
+    "close": "Zapri",
+    "dismiss": "Opusti",
+    "drawer": "Stranski meni",
+    "placeholder_image": "Nadomestna slika",
+    "account": "Račun",
+    "search": "Išči",
+    "pagination": {
+      "label": "Oštevilčenje strani",
+      "previous_page": "Prejšnja stran",
+      "next_page": "Naslednja stran",
+      "page": "Stran {{ number }}",
+      "current_page": "Stran {{ number }}, trenutna stran"
+    },
+    "meta": {
+      "tagged": "z oznako »{{ tags }}«",
+      "page": "Stran {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Rezultati so posodobljeni",
+    "variant_updated": "Izbira je posodobljena",
+    "update_error": "Prišlo je do napake. Poskusite znova."
+  },
+  "blog": {
+    "articles_heading": "Članki",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Komentar",
+    "comment_form_email": "E-pošta",
+    "comment_form_name": "Ime",
+    "comment_form_submit": "Objavi",
+    "comment_form_title": "Dodaj komentar",
+    "comments_count": {
+      "one": "1 komentar",
+      "other": "Komentarji: {{ count }}"
+    },
+    "no_articles": "Ni še nobenih člankov."
+  },
+  "cart": {
+    "checkout": "Na blagajno",
+    "title": "Košarica",
+    "remove": "Odstrani: {{ title }}",
+    "empty": "Vaša košarica je prazna.",
+    "empty_description": "Videti je, da v košarico še niste dodali nobenega izdelka.",
+    "icon_label": {
+      "one": "Košarica (1 kos)",
+      "other": "Košarica (število kosov: {{ count }})"
+    },
+    "item_count": {
+      "one": "1 kos v košarici",
+      "other": "Število kosov v košarici: {{ count }}"
+    },
+    "item_removed": "Kos je odstranjen iz košarice",
+    "updated": "Košarica je posodobljena",
+    "note_label": "Opombe k naročilu",
+    "note_placeholder": "Dodajte posebna navodila za vaše naročilo",
+    "taxes_and_shipping_at_checkout": "Davki in stroški dostave se izračunajo na blagajni",
+    "discount_list": "Uveljavljeni popusti",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Koda za popust",
+    "discount_title": "Popust: {{ title }}",
+    "update_error": "Košarice ni bilo mogoče posodobiti. Poskusite znova.",
+    "refresh_error": "Košarica je posodobljena, vendar prikaz morda ni posodobljen. Osvežite stran, da si ogledate najnovejše stanje košarice.",
+    "continue_shopping": "Nadaljuj z nakupovanjem",
+    "checkout_description": "Nadaljevanje na varno blagajno",
+    "discount_placeholder": "Vnesite kodo",
+    "discount_apply": "Uporabi",
+    "note_accordion_label": "Posebna navodila",
+    "total_label": "Ocenjeni znesek"
+  },
+  "contact": {
+    "name": "Ime",
+    "email": "E-pošta",
+    "phone": "Telefon (neobvezno)",
+    "message": "Sporočilo",
+    "submit": "Pošlji sporočilo",
+    "success": "Hvala za vaše sporočilo. Kmalu bomo stopili v stik z vami."
+  },
+  "collections": {
+    "all_collections": "Vse zbirke",
+    "browse_heading": "Prebrskaj zbirke",
+    "products_heading": "Izdelki",
+    "placeholder_title": "Ime zbirke",
+    "no_collections": "Ni bilo mogoče najti nobenih zbirk.",
+    "no_products": "Noben izdelek se ne ujema z izbranimi filtri.",
+    "products_count": {
+      "one": "1 izdelek",
+      "other": "Izdelki: {{ count }}"
+    },
+    "filter": "Filtriraj",
+    "filters": "Filtri",
+    "active_filters": "Aktivni filtri",
+    "clear_all": "Počisti vse",
+    "remove_filter": "Odstrani: {{ filter }}",
+    "show_results": "Prikaži rezultate",
+    "value_unavailable": "Unavailable",
+    "price_min": "Najnižja cena",
+    "price_max": "Najvišja cena",
+    "price_to": "do",
+    "sort_by": "Razvrsti po",
+    "filtering": {
+      "show_more": "Prikaži več"
+    },
+    "view_all": "Prikaži vse"
+  },
+  "header": {
+    "menu": "Meni",
+    "mobile_navigation": "Mobilna navigacija",
+    "navigation": "Glavna navigacija",
+    "show_submenu": "Prikaži podmeni {{ title }}"
+  },
+  "footer": {
+    "quick_links": "Hitre povezave",
+    "policies": "Pravilniki"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Dodaj v denarnico Apple",
+    "card": "Darilna kartica",
+    "expired": "Ta darilna kartica je potekla.",
+    "expires_on": "Poteka {{ expires_on }}",
+    "use_at_checkout": "Uporabi to darilno kartico na blagajni",
+    "a_gift_for_you": "Darilo za vas",
+    "available": "Na voljo: {{ amount }}",
+    "a_little_something": "Majhna pozornost za vas",
+    "card_label": "Darilna kartica trgovine {{ shop }}",
+    "copy_code": "Kopiraj kodo",
+    "copied": "Koda je kopirana",
+    "copy_error": "Kode ni bilo mogoče samodejno kopirati. Kopirajte jo ročno.",
+    "disabled": "Ta darilna kartica ni več veljavna",
+    "start_shopping": "Začnite nakupovati"
+  },
+  "page": {
+    "content_heading": "Vsebina strani"
+  },
+  "password": {
+    "title": "Ta trgovina je zasebna",
+    "eyebrow": "Kmalu odpiramo",
+    "launch_description": "Med prvimi si oglejte, kaj prihaja.",
+    "enter": "Vstopi",
+    "enter_with_password": "Vstopi z geslom",
+    "enter_store": "Vstopi v trgovino",
+    "show": "Prikaži",
+    "hide": "Skrij",
+    "error": "Nepravilno geslo. Poskusite znova.",
+    "field_label": "Geslo",
+    "placeholder": "Vnesite geslo",
+    "get_updates": "Prejemaj novice o odprtju",
+    "updates_description": "Med prvimi izvedite, kdaj odpremo.",
+    "updates_submit": "Obvesti me",
+    "updates_success": "Hvala za naročnino."
+  },
+  "product": {
+    "details": "Podrobnosti o izdelku",
+    "placeholder_title": "Ime izdelka",
+    "quantity": "Količina",
+    "quantity_decrease": "Zmanjšaj količino: {{ title }}",
+    "quantity_increase": "Povečaj količino: {{ title }}",
+    "quantity_input": "Količina za {{ title }}",
+    "add_to_cart": "Dodaj v košarico",
+    "added_to_cart": "Dodano v košarico",
+    "sold_out": "Razprodano",
+    "description": "Opis",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Cena",
+      "price_range_html": "{{ min }}–{{ max }}",
+      "price_range_label": "Cenovni razpon",
+      "regular_price": "Redna cena",
+      "sale_price": "Prodajna cena",
+      "savings": "Prihranek: {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Zmanjšaj količino",
+      "increase": "Povečaj količino",
+      "input_label": "Količina"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 aktiven filter",
+      "other": "Aktivni filtri: {{ count }}"
+    }
+  },
+  "forms": {
+    "required": "obvezno",
+    "form_errors_title": "Odpravite naslednje napake:"
+  },
+  "search": {
+    "title": "Iskanje",
+    "label": "Iskanje",
+    "placeholder": "Išči",
+    "products_heading": "Izdelki",
+    "results_heading": "Rezultati iskanja",
+    "view_all_results": "Prikaži vse rezultate",
+    "results_count_announcement": {
+      "one": "Na voljo je 1 rezultat",
+      "other": "Število rezultatov na voljo: {{ count }}"
+    },
+    "no_results_announcement": "Za »{{ terms }}« ni rezultatov.",
+    "results_for": "Število najdenih rezultatov za »{{ terms }}«: {{ count }}",
+    "no_results": "Za »{{ terms }}« ni rezultatov.",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Posodobi"
+  },
+  "home": {
+    "hero": {
+      "title": "Novosti",
+      "subtitle": "Raziščite kolekcijo"
+    }
+  }
+}

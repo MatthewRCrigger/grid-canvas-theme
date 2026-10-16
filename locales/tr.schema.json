@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Arka plan",
+    "buttons": "Düğmeler",
+    "cards": "Kartlar",
+    "color": "Renk",
+    "collection": "Koleksiyon",
+    "default": "Varsayılan",
+    "forms": "Formlar",
+    "link": "Bağlantı",
+    "pill": "Hap",
+    "rounded": "Yuvarlak",
+    "sharp": "Keskin",
+    "size": "Boyut",
+    "small": "Küçük",
+    "style": "Stil",
+    "text_style": "Metin stili",
+    "transparent": "Şeffaf",
+    "video": "Video",
+    "alignment": "Hizalama",
+        "none": "Yok",
+    "medium": "Orta",
+    "large": "Büyük",
+    "corner_radius": "Köşe yarıçapı",
+    "extra_small": "Çok küçük",
+    "extra_large": "Çok büyük"
+  },
+  "settings": {
+    "border_radius": "Kenarlık yarıçapı",
+    "colors": "Renkler",
+    "fonts": "Yazı tipleri",
+    "type_styles": "Yazı stilleri"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Görüntüleme",
+      "heading_xl": "Başlık XL",
+      "heading_lg": "Başlık LG",
+      "heading_md": "Başlık MD",
+      "heading_sm": "Başlık SM",
+      "body_lg": "Gövde LG",
+      "body": "Gövde",
+      "body_sm": "Gövde küçük",
+      "overline": "Üst çizgi"
+    },
+    "quantity_selector": {
+      "outlined": "Dış hatlı",
+      "filled": "Dolgulu"
+    },
+    "button": {
+      "custom": "Özel",
+      "outline": "Dış hat",
+      "plain": "Düz",
+      "primary": "Birincil",
+      "secondary": "İkincil"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Renk örneği",
+        "buttons": "Düğmeler",
+        "dropdown": "Açılır menü"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Düğme",
+    "container": "Kapsayıcı",
+    "container_settings": {
+      "fill": "Dolgu",
+      "fill_info": "Otomatik, mevcut arka planı korur.",
+      "fill_automatic": "Otomatik",
+      "background_image": "Arka plan görseli",
+      "padding": "İç boşluk",
+      "padding_small": "Küçük",
+      "padding_medium": "Orta",
+      "padding_large": "Büyük",
+      "padding_extra_large": "Ekstra büyük"
+    },
+    "featured_collection": "Öne çıkan koleksiyon",
+    "image": "Görsel",
+    "link": "Bağlantı",
+    "image_settings": {
+      "image": "Görsel",
+      "aspect_ratio": "Oran",
+      "auto": "Otomatik",
+      "square": "Kare",
+      "portrait": "Dikey"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Logo görseli",
+      "image_info": "Bu yerleşim için özel logo görseli.",
+      "height_info": "Yalnızca özel boyut seçeneği seçildiğinde uygulanır.",
+      "size": "Boyut",
+      "size_small": "Küçük",
+      "size_medium": "Orta",
+      "size_large": "Büyük",
+      "size_custom": "Özel",
+      "height": "Logo yüksekliği"
+    },
+    "main_menu": "Ana menü",
+    "basic_menu": "Temel menü",
+    "header": "Üst bilgi",
+    "footer": "Alt bilgi",
+    "menu_settings": {
+      "menu": "Menü",
+      "menu_info": "Hangi gezinme menüsünün görüntüleneceğini seçin.",
+      "dropdown_color": "Açılır menü rengi"
+    },
+    "card": "Kart",
+    "product_card": "Ürün kartı",
+    "collection_card": "Koleksiyon kartı",
+    "article_card": "Makale kartı",
+    "text": "Metin",
+    "richtext": "Zengin metin",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo kimliği",
+      "youtube_id": "YouTube kimliği",
+      "ratio": "Oran",
+      "ratio_auto": "Otomatik",
+      "ratio_square": "Kare",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Dikey (3:4)",
+      "autoplay": "Otomatik oynatma",
+      "loop": "Döngü",
+      "muted": "Sessiz",
+      "plays_inline": "Satır içi oynatılır",
+      "pause_on_hover": "Üzerine gelindiğinde duraklat"
+    },
+    "pagination": "Sayfalara ayırma",
+    "predictive_search": "Tahmini arama",
+    "price": "Fiyat",
+    "quantity_selector": "Adet seçici",
+    "quantity_selector_settings": {
+      "button_color": "Düğme rengi"
+    },
+    "variant_picker_settings": {
+      "shape": "Şekil",
+      "shape_square": "Kare",
+      "shape_rounded": "Yuvarlak",
+      "shape_circle": "Daire"
+    },
+    "variant_picker": "Varyasyon seçici",
+    "gift_card": "Hediye kartı"
+  },
+  "type_styles": {
+    "paragraph_size": "Paragraf boyutu",
+    "heading_size": "Başlık boyutu"
+  },
+  "typography": {
+    "primary_font": "Birincil yazı tipi",
+    "secondary_font": "İkincil yazı tipi"
+  },
+  "direction": {
+    "start": "Sol",
+    "center": "Orta",
+    "end": "Sağ"
+  }
+}

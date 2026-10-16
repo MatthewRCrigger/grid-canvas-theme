@@ -1,0 +1,15 @@
+{% doc %}
+  Renders the global `<s-notification>` toast host and loads its module. Render
+  once per layout near the end of `<body>`; components dispatch toast events that
+  this single host queues and auto-dismisses.
+
+  @category interactive
+  @renders s-notification
+
+  @example
+  {% render 'notification-host' %}
+{% enddoc %}
+
+{%- comment -%} The active-modal portal copies this class list, so keep its safe-area offsets here. {%- endcomment -%}
+<s-notification position="bottom-right" duration="5000" class="fixed top-auto inset-s-auto flex-col-reverse z-50 flex gap-3 w-notification-width pointer-events-none inset-be-[max(1.5rem,var(--safe-area-inset-bottom))] inset-e-[max(1.5rem,var(--safe-area-inset-inline-end))]" data-dismiss-label="{{ 'general.dismiss' | t }}"></s-notification>
+<script type="module" src="{{ 's-notification.js' | asset_url }}"></script>

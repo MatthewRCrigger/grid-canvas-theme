@@ -1,0 +1,62 @@
+{% doc %}
+  The GRID OS desktop: a bespoke home page region. From 64rem it fills the screen under the menu
+  bar, shows the wallpaper (a perspective grid floor, an image, or plain black) and holds the
+  caller's windows (Frame blocks with Desktop window on, placed with lg: position utilities)
+  and a desktop-icon list. Below 64rem it becomes a home screen: windows and the icon grid stack.
+
+  Compositional: the caller writes windows and the icon list inside the call.
+
+  @param {string} [class] - Extra utilities on the section.
+  @param {string} [attributes] - Extra attributes on the section (aria-*).
+
+  @category layout
+  @renders section
+
+  @example
+  {% block 'desktop' %}
+    {% block 'frame', id: 'win-boot', window: 'open', class: 'lg:absolute lg:start-8 lg:top-8 lg:w-[30rem]' %}…{% endblock %}
+    <ul class="os-icons">{% block 'desktop-icon', … %}{% endblock %}</ul>
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign wallpaper_style = wallpaper_style | default: 'grid'
+  if wallpaper_style == 'image' and wallpaper == blank
+    assign wallpaper_style = 'grid'
+  endif
+-%}
+
+<s-desktop class="os-desktop {{ class }}" data-wallpaper="{{ wallpaper_style }}" role="region" aria-label="{{ 'os.desktop_label' | t | escape }}" {{ attributes }} {{ block.shopify_attributes }}>
+  {%- if wallpaper_style == 'image' -%}
+    {{ wallpaper | image_url: width: 2400 | image_tag: class: 'os-wallpaper-image', alt: '', sizes: '100vw', widths: '1200,1600,2000,2400', loading: 'lazy' }}
+  {%- endif -%}
+  {%- comment -%} Corner coordinates: decorative GRID readouts pinned to the desktop corners. {%- endcomment -%}
+  <span class="os-desktop-coord os-desktop-coord-start" aria-hidden="true">X:0000 Y:0000</span>
+  <span class="os-desktop-coord os-desktop-coord-end" aria-hidden="true">GRID//OS</span>
+  {{ content }}
+</s-desktop>
+<script type="module" src="{{ 's-desktop.js' | asset_url }}"></script>
+
+{% schema %}
+  {
+    "name": "t:blocks.desktop",
+    "settings": [
+      {
+        "type": "select",
+        "id": "wallpaper_style",
+        "label": "t:blocks.desktop_settings.wallpaper_style",
+        "default": "grid",
+        "options": [
+          { "value": "grid", "label": "t:blocks.desktop_settings.wallpaper_grid" },
+          { "value": "image", "label": "t:blocks.desktop_settings.wallpaper_image" },
+          { "value": "plain", "label": "t:blocks.desktop_settings.wallpaper_plain" }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "wallpaper",
+        "label": "t:blocks.desktop_settings.wallpaper"
+      }
+    ]
+  }
+{% endschema %}

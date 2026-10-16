@@ -1,0 +1,176 @@
+<script type="application/ld+json">{{ article | structured_data }}</script>
+
+{% block 'container', class: 'os-stage' %}
+  {%- liquid
+    assign article_date = article.published_at | date: '%Y.%m.%d'
+    assign article_datetime = article.published_at | date: '%Y-%m-%d'
+    assign escaped_author = article.author | escape
+  -%}
+  <article class="mx-auto w-full max-w-[1040px] px-margin">
+    {%- comment -%} GRID header band: back link + mono log stamp, then the title at heading scale so long titles stay legible. {%- endcomment -%}
+    {%- comment -%} DOCUMENT window: the entry as an open file, title and log stamp in the title bar. {%- endcomment -%}
+    {% block 'frame', window: 'page', class: 'os-page', inner_class: 'flex flex-col' %}
+    <div class="panel-header os-page-bar">
+      <span class="truncate">{{ article.title | escape }}</span>
+      <span class="os-page-meta"><time datetime="{{ article_datetime }}">{{ article_date }}</time></span>
+    </div>
+    <header class="border-b border-line-400">
+      <div class="px-4 py-8 md:px-10 md:py-12">
+        <div class="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <a href="{{ blog.url }}" class="type-overline inline-flex min-h-touch-target items-center gap-2 text-accent no-underline motion-safe:transition-colors hover:text-on-surface">
+            <span class="inline-flex size-4 items-center justify-center rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-left.svg' | inline_asset_content -}}</span>
+            {{- 'blog.back_to_blog' | t -}}
+          </a>
+          <span class="type-data-sm uppercase text-ink-300"><time datetime="{{ article_datetime }}">{{ article_date }}</time></span>
+          {%- if article.author != blank -%}
+            <span class="type-overline text-ink-300">{{ escaped_author }}</span>
+          {%- endif -%}
+        </div>
+        {% block 'text', tag: 'h1', variant: 'type-heading-2xl', class: 'max-w-full break-words text-on-surface' %}{{ article.title | escape }}{% endblock %}
+      </div>
+    </header>
+
+    <div class="px-4 py-8 md:px-10 md:py-10">
+      {% if article.image %}
+        <div class="mb-10 overflow-hidden border border-line-400 bg-panel">
+          {%- assign article_image_alt = article.image.alt | default: article.title -%}
+          {%- comment -%} The `sizes` kwarg is mirrored by the article LCP preload imagesizes in snippets/lcp-preload.liquid — keep both byte-identical. {%- endcomment -%}
+          {% block 'image', image: article.image, sizes: '(min-width: 1008px) 960px, calc(100vw - 48px)', attributes: 'loading="eager" fetchpriority="high"', alt: article_image_alt, aspect_ratio: 'aspect-landscape' %}{% endblock %}
+        </div>
+      {% endif %}
+
+      {%- if article.content != blank -%}
+        {%- comment -%} The schema-backed setting keeps the article body connected as one richtext presentation block instead of decomposing its authored HTML into per-element text blocks. {%- endcomment -%}
+        {% block 'richtext', text: article.content, class: 'type-body' %}{% endblock %}
+      {%- endif -%}
+
+    </div>
+    {% endblock %}
+
+      {%- comment -%} Comments sit in a GRID panel: hairline rows, mono timestamps, then the form. {%- endcomment -%}
+      {% if blog.comments_enabled? %}
+        {% block 'frame', window: 'pane', tag: 'section', class: 'mt-6', attributes: 'aria-labelledby="article-comments-title"' %}
+            <div class="panel-header os-pane-bar">
+              {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'blog.comments_panel' | t }}{% endblock %}
+              <span class="type-data-sm uppercase text-ink-invert" id="article-comments-title">{{ 'blog.comments_count' | t: count: article.comments_count }}</span>
+            </div>
+            <div class="p-4 md:p-6">
+              {% paginate article.comments by 10 %}
+                {% for comment in article.comments %}
+                  <div class="py-5{% unless forloop.last %} border-b border-line-400{% endunless %}">
+                    <div class="mb-2 flex flex-wrap items-center gap-3">
+                      {% block 'text', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ comment.author | escape }}{% endblock %}
+                      <time datetime="{{ comment.created_at | date: '%Y-%m-%dT%H:%M:%S%z' }}" class="type-data-sm text-ink-300">
+                        {{- comment.created_at | date: '%Y.%m.%d' -}}
+                      </time>
+                    </div>
+                    <div class="type-body text-ink-200">{{ comment.content | escape | newline_to_br }}</div>
+                  </div>
+                {% endfor %}
+
+                {% block 'pagination', paginate: paginate %}{% endblock %}
+              {% endpaginate %}
+
+        {% form 'new_comment', article %}
+          {%- if form.errors -%}
+            <div role="alert" class="mb-4 flex items-start gap-3 border border-critical p-4 text-on-surface">
+              <div class="flex-1">
+                <p class="type-overline mb-2 text-critical">{{ 'forms.form_errors_title' | t }}</p>
+                <ul class="type-body-sm list-disc ps-4">
+                  {% for field in form.errors %}
+                    <li>{{ form.errors.translated_fields[field] | escape }} {{ form.errors.messages[field] | escape }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+
+            {%- for field in form.errors -%}
+              {%- capture field_error_message -%}{{ form.errors.translated_fields[field] }} {{ form.errors.messages[field] }}{%- endcapture -%}
+              {%- case field -%}
+                {%- when 'author' -%}
+                  {%- assign comment_name_error = field_error_message -%}
+                {%- when 'email' -%}
+                  {%- assign comment_email_error = field_error_message -%}
+                {%- when 'body' -%}
+                  {%- assign comment_body_error = field_error_message -%}
+              {%- endcase -%}
+            {%- endfor -%}
+          {%- endif -%}
+
+          <div class="mt-8 flex max-w-md flex-col gap-4">
+            {% block 'text', tag: 'h3', variant: 'type-overline-lg', class: 'text-on-surface' %}{{ 'blog.comment_form_title' | t }}{% endblock %}
+
+            {%- assign comment_name_label = 'blog.comment_form_name' | t -%}
+            {%- assign comment_email_label = 'blog.comment_form_email' | t -%}
+            {%- assign comment_body_label = 'blog.comment_form_body' | t -%}
+
+            {%- comment -%} Comment form repopulation with form.author and form.email {%- endcomment -%}
+            <div>
+              <label for="comment-name" class="type-overline mb-2 block text-ink-300">
+                {{- comment_name_label | escape -}}
+                <span class="text-critical ms-0.5" aria-hidden="true">*</span><span class="sr-only"> ({{ 'forms.required' | t }})</span>
+              </label>
+              <input
+                type="text"
+                name="comment[author]"
+                id="comment-name"
+                class="w-full"
+                {%- if form.author != blank %} value="{{ form.author | escape }}"{% endif %}
+                autocomplete="name"
+                required
+                aria-required="true"
+                {%- if comment_name_error != blank %} aria-invalid="true" aria-describedby="comment-name-error"{% endif %}
+              >
+              {%- if comment_name_error != blank -%}
+                <p id="comment-name-error" class="text-[12px] text-critical" role="alert">{{ comment_name_error | escape }}</p>
+              {%- endif -%}
+            </div>
+            <div>
+              <label for="comment-email" class="type-overline mb-2 block text-ink-300">
+                {{- comment_email_label | escape -}}
+                <span class="text-critical ms-0.5" aria-hidden="true">*</span><span class="sr-only"> ({{ 'forms.required' | t }})</span>
+              </label>
+              <input
+                type="email"
+                name="comment[email]"
+                id="comment-email"
+                class="w-full"
+                {%- if form.email != blank %} value="{{ form.email | escape }}"{% endif %}
+                autocomplete="email"
+                required
+                aria-required="true"
+                {%- if comment_email_error != blank %} aria-invalid="true" aria-describedby="comment-email-error"{% endif %}
+              >
+              {%- if comment_email_error != blank -%}
+                <p id="comment-email-error" class="text-[12px] text-critical" role="alert">{{ comment_email_error | escape }}</p>
+              {%- endif -%}
+            </div>
+            <div>
+              <label for="comment-body" class="type-overline mb-2 block text-ink-300">
+                {{- comment_body_label | escape -}}
+                <span class="text-critical ms-0.5" aria-hidden="true">*</span><span class="sr-only"> ({{ 'forms.required' | t }})</span>
+              </label>
+              <textarea
+                name="comment[body]"
+                id="comment-body"
+                rows="4"
+                class="w-full"
+                required
+                aria-required="true"
+                {%- if comment_body_error != blank %} aria-invalid="true" aria-describedby="comment-body-error"{% endif %}
+              >
+                {%- if form.body != blank %}{{ form.body | escape }}{% endif -%}
+              </textarea>
+              {%- if comment_body_error != blank -%}
+                <p id="comment-body-error" class="text-[12px] text-critical" role="alert">{{ comment_body_error | escape }}</p>
+              {%- endif -%}
+            </div>
+
+            {% block 'button', type: 'submit', variant: 'button-primary', class: 'h-11 self-start px-5 text-[13px]' %}{{- 'blog.comment_form_submit' | t -}}{% endblock %}
+          </div>
+        {% endform %}
+            </div>
+        {% endblock %}
+      {% endif %}
+  </article>
+{% endblock %}

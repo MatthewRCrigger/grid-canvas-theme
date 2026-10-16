@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Sidan hittades inte",
+    "not_found": "Sidan hittades inte.",
+    "back_to_shopping": "Utforska kollektionen",
+    "suggestions_heading": "En annan väg framåt.",
+    "recovery_body": "Sidan kunde inte hittas. Det finns fortfarande mycket att upptäcka."
+  },
+  "general": {
+    "skip_to_content": "Hoppa till innehåll",
+    "play_video": "Spela upp video",
+    "video_player": "Videospelare",
+    "captions": "Undertexter",
+    "clear": "Rensa",
+    "back": "Tillbaka",
+    "close": "Stäng",
+    "dismiss": "Stäng",
+    "drawer": "Sidopanel",
+    "placeholder_image": "Platshållarbild",
+    "account": "Konto",
+    "search": "Sök",
+    "pagination": {
+      "label": "Paginering",
+      "previous_page": "Föregående sida",
+      "next_page": "Nästa sida",
+      "page": "Sida {{ number }}",
+      "current_page": "Sida {{ number }}, aktuell sida"
+    },
+    "meta": {
+      "tagged": "taggad med ”{{ tags }}”",
+      "page": "Sida {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Resultaten har uppdaterats",
+    "variant_updated": "Urvalet har uppdaterats",
+    "update_error": "Ett fel uppstod. Försök igen."
+  },
+  "blog": {
+    "articles_heading": "Artiklar",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Kommentar",
+    "comment_form_email": "E-post",
+    "comment_form_name": "Namn",
+    "comment_form_submit": "Publicera",
+    "comment_form_title": "Lägg till en kommentar",
+    "comments_count": {
+      "one": "1 kommentar",
+      "other": "{{ count }} kommentarer"
+    },
+    "no_articles": "Inga artiklar än."
+  },
+  "cart": {
+    "checkout": "Kassa",
+    "title": "Varukorg",
+    "remove": "Ta bort: {{ title }}",
+    "empty": "Varukorgen är tom.",
+    "empty_description": "Det ser ut som om du inte har lagt till något i varukorgen än.",
+    "icon_label": {
+      "one": "Varukorg (1 artikel)",
+      "other": "Varukorg ({{ count }} artiklar)"
+    },
+    "item_count": {
+      "one": "1 artikel i varukorgen",
+      "other": "{{ count }} artiklar i varukorgen"
+    },
+    "item_removed": "Artikeln har tagits bort från varukorgen",
+    "updated": "Varukorgen har uppdaterats",
+    "note_label": "Orderanteckningar",
+    "note_placeholder": "Lägg till särskilda anvisningar för din order",
+    "taxes_and_shipping_at_checkout": "Skatt och frakt beräknas i kassan",
+    "discount_list": "Tillämpade rabatter",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Rabattkod",
+    "discount_title": "Rabatt: {{ title }}",
+    "update_error": "Kunde inte uppdatera varukorgen. Försök igen.",
+    "refresh_error": "Varukorgen har uppdaterats, men visningen kan vara inaktuell. Uppdatera sidan för att se den senaste varukorgen.",
+    "continue_shopping": "Fortsätt handla",
+    "checkout_description": "Går vidare till säker betalning",
+    "discount_placeholder": "Ange kod",
+    "discount_apply": "Tillämpa",
+    "note_accordion_label": "Särskilda anvisningar",
+    "total_label": "Beräknad totalsumma"
+  },
+  "contact": {
+    "name": "Namn",
+    "email": "E-post",
+    "phone": "Telefon (valfritt)",
+    "message": "Meddelande",
+    "submit": "Skicka meddelande",
+    "success": "Tack för att du kontaktar oss. Vi återkommer snart."
+  },
+  "collections": {
+    "all_collections": "Alla produktserier",
+    "browse_heading": "Bläddra bland produktserier",
+    "products_heading": "Produkter",
+    "placeholder_title": "Produktserienamn",
+    "no_collections": "Inga produktserier hittades.",
+    "no_products": "Inga produkter matchar de valda filtren.",
+    "products_count": {
+      "one": "1 produkt",
+      "other": "{{ count }} produkter"
+    },
+    "filter": "Filter",
+    "filters": "Filter",
+    "active_filters": "Aktiva filter",
+    "clear_all": "Rensa alla",
+    "remove_filter": "Ta bort {{ filter }}",
+    "show_results": "Visa resultat",
+    "value_unavailable": "Unavailable",
+    "price_min": "Lägsta pris",
+    "price_max": "Högsta pris",
+    "price_to": "till",
+    "sort_by": "Sortera efter",
+    "filtering": {
+      "show_more": "Visa mer"
+    },
+    "view_all": "Visa alla"
+  },
+  "header": {
+    "menu": "Meny",
+    "mobile_navigation": "Mobilnavigering",
+    "navigation": "Huvudnavigering",
+    "show_submenu": "Visa undermeny för {{ title }}"
+  },
+  "footer": {
+    "quick_links": "Snabblänkar",
+    "policies": "Policyer"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Lägg till i Apple Wallet",
+    "card": "Presentkort",
+    "expired": "Detta presentkort har gått ut",
+    "expires_on": "Går ut {{ expires_on }}",
+    "use_at_checkout": "Använd detta presentkort i kassan",
+    "a_gift_for_you": "En gåva till dig",
+    "available": "{{ amount }} tillgängligt",
+    "a_little_something": "En liten gåva till dig",
+    "card_label": "Presentkort från {{ shop }}",
+    "copy_code": "Kopiera kod",
+    "copied": "Koden har kopierats",
+    "copy_error": "Det gick inte att kopiera automatiskt. Kopiera koden manuellt.",
+    "disabled": "Det här presentkortet är inte längre giltigt",
+    "start_shopping": "Börja handla"
+  },
+  "page": {
+    "content_heading": "Sidinnehåll"
+  },
+  "password": {
+    "title": "Den här butiken är privat",
+    "eyebrow": "Öppnar snart",
+    "launch_description": "Få en tidig titt på vad som kommer.",
+    "enter": "Gå in",
+    "enter_with_password": "Gå in med lösenord",
+    "enter_store": "Gå in i butiken",
+    "show": "Visa",
+    "hide": "Dölj",
+    "error": "Felaktigt lösenord. Försök igen.",
+    "field_label": "Lösenord",
+    "placeholder": "Ange lösenord",
+    "get_updates": "Få uppdateringar om öppningen",
+    "updates_description": "Bli först med att få veta när vi öppnar.",
+    "updates_submit": "Meddela mig",
+    "updates_success": "Tack för din prenumeration."
+  },
+  "product": {
+    "details": "Produktuppgifter",
+    "placeholder_title": "Produktnamn",
+    "quantity": "Antal",
+    "quantity_decrease": "Minska antal: {{ title }}",
+    "quantity_increase": "Öka antal: {{ title }}",
+    "quantity_input": "Antal för {{ title }}",
+    "add_to_cart": "Lägg i varukorg",
+    "added_to_cart": "Tillagd i varukorg",
+    "sold_out": "Slutsåld",
+    "description": "Beskrivning",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Pris",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "Prisklass",
+      "regular_price": "Ordinarie pris",
+      "sale_price": "Reapris",
+      "savings": "Spara {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Minska antal",
+      "increase": "Öka antal",
+      "input_label": "Antal"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 aktivt filter",
+      "other": "{{ count }} aktiva filter"
+    }
+  },
+  "forms": {
+    "required": "obligatoriskt",
+    "form_errors_title": "Åtgärda följande fel:"
+  },
+  "search": {
+    "title": "Sök",
+    "label": "Sök",
+    "placeholder": "Sök",
+    "products_heading": "Produkter",
+    "results_heading": "Sökresultat",
+    "view_all_results": "Visa alla resultat",
+    "results_count_announcement": {
+      "one": "1 resultat tillgängligt",
+      "other": "{{ count }} resultat tillgängliga"
+    },
+    "no_results_announcement": "Inga resultat hittades för {{ terms }}",
+    "results_for": "{{ count }} resultat hittades för {{ terms }}",
+    "no_results": "Inga resultat hittades för {{ terms }}",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Uppdatera"
+  },
+  "home": {
+    "hero": {
+      "title": "Nyheter",
+      "subtitle": "Utforska kollektionen"
+    }
+  }
+}

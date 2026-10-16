@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Bakgrund",
+    "buttons": "Knappar",
+    "cards": "Kort",
+    "color": "Färg",
+    "collection": "Produktserie",
+    "default": "Standard",
+    "forms": "Formulär",
+    "link": "Länk",
+    "pill": "Kapsel",
+    "rounded": "Rundad",
+    "sharp": "Skarp",
+    "size": "Storlek",
+    "small": "Liten",
+    "style": "Stil",
+    "text_style": "Textstil",
+    "transparent": "Transparent",
+    "video": "Video",
+    "alignment": "Justering",
+        "none": "Ingen",
+    "medium": "Mellan",
+    "large": "Stor",
+    "corner_radius": "Hörnradie",
+    "extra_small": "Extra liten",
+    "extra_large": "Extra stor"
+  },
+  "settings": {
+    "border_radius": "Kantradie",
+    "colors": "Färger",
+    "fonts": "Teckensnitt",
+    "type_styles": "Typografistilar"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Display",
+      "heading_xl": "Rubrik XL",
+      "heading_lg": "Rubrik LG",
+      "heading_md": "Rubrik MD",
+      "heading_sm": "Rubrik SM",
+      "body_lg": "Brödtext stor",
+      "body": "Brödtext",
+      "body_sm": "Brödtext liten",
+      "overline": "Överlinje"
+    },
+    "quantity_selector": {
+      "outlined": "Med kontur",
+      "filled": "Fylld"
+    },
+    "button": {
+      "custom": "Anpassad",
+      "outline": "Kontur",
+      "plain": "Enkel",
+      "primary": "Primär",
+      "secondary": "Sekundär"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Färgprov",
+        "buttons": "Knappar",
+        "dropdown": "Rullgardinsmeny"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Knapp",
+    "container": "Behållare",
+    "container_settings": {
+      "fill": "Fyllning",
+      "fill_info": "Automatiskt behåller den befintliga bakgrunden.",
+      "fill_automatic": "Automatiskt",
+      "background_image": "Bakgrundsbild",
+      "padding": "Utfyllnad",
+      "padding_small": "Liten",
+      "padding_medium": "Mellan",
+      "padding_large": "Stor",
+      "padding_extra_large": "Extra stor"
+    },
+    "featured_collection": "Utvald kollektion",
+    "image": "Bild",
+    "link": "Länk",
+    "image_settings": {
+      "image": "Bild",
+      "aspect_ratio": "Proportioner",
+      "auto": "Auto",
+      "square": "Kvadratisk",
+      "portrait": "Stående"
+    },
+    "logo": "Logotyp",
+    "logo_settings": {
+      "image": "Logotypbild",
+      "image_info": "Anpassad logotypbild för denna placering.",
+      "height_info": "Tillämpas endast när alternativet för anpassad storlek är valt.",
+      "size": "Storlek",
+      "size_small": "Liten",
+      "size_medium": "Mellan",
+      "size_large": "Stor",
+      "size_custom": "Anpassad",
+      "height": "Logotyphöjd"
+    },
+    "main_menu": "Huvudmeny",
+    "basic_menu": "Enkel meny",
+    "header": "Sidhuvud",
+    "footer": "Sidfot",
+    "menu_settings": {
+      "menu": "Meny",
+      "menu_info": "Välj vilken navigeringsmeny som ska visas.",
+      "dropdown_color": "Färg på rullgardinsmeny"
+    },
+    "card": "Kort",
+    "product_card": "Produktkort",
+    "collection_card": "Produktseriekort",
+    "article_card": "Artikelkort",
+    "text": "Text",
+    "richtext": "RTF",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo-ID",
+      "youtube_id": "YouTube-ID",
+      "ratio": "Proportioner",
+      "ratio_auto": "Auto",
+      "ratio_square": "Kvadratisk",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Stående (3:4)",
+      "autoplay": "Spela upp automatiskt",
+      "loop": "Spela i loop",
+      "muted": "Ljudlös",
+      "plays_inline": "Spelas upp inbäddat",
+      "pause_on_hover": "Pausa vid hovring"
+    },
+    "pagination": "Paginering",
+    "predictive_search": "Prediktiv sökning",
+    "price": "Pris",
+    "quantity_selector": "Kvantitetsväljare",
+    "quantity_selector_settings": {
+      "button_color": "Knappfärg"
+    },
+    "variant_picker_settings": {
+      "shape": "Form",
+      "shape_square": "Kvadrat",
+      "shape_rounded": "Rundad",
+      "shape_circle": "Cirkel"
+    },
+    "variant_picker": "Variantväljare",
+    "gift_card": "Presentkort"
+  },
+  "type_styles": {
+    "paragraph_size": "Styckestorlek",
+    "heading_size": "Rubrikstorlek"
+  },
+  "typography": {
+    "primary_font": "Primärt typsnitt",
+    "secondary_font": "Sekundärt typsnitt"
+  },
+  "direction": {
+    "start": "Vänster",
+    "center": "Centrerad",
+    "end": "Höger"
+  }
+}

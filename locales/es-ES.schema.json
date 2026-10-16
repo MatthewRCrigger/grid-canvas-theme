@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Fondo",
+    "buttons": "Botones",
+    "cards": "Tarjetas",
+    "color": "Color",
+    "collection": "Colección",
+    "default": "Predeterminado",
+    "forms": "Formularios",
+    "link": "Enlace",
+    "pill": "Píldora",
+    "rounded": "Redondeado",
+    "sharp": "Recto",
+    "size": "Tamaño",
+    "small": "Pequeño",
+    "style": "Estilo",
+    "text_style": "Estilo de texto",
+    "transparent": "Transparente",
+    "video": "Vídeo",
+    "alignment": "Alineación",
+        "none": "Ninguno",
+    "medium": "Mediano",
+    "large": "Grande",
+    "corner_radius": "Radio de las esquinas",
+    "extra_small": "Extra pequeño",
+    "extra_large": "Extra grande"
+  },
+  "settings": {
+    "border_radius": "Radio del borde",
+    "colors": "Colores",
+    "fonts": "Fuentes",
+    "type_styles": "Estilos de tipografía"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Display",
+      "heading_xl": "Encabezado XL",
+      "heading_lg": "Encabezado LG",
+      "heading_md": "Encabezado MD",
+      "heading_sm": "Encabezado SM",
+      "body_lg": "Cuerpo LG",
+      "body": "Cuerpo",
+      "body_sm": "Cuerpo pequeño",
+      "overline": "Sobrelínea"
+    },
+    "quantity_selector": {
+      "outlined": "Con contorno",
+      "filled": "Relleno"
+    },
+    "button": {
+      "custom": "Personalizado",
+      "outline": "Contorno",
+      "plain": "Sencillo",
+      "primary": "Principal",
+      "secondary": "Secundario"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Muestra",
+        "buttons": "Botones",
+        "dropdown": "Menú desplegable"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Botón",
+    "container": "Contenedor",
+    "container_settings": {
+      "fill": "Relleno",
+      "fill_info": "Automático mantiene el fondo existente.",
+      "fill_automatic": "Automático",
+      "background_image": "Imagen de fondo",
+      "padding": "Relleno",
+      "padding_small": "Pequeño",
+      "padding_medium": "Mediano",
+      "padding_large": "Grande",
+      "padding_extra_large": "Extragrande"
+    },
+    "featured_collection": "Colección destacada",
+    "image": "Imagen",
+    "link": "Enlace",
+    "image_settings": {
+      "image": "Imagen",
+      "aspect_ratio": "Proporción",
+      "auto": "Automático",
+      "square": "Cuadrado",
+      "portrait": "Vertical"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Imagen del logo",
+      "image_info": "Imagen del logo personalizada para esta ubicación.",
+      "height_info": "Solo se aplica cuando se selecciona la opción de tamaño personalizado.",
+      "size": "Tamaño",
+      "size_small": "Pequeño",
+      "size_medium": "Mediano",
+      "size_large": "Grande",
+      "size_custom": "Personalizado",
+      "height": "Altura del logo"
+    },
+    "main_menu": "Menú principal",
+    "basic_menu": "Menú básico",
+    "header": "Encabezado",
+    "footer": "Pie de página",
+    "menu_settings": {
+      "menu": "Menú",
+      "menu_info": "Elige qué menú de navegación mostrar.",
+      "dropdown_color": "Color del menú desplegable"
+    },
+    "card": "Tarjeta",
+    "product_card": "Tarjeta de producto",
+    "collection_card": "Tarjeta de colección",
+    "article_card": "Tarjeta de artículo",
+    "text": "Texto",
+    "richtext": "Texto enriquecido",
+    "video": "Vídeo",
+    "video_settings": {
+      "vimeo_id": "ID de Vimeo",
+      "youtube_id": "ID de YouTube",
+      "ratio": "Proporción",
+      "ratio_auto": "Automático",
+      "ratio_square": "Cuadrado",
+      "ratio_video": "Vídeo (16:9)",
+      "ratio_portrait": "Vertical (3:4)",
+      "autoplay": "Reproducción automática",
+      "loop": "Bucle",
+      "muted": "Silenciado",
+      "plays_inline": "Reproducción en línea",
+      "pause_on_hover": "Pausar al pasar el cursor"
+    },
+    "pagination": "Paginación",
+    "predictive_search": "Búsqueda predictiva",
+    "price": "Precio",
+    "quantity_selector": "Selector de cantidad",
+    "quantity_selector_settings": {
+      "button_color": "Color del botón"
+    },
+    "variant_picker_settings": {
+      "shape": "Forma",
+      "shape_square": "Cuadrado",
+      "shape_rounded": "Redondeado",
+      "shape_circle": "Círculo"
+    },
+    "variant_picker": "Selector de variantes",
+    "gift_card": "Tarjeta de regalo"
+  },
+  "type_styles": {
+    "paragraph_size": "Tamaño de párrafo",
+    "heading_size": "Tamaño de encabezado"
+  },
+  "typography": {
+    "primary_font": "Fuente principal",
+    "secondary_font": "Fuente secundaria"
+  },
+  "direction": {
+    "start": "Izquierda",
+    "center": "Centro",
+    "end": "Derecha"
+  }
+}

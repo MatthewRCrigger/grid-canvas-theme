@@ -1,0 +1,52 @@
+{% doc %}
+  Registers the theme's Standard Actions cart configuration. An inline classic
+  script starts the standard-actions-override.js module import immediately, then
+  a one-shot DOMContentLoaded listener configures `Shopify.actions.openCart` and
+  `Shopify.actions.updateCart` so platform cart mutations use the theme handlers
+  instead of the full-page fallback.
+
+  The layout must render this snippet above content_for_header — the platform
+  requires the configuration hooks to register first. This is one of the two
+  audited bootstrap-only DOMContentLoaded exceptions documented in
+  docs/component-api.md.
+
+  @example
+  {% render 'standard-actions-config' %}
+{% enddoc %}
+
+<script>
+  (() => {
+    const standardActionsOverride = import({{ 'standard-actions-override.js' | asset_url | json }});
+    const cartEventTarget = () => document.querySelector('s-cart') ?? document;
+    const productFormEventTarget = () => document.querySelector('[data-product-form][aria-busy="true"]')
+      ?? document.querySelector('[data-product-form]')
+      ?? cartEventTarget();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const actions = window.Shopify?.actions;
+      if (!actions) return;
+
+      actions.openCart.configure({
+        async handler() {
+          const { handleOpenCart } = await standardActionsOverride;
+          return handleOpenCart();
+        },
+      });
+
+      actions.updateCart.configure({
+        // Product adds and cart edits emit from their owning interaction surface.
+        eventTarget: (meta) => {
+          if (meta?.type === 'shopify:cart:lines-update' && meta.action === 'add') {
+            return productFormEventTarget();
+          }
+
+          return cartEventTarget();
+        },
+        async handler(defaultHandler, payload, options) {
+          const { handleUpdateCart } = await standardActionsOverride;
+          return handleUpdateCart(defaultHandler, payload, options);
+        },
+      });
+    }, { once: true });
+  })();
+</script>

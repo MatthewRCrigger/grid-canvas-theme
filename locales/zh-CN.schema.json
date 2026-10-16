@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "背景",
+    "buttons": "按钮",
+    "cards": "卡片",
+    "color": "颜色",
+    "collection": "产品系列",
+    "default": "默认",
+    "forms": "表单",
+    "link": "链接",
+    "pill": "胶囊",
+    "rounded": "圆角",
+    "sharp": "直角",
+    "size": "尺寸",
+    "small": "小",
+    "style": "样式",
+    "text_style": "文本样式",
+    "transparent": "透明",
+    "video": "视频",
+    "alignment": "对齐方式",
+        "none": "无",
+    "medium": "中",
+    "large": "大",
+    "corner_radius": "圆角半径",
+    "extra_small": "超小",
+    "extra_large": "超大"
+  },
+  "settings": {
+    "border_radius": "边框圆角",
+    "colors": "颜色",
+    "fonts": "字体",
+    "type_styles": "字体样式"
+  },
+  "variants": {
+    "text_style": {
+      "display": "显示",
+      "heading_xl": "标题 XL",
+      "heading_lg": "标题 LG",
+      "heading_md": "标题 MD",
+      "heading_sm": "标题 SM",
+      "body_lg": "正文 LG",
+      "body": "正文",
+      "body_sm": "小号正文",
+      "overline": "上划线"
+    },
+    "quantity_selector": {
+      "outlined": "轮廓",
+      "filled": "填充"
+    },
+    "button": {
+      "custom": "自定义",
+      "outline": "轮廓",
+      "plain": "纯文本",
+      "primary": "主要",
+      "secondary": "次要"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "色票",
+        "buttons": "按钮",
+        "dropdown": "下拉菜单"
+      }
+    }
+  },
+  "blocks": {
+    "button": "按钮",
+    "container": "容器",
+    "container_settings": {
+      "fill": "填充",
+      "fill_info": "自动会保留现有背景。",
+      "fill_automatic": "自动",
+      "background_image": "背景图片",
+      "padding": "内边距",
+      "padding_small": "小",
+      "padding_medium": "中",
+      "padding_large": "大",
+      "padding_extra_large": "特大"
+    },
+    "featured_collection": "特色产品系列",
+    "image": "图片",
+    "link": "链接",
+    "image_settings": {
+      "image": "图片",
+      "aspect_ratio": "比例",
+      "auto": "自动",
+      "square": "方形",
+      "portrait": "纵向"
+    },
+    "logo": "logo",
+    "logo_settings": {
+      "image": "logo 图片",
+      "image_info": "此展示位置的自定义 logo 图片。",
+      "height_info": "仅在选择自定义尺寸选项时应用。",
+      "size": "尺寸",
+      "size_small": "小",
+      "size_medium": "中",
+      "size_large": "大",
+      "size_custom": "自定义",
+      "height": "logo 高度"
+    },
+    "main_menu": "主菜单",
+    "basic_menu": "基本菜单",
+    "header": "页眉",
+    "footer": "页脚",
+    "menu_settings": {
+      "menu": "菜单",
+      "menu_info": "选择要显示的导航菜单。",
+      "dropdown_color": "下拉菜单颜色"
+    },
+    "card": "卡片",
+    "product_card": "产品卡片",
+    "collection_card": "产品系列卡片",
+    "article_card": "文章卡片",
+    "text": "文本",
+    "richtext": "富文本",
+    "video": "视频",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "比例",
+      "ratio_auto": "自动",
+      "ratio_square": "方形",
+      "ratio_video": "视频 (16:9)",
+      "ratio_portrait": "纵向 (3:4)",
+      "autoplay": "自动播放",
+      "loop": "循环播放",
+      "muted": "静音",
+      "plays_inline": "内联播放",
+      "pause_on_hover": "悬停时暂停"
+    },
+    "pagination": "分页",
+    "predictive_search": "预测搜索",
+    "price": "价格",
+    "quantity_selector": "数量选择器",
+    "quantity_selector_settings": {
+      "button_color": "按钮颜色"
+    },
+    "variant_picker_settings": {
+      "shape": "形状",
+      "shape_square": "方形",
+      "shape_rounded": "圆角",
+      "shape_circle": "圆形"
+    },
+    "variant_picker": "多属性选择器",
+    "gift_card": "礼品卡"
+  },
+  "type_styles": {
+    "paragraph_size": "段落大小",
+    "heading_size": "标题大小"
+  },
+  "typography": {
+    "primary_font": "主要字体",
+    "secondary_font": "次要字体"
+  },
+  "direction": {
+    "start": "左对齐",
+    "center": "居中",
+    "end": "右对齐"
+  }
+}

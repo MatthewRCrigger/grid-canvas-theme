@@ -1,0 +1,86 @@
+{% doc %}
+  Emits the inline style block that wires merchant theme settings to CSS custom
+  properties. Render this from every layout head after the compiled stylesheet so
+  @font-face declarations and :root overrides apply on every page.
+
+  @example
+  {% render 'theme-styles' %}
+{% enddoc %}
+
+{%- liquid
+  # Emit @font-face declarations, deduplicating when body and heading
+  # share the same font.
+  assign body_face_id = settings.type_primary_font.family | append: '-' | append: settings.type_primary_font.weight | append: '-' | append: settings.type_primary_font.style
+  assign heading_face_id = settings.type_heading_font.family | append: '-' | append: settings.type_heading_font.weight | append: '-' | append: settings.type_heading_font.style
+
+  assign interactive_text = '#ffffff'
+  if settings.color_palette.interactive
+    assign interactive_brightness = settings.color_palette.interactive | color_brightness
+    if interactive_brightness > 128
+      assign interactive_text = '#000000'
+    endif
+  endif
+
+  assign radius_buttons = '0.5rem'
+  case settings.border_radius_buttons
+    when 'sharp'
+      assign radius_buttons = '0'
+    when 'pill'
+      assign radius_buttons = '9999px'
+  endcase
+
+  assign radius_cards = '0'
+  case settings.border_radius_cards
+    when 'rounded'
+      assign radius_cards = '0.5rem'
+    when 'pill'
+      assign radius_cards = '9999px'
+  endcase
+
+  assign radius_forms = '0'
+  case settings.border_radius_forms
+    when 'rounded'
+      assign radius_forms = '0.5rem'
+    when 'pill'
+      assign radius_forms = '9999px'
+  endcase
+-%}
+{%- comment -%} font-display swap prevents FOIT on text-LCP templates. {%- endcomment -%}
+<style>
+  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
+  {%- unless heading_face_id == body_face_id -%}
+    {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {%- endunless -%}
+  {%- if settings.type_mono_font -%}{{ settings.type_mono_font | font_face: font_display: 'swap' }}{%- endif -%}
+  :root {
+    --font-body: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    --font-heading: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    {%- if settings.type_mono_font %}
+    --font-mono: {{ settings.type_mono_font.family }}, ui-monospace, Menlo, {{ settings.type_mono_font.fallback_families }};
+    {%- endif %}
+    --radius-button: {{ radius_buttons }};
+    --radius-card: {{ radius_cards }};
+    --radius-input: {{ radius_forms }};
+    {% render 'theme-type-scale-variables' %}
+    {%- if settings.color_palette.surface %}
+    --color-surface: {{ settings.color_palette.surface }};
+    {%- endif %}
+    {%- if settings.color_palette.on_surface %}
+    --color-on-surface: {{ settings.color_palette.on_surface }};
+    {%- endif %}
+    {%- if settings.color_palette.surface_2 %}
+    --color-surface-secondary: {{ settings.color_palette.surface_2 }};
+    {%- endif %}
+    {%- if settings.color_palette.accent %}
+    --color-accent: {{ settings.color_palette.accent }};
+    {%- endif %}
+    {%- if settings.color_palette.interactive %}
+    --color-interactive: {{ settings.color_palette.interactive }};
+    --color-interactive-text: {{ interactive_text }};
+    --color-button-primary: var(--color-interactive);
+    --color-button-primary-text: var(--color-interactive-text);
+    --color-button-outline-border: var(--color-interactive);
+    --color-button-outline-text: var(--color-interactive);
+    {%- endif %}
+  }
+</style>

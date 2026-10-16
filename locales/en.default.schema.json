@@ -1,0 +1,302 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Background",
+    "buttons": "Buttons",
+    "cards": "Cards",
+    "color": "Color",
+    "collection": "Collection",
+    "default": "Default",
+    "forms": "Forms",
+    "link": "Link",
+    "pill": "Pill",
+    "rounded": "Rounded",
+    "sharp": "Sharp",
+    "size": "Size",
+    "small": "Small",
+    "style": "Style",
+    "text_style": "Text style",
+    "transparent": "Transparent",
+    "video": "Video",
+    "alignment": "Alignment",
+    "none": "None",
+    "medium": "Medium",
+    "large": "Large",
+    "corner_radius": "Corner radius",
+    "extra_small": "Extra small",
+    "extra_large": "Extra large"
+  },
+  "direction": {
+    "start": "Left",
+    "center": "Center",
+    "end": "Right"
+  },
+  "settings": {
+    "border_radius": "Border radius",
+    "colors": "Colors",
+    "fonts": "Fonts",
+    "logo": "Logo",
+    "favicon": "Favicon image",
+    "favicon_info": "Shown in browser tabs and bookmarks. Use a square image, at least 32 × 32 px. Leave empty to use the square logo from your Brand settings.",
+    "logo_image_info": "Shown everywhere the logo appears, including the header and password page. Leave empty to use the logo from your Brand settings, or your store name as text.",
+    "social_media": "Social media",
+    "social_info": "Instagram, X, TikTok, YouTube, Facebook, Pinterest, Snapchat, Tumblr and Vimeo links come from Settings > Brand. Use these fields for profiles Brand doesn't support. Paste the full URL; leave a field empty to hide it.",
+    "social_linkedin": "LinkedIn",
+    "social_linkedin_info": "Only used if no LinkedIn link is set in Settings > Brand.",
+    "social_github": "GitHub",
+    "type_styles": "Type styles",
+    "wallpaper": "Wallpaper",
+    "wallpaper_motion": "Cursor glow",
+    "wallpaper_motion_info": "The static grid floor behind every page on screens 1024px and wider. Cursor glow lights the grid cells near the mouse; it stays off for visitors who prefer reduced motion.",
+    "wallpaper_motion_live": "On",
+    "wallpaper_motion_still": "Off"
+  },
+  "variants": {
+    "text_style": {
+      "display_xl": "Display extra large",
+      "display": "Display",
+      "title": "Page title",
+      "heading_2xl": "Heading 2X large",
+      "heading_xl": "Heading extra large",
+      "heading_lg": "Heading large",
+      "heading_md": "Heading medium",
+      "heading_sm": "Heading small",
+      "body_lg": "Body large",
+      "body": "Body",
+      "body_sm": "Body small",
+      "overline_lg": "Overline large",
+      "overline": "Overline",
+      "data_lg": "Data large",
+      "data": "Data",
+      "data_sm": "Data small",
+      "tag": "Tag"
+    },
+    "quantity_selector": {
+      "outlined": "Outlined",
+      "filled": "Filled"
+    },
+    "button": {
+      "custom": "Custom",
+      "outline": "Outline",
+      "plain": "Plain",
+      "primary": "Primary",
+      "secondary": "Secondary"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Swatch",
+        "buttons": "Buttons",
+        "dropdown": "Dropdown"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Button",
+    "container": "Container",
+    "container_settings": {
+      "fill": "Fill",
+      "fill_info": "Automatic keeps the existing background.",
+      "fill_automatic": "Automatic",
+      "background_image": "Background image",
+      "padding": "Padding",
+      "padding_small": "Small",
+      "padding_medium": "Medium",
+      "padding_large": "Large",
+      "padding_extra_large": "Extra large"
+    },
+    "featured_collection": "Featured collection",
+    "featured_product": "Featured product",
+    "featured_product_settings": {
+      "product": "Product"
+    },
+    "image": "Image",
+    "link": "Link",
+    "image_settings": {
+      "image": "Image",
+      "aspect_ratio": "Ratio",
+      "auto": "Auto",
+      "square": "Square",
+      "portrait": "Portrait"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Logo image",
+      "image_info": "Custom logo image for this placement.",
+      "global_info": "Logo image, size and height are set in Theme settings > Logo and apply everywhere the logo appears.",
+      "height_info": "Only applied when the custom size option is selected.",
+      "size": "Size",
+      "size_small": "Small",
+      "size_medium": "Medium",
+      "size_large": "Large",
+      "size_custom": "Custom",
+      "height": "Logo height"
+    },
+    "main_menu": "Main menu",
+    "basic_menu": "Basic menu",
+    "header": "Header",
+    "collection_directory": "Collection directory",
+    "collection_directory_settings": {
+      "collection_list": "Collections",
+      "collection_list_info": "Pick and order the collections to list. Leave empty to list your first 8 collections."
+    },
+    "frame": "Frame",
+    "frame_settings": {
+      "variant": "Frame style",
+      "variant_grid": "GRID window",
+      "variant_hairline": "Hairline border",
+      "variant_none": "No border",
+      "border_color": "Frame color",
+      "border_color_info": "Colors the outer ring, hairline border and filled title bar. Leave empty for the theme line color.",
+      "background_info": "Leave empty to use the theme panel color.",
+      "header": "Title bar",
+      "header_info": "Filled uses the frame color as a solid strip. No fill keeps the strip open with a thin rule under it.",
+      "header_filled": "Filled",
+      "header_outline": "No fill",
+      "header_hidden": "Hide",
+      "entrance": "Entrance",
+      "entrance_info": "How the frame assembles as it scrolls into view. Turned off for shoppers who reduce motion.",
+      "entrance_none": "None",
+      "entrance_draw": "Draw",
+      "entrance_scan": "Scan",
+      "readout": "Title bar readout",
+      "readout_info": "A small live readout centred in the title bar, from tablet width up.",
+      "readout_none": "None",
+      "readout_status": "System status",
+      "readout_clock": "Clock",
+      "readout_scroll": "Scroll position",
+      "readout_alert": "Alert",
+      "span": "Width",
+      "span_info": "Columns this frame spans in a 12-column layout on desktop. Auto keeps the page design.",
+      "span_auto": "Auto",
+      "span_4": "4 columns",
+      "span_5": "5 columns",
+      "span_6": "6 columns (half)",
+      "span_7": "7 columns",
+      "span_8": "8 columns",
+      "span_12": "12 columns (full)",
+      "window": "Window",
+      "window_info": "Makes the frame a GRID OS window with working close, minimize and zoom controls. Page window: the main window of a page; close goes to the Desktop. Pane: a side window; close and minimize send it to the dock. Desktop: a floating, draggable window on the homepage desktop; closed ones open from a desktop icon. Pop-up window: the window inside a pop-up such as compare; close and minimize close the pop-up.",
+      "window_none": "Off",
+      "window_page": "Page window",
+      "window_pane": "Pane",
+      "window_open": "Desktop: open",
+      "window_closed": "Desktop: closed",
+      "window_dialog": "Pop-up window"
+    },
+    "dock": "Dock",
+    "dock_item": "Dock item",
+    "dock_item_settings": {
+      "icon": "Icon",
+      "url": "Link",
+      "url_info": "Items that open search, compare or the cart ignore this link."
+    },
+    "desktop": "Desktop",
+    "desktop_settings": {
+      "wallpaper": "Wallpaper image",
+      "wallpaper_style": "Wallpaper",
+      "wallpaper_grid": "Grid floor",
+      "wallpaper_image": "Image",
+      "wallpaper_plain": "Plain"
+    },
+    "desktop_icon": "Desktop icon",
+    "desktop_icon_settings": {
+      "icon": "Icon",
+      "url": "Link",
+      "url_info": "Opens as a window on desktop computers. Icons that open a desktop window ignore this link."
+    },
+    "os_icons": {
+      "finder": "Desktop",
+      "bag": "Shop",
+      "folder": "Folder",
+      "file": "Text file",
+      "image": "Image file",
+      "board": "Board",
+      "search": "Search",
+      "compare": "Compare",
+      "cart": "Cart",
+      "journal": "Journal",
+      "terminal": "Terminal",
+      "mail": "Mail",
+      "grid": "Grid"
+    },
+    "hotspot": "Hotspot",
+    "hotspot_settings": {
+      "x": "Horizontal position",
+      "y": "Vertical position",
+      "product": "Product",
+      "product_info": "Optional. Adds a product row with a link to the readout."
+    },
+    "footer": "Footer",
+    "button_settings": {
+      "url_info": "Buttons that open the cart, menu or search, or submit a form, ignore this link."
+    },
+    "header_settings": {
+      "scroll_behavior": "Scroll behavior",
+      "scroll_behavior_info": "Sticky keeps the header pinned to the top while shoppers scroll. Sticky with compact logo also shrinks the logo and header bar after scrolling.",
+      "scroll_static": "Static",
+      "scroll_sticky": "Sticky",
+      "scroll_sticky_shrink": "Sticky with compact logo",
+      "logo_position": "Logo position",
+      "logo_position_left": "Left",
+      "logo_position_center": "Center"
+    },
+    "menu_settings": {
+      "menu": "Menu",
+      "menu_info": "Pick which navigation menu to display.",
+      "dropdown_color": "Dropdown color"
+    },
+    "card": "Card",
+    "product_card": "Product Card",
+    "collection_card": "Collection Card",
+    "article_card": "Article Card",
+    "text": "Text",
+    "richtext": "Rich text",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "Ratio",
+      "ratio_auto": "Auto",
+      "ratio_square": "Square",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Portrait (3:4)",
+      "autoplay": "Autoplay",
+      "loop": "Loop",
+      "muted": "Muted",
+      "plays_inline": "Plays inline",
+      "pause_on_hover": "Pause on hover"
+    },
+    "pagination": "Pagination",
+    "predictive_search": "Predictive search",
+    "price": "Price",
+    "quantity_selector": "Quantity selector",
+    "quantity_selector_settings": {
+      "button_color": "Button color"
+    },
+    "variant_picker_settings": {
+      "shape": "Shape",
+      "shape_square": "Square",
+      "shape_rounded": "Rounded",
+      "shape_circle": "Circle"
+    },
+    "variant_picker": "Variant picker",
+    "gift_card": "Gift card"
+  },
+  "type_styles": {
+    "paragraph_size": "Paragraph size",
+    "heading_size": "Heading size"
+  },
+  "typography": {
+    "primary_font": "Primary font",
+    "secondary_font": "Secondary font",
+    "mono_font": "Data font (prices, counts, codes)"
+  }
+}

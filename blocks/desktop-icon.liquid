@@ -1,0 +1,75 @@
+{% doc %}
+  A GRID OS desktop icon: a wireframe glyph over a caps label. Pass `window` to open a desktop
+  window on this page (by id); otherwise it links to its URL, which opens as a page window on
+  desktop computers and as a normal page on phones. With a mouse the first click selects and
+  the second opens (see s-desktop).
+
+  Compositional: the caller writes the label (a text block) inside the call.
+
+  @param {string} [window] - Id of a desktop window (Frame block with Desktop window on) to open.
+  @param {string} [class] - Utilities on the list item.
+  @param {string} [attributes] - Extra attributes on the icon link or button.
+
+  @category navigation
+  @renders li
+
+  @example
+  {% block 'desktop-icon', icon: 'folder', url: collection.url %}
+    {% block 'text', tag: 'span', variant: 'type-data' %}Hydrogen{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign icon = icon | default: 'folder'
+  assign url = url | default: routes.root_url
+-%}
+
+<li class="os-icon-item {{ class }}" {{ block.shopify_attributes }}>
+  {%- if window != blank -%}
+    <button type="button" class="os-icon" data-window="{{ window }}" aria-controls="{{ window }}" {{ attributes }}>
+  {%- else -%}
+    <a href="{{ url | escape }}" class="os-icon" {{ attributes }}>
+  {%- endif -%}
+      <span class="os-icon-glyph" data-icon="{{ icon }}">
+        {% render 'os-icon', name: icon, class: 'size-full' %}
+      </span>
+      <span class="os-icon-label">{{ content }}</span>
+  {%- if window != blank -%}
+    </button>
+  {%- else -%}
+    </a>
+  {%- endif -%}
+</li>
+
+{% schema %}
+  {
+    "name": "t:blocks.desktop_icon",
+    "settings": [
+      {
+        "type": "select",
+        "id": "icon",
+        "label": "t:blocks.desktop_icon_settings.icon",
+        "default": "folder",
+        "options": [
+          { "value": "folder", "label": "t:blocks.os_icons.folder" },
+          { "value": "file", "label": "t:blocks.os_icons.file" },
+          { "value": "image", "label": "t:blocks.os_icons.image" },
+          { "value": "board", "label": "t:blocks.os_icons.board" },
+          { "value": "bag", "label": "t:blocks.os_icons.bag" },
+          { "value": "journal", "label": "t:blocks.os_icons.journal" },
+          { "value": "terminal", "label": "t:blocks.os_icons.terminal" },
+          { "value": "mail", "label": "t:blocks.os_icons.mail" },
+          { "value": "compare", "label": "t:blocks.os_icons.compare" },
+          { "value": "search", "label": "t:blocks.os_icons.search" },
+          { "value": "grid", "label": "t:blocks.os_icons.grid" }
+        ]
+      },
+      {
+        "type": "url",
+        "id": "url",
+        "label": "t:blocks.desktop_icon_settings.url",
+        "info": "t:blocks.desktop_icon_settings.url_info"
+      }
+    ]
+  }
+{% endschema %}

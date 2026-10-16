@@ -1,0 +1,240 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Base",
+    "theme_version": "0.1.0",
+    "theme_author": "Shopify",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "t:settings.logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo_image",
+        "label": "t:blocks.logo_settings.image",
+        "info": "t:settings.logo_image_info"
+      },
+      {
+        "type": "select",
+        "id": "logo_size",
+        "label": "t:blocks.logo_settings.size",
+        "default": "logo-size-custom",
+        "options": [
+          { "value": "w-16", "label": "t:blocks.logo_settings.size_small" },
+          { "value": "w-24", "label": "t:blocks.logo_settings.size_medium" },
+          { "value": "w-32", "label": "t:blocks.logo_settings.size_large" },
+          { "value": "logo-size-custom", "label": "t:blocks.logo_settings.size_custom" }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "logo_height",
+        "label": "t:blocks.logo_settings.height",
+        "info": "t:blocks.logo_settings.height_info",
+        "min": 16,
+        "max": 80,
+        "step": 4,
+        "unit": "px",
+        "default": 32,
+        "visible_if": "{{ settings.logo_size == 'logo-size-custom' }}"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:settings.favicon",
+        "info": "t:settings.favicon_info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings.colors",
+    "settings": [
+      {
+        "type": "color_palette",
+        "id": "color_palette",
+        "default": {
+          "surface": "#FFFFFF",
+          "on_surface": "#171717",
+          "surface_2": "#F5F5F5",
+          "accent": "#2563EB",
+          "interactive": "#171717"
+        }
+      }
+    ]
+  },
+  {
+    "name": "t:settings.fonts",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_primary_font",
+        "default": "manrope_n4",
+        "label": "t:typography.primary_font"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "default": "inter_n4",
+        "label": "t:typography.secondary_font"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_mono_font",
+        "default": "space_mono_n4",
+        "label": "t:typography.mono_font"
+      }
+    ]
+  },
+  {
+    "name": "t:settings.type_styles",
+    "settings": [
+      {
+        "type": "select",
+        "id": "type_scale_paragraph_size",
+        "label": "t:type_styles.paragraph_size",
+        "default": "sm",
+        "options": [
+          {
+            "value": "xs",
+            "label": "t:general.extra_small"
+          },
+          {
+            "value": "sm",
+            "label": "t:general.small"
+          },
+          {
+            "value": "md",
+            "label": "t:general.medium"
+          },
+          {
+            "value": "lg",
+            "label": "t:general.large"
+          },
+          {
+            "value": "xl",
+            "label": "t:general.extra_large"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "type_scale_heading_size",
+        "label": "t:type_styles.heading_size",
+        "default": "sm",
+        "options": [
+          {
+            "value": "xs",
+            "label": "t:general.extra_small"
+          },
+          {
+            "value": "sm",
+            "label": "t:general.small"
+          },
+          {
+            "value": "md",
+            "label": "t:general.medium"
+          },
+          {
+            "value": "lg",
+            "label": "t:general.large"
+          },
+          {
+            "value": "xl",
+            "label": "t:general.extra_large"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "t:settings.border_radius",
+    "settings": [
+      {
+        "type": "select",
+        "id": "border_radius_buttons",
+        "label": "t:general.buttons",
+        "default": "rounded",
+        "options": [
+          {
+            "value": "sharp",
+            "label": "t:general.sharp"
+          },
+          {
+            "value": "rounded",
+            "label": "t:general.rounded"
+          },
+          {
+            "value": "pill",
+            "label": "t:general.pill"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "border_radius_cards",
+        "label": "t:general.cards",
+        "default": "sharp",
+        "options": [
+          {
+            "value": "sharp",
+            "label": "t:general.sharp"
+          },
+          {
+            "value": "rounded",
+            "label": "t:general.rounded"
+          },
+          {
+            "value": "pill",
+            "label": "t:general.pill"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "border_radius_forms",
+        "label": "t:general.forms",
+        "default": "rounded",
+        "options": [
+          {
+            "value": "sharp",
+            "label": "t:general.sharp"
+          },
+          {
+            "value": "rounded",
+            "label": "t:general.rounded"
+          },
+          {
+            "value": "pill",
+            "label": "t:general.pill"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "t:settings.wallpaper",
+    "settings": [
+      {
+        "type": "select",
+        "id": "wallpaper_motion",
+        "label": "t:settings.wallpaper_motion",
+        "info": "t:settings.wallpaper_motion_info",
+        "default": "live",
+        "options": [
+          { "value": "live", "label": "t:settings.wallpaper_motion_live" },
+          { "value": "still", "label": "t:settings.wallpaper_motion_still" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "t:settings.social_media",
+    "settings": [
+      { "type": "paragraph", "content": "t:settings.social_info" },
+      { "type": "url", "id": "social_linkedin", "label": "t:settings.social_linkedin", "info": "t:settings.social_linkedin_info" },
+      { "type": "url", "id": "social_github", "label": "t:settings.social_github" }
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+{% doc %}
+  Renders the global search pop-up dialog shell. Its caller owns the window body:
+  the title bar and the shared Spotlight search (snippets/spotlight.liquid) with
+  its editable top hits and footer. Open with a trigger button using
+  `commandfor="predictive-search" command="show-modal"`.
+
+  @param {string} [class] - Additional CSS classes to append to the root element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category interactive
+  @renders s-dialog
+
+  @example
+  {% block 'predictive-search' %}
+    <div class="panel-header">…</div>
+    {% render 'spotlight', id: 'predictive-search', top_hits: ps_top_hits, autofocus: true %}
+  {% endblock %}
+{% enddoc %}
+
+{%- comment -%} The caller renders the shared GRID Spotlight (snippets/spotlight.liquid, id "predictive-search") inside; s-spotlight clears a query on the first Escape and lets the second close the dialog. {%- endcomment -%}
+<div class="contents{% if class != blank %} {{ class }}{% endif %}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+<s-dialog close-on-navigate>
+  <dialog
+    id="predictive-search"
+    class="overlay-panel grid-window-modal"
+    aria-label="{{ 'general.search' | t }}"
+  >
+    {%- comment -%} The visible window is the shared GRID OS pop-up window; the caller's content starts with its title bar. {%- endcomment -%}
+    {% render 'os-dialog-window', id: 'predictive-search-window', content: content, attributes: 'data-dialog-body' %}
+  </dialog>
+</s-dialog>
+</div>
+
+{% schema %}
+  {
+    "name": "t:blocks.predictive_search"
+  }
+{% endschema %}

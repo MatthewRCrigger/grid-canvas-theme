@@ -1,0 +1,53 @@
+{% doc %}
+  A hairline-ruled index of collections, read like a system table: mono index, caps
+  title, mono item count, arrow. Merchants choose and order the collections with the
+  Collections setting; when it is empty the first 8 store collections are listed.
+
+  Self-contained: callers pass an empty body.
+
+  @param {string} [class] - Extra classes on the list.
+  @param {string} [attributes] - Extra attributes on the list.
+
+  @category collection
+  @renders ul
+
+  @example
+  {% block 'collection-directory' %}{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign directory_list = collection_list
+  assign directory_limit = 50
+  if directory_list == blank
+    assign directory_list = collections
+    assign directory_limit = 8
+  endif
+-%}
+
+<ul role="list" class="flex flex-col {{ class }}" {{ attributes }} {{ block.shopify_attributes }}>
+  {%- for directory_collection in directory_list limit: directory_limit -%}
+    <li class="border-b border-line-400 last:border-b-0">
+      <a href="{{ directory_collection.url }}" class="group/row grid min-h-16 grid-cols-[2rem_minmax(0,1fr)_auto_1.25rem] md:grid-cols-[2.5rem_minmax(0,1fr)_auto_1.25rem] items-center gap-3 px-4 text-on-surface no-underline hover:bg-hover motion-safe:transition-colors md:px-6">
+        <span class="type-data-sm text-ink-300">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+        <span class="type-heading-sm truncate">{{ directory_collection.title | escape }}</span>
+        <span class="type-data-sm uppercase text-ink-200">{{ 'home.directory.items' | t: count: directory_collection.products_count }}</span>
+        <span class="inline-flex size-5 text-ink-300 group-hover/row:text-accent motion-safe:transition-colors rtl:-scale-x-100" aria-hidden="true">{{- 'icon-arrow-right.svg' | inline_asset_content -}}</span>
+      </a>
+    </li>
+  {%- endfor -%}
+</ul>
+
+{% schema %}
+  {
+    "name": "t:blocks.collection_directory",
+    "settings": [
+      {
+        "type": "collection_list",
+        "id": "collection_list",
+        "label": "t:blocks.collection_directory_settings.collection_list",
+        "info": "t:blocks.collection_directory_settings.collection_list_info",
+        "limit": 24
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,612 @@
+{%- comment -%} Visually-hidden page heading keeps the homepage's h1 contract while its regions provide the visible composition. {%- endcomment -%}
+<h1 class="sr-only">{{ shop.name }}</h1>
+
+{%- liquid
+  assign hero_image = images['grid-dev-stack-exploded.png']
+  assign carve_image = images['grid-dev-desk.png']
+  assign ridge_image = images['grid-dev-network.png']
+  assign field_riders_image = images['grid-dev-workstation.png']
+  assign riders_alt = 'home.field.riders_caption' | t
+  assign hero_alt = 'home.hud.image_alt' | t
+  assign carve_alt = 'home.target.image_alt' | t
+  assign ridge_alt = 'home.scan.image_alt' | t
+-%}
+
+{%- comment -%}
+  DESKTOP — the GRID OS desktop. The landing is one SPOTLIGHT window (search-first launcher)
+  centred in the space left of the icon columns. The board viewport, SPEC sheet and LIVE UNIT
+  stay as closed desktop windows opened from their icons.
+{%- endcomment -%}
+{%- assign live_product = all_products['demo-product'] -%}
+{% block 'desktop', wallpaper_style: 'plain' %}
+
+    {%- comment -%}
+      SPOTLIGHT — the landing window, Apple Spotlight behaviour in GRID style: intro copy, a
+      borderless query bar, then a grouped result list. With no query the list shows TOP HITS
+      from spotlight_collection (the Featured collection picker rewrites the handle here) and
+      the COMMANDS palette. Typing swaps in live predictive results for every resource type
+      (Top hit, suggested queries, products, collections, journal articles, pages, search all),
+      built by snippets/spotlight.liquid (shared with the search pop-up). This window owns the
+      intro, top hits and footer copy.
+    {%- endcomment -%}
+    {%- liquid
+      assign spotlight_collection = collections.all
+      assign spotlight_limit = 5
+      assign spotlight_shown = spotlight_collection.products_count
+      if spotlight_shown > spotlight_limit
+        assign spotlight_shown = spotlight_limit
+      endif
+    -%}
+    {% block 'frame', entrance: 'scan', id: 'win-spotlight', window: 'open', attributes: 'data-active', class: 'max-lg:order-1 lg:absolute lg:top-[4%] lg:start-[calc((100%_-_330px_-_min(860px,58%))_/_2)] lg:w-[min(860px,58%)]' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.spotlight.title' | t }}{% endblock %}
+        {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert' %}{{ 'home.spotlight.index' | t }}{% endblock %}
+      </div>
+      {%- capture spotlight_intro -%}
+        <div class="flex flex-col gap-2 px-4 pt-5 md:px-6 md:pt-6 group-data-[querying]/spot:hidden">
+          {% block 'text', tag: 'h2', variant: 'type-heading-2xl', class: '[overflow-wrap:anywhere]', attributes: 'id="home-hero-heading"' %}{{ 'home.spotlight.heading' | t }}{% endblock %}
+          {% block 'text', variant: 'type-body-lg', class: 'max-w-[52ch] text-ink-200' %}{{ 'home.spotlight.subtitle' | t }}{% endblock %}
+        </div>
+      {%- endcapture -%}
+      {%- capture spotlight_top_hits -%}
+            {% block 'featured-collection', collection: spotlight_collection, class: 'block !py-0', attributes: 'role="group" aria-labelledby="spotlight-top-hits" data-spotlight-default' %}
+              <div class="flex min-h-8 items-center justify-between gap-3 px-4 pt-2 md:px-6">
+                <span id="spotlight-top-hits">{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.spotlight.top_hits' | t }}{% endblock %}</span>
+                <span class="type-data-sm text-ink-300" aria-hidden="true">{{ spotlight_shown | prepend: '0' | slice: -2, 2 }}</span>
+              </div>
+              {%- for product in spotlight_collection.products limit: spotlight_limit -%}
+                {%- liquid
+                  assign hit_variant = product.selected_or_first_available_variant
+                  if product.price_varies
+                    assign hit_price_max = product.price_max | money
+                    assign hit_price = product.price_min | money | append: ' – ' | append: hit_price_max
+                  else
+                    assign hit_price = hit_variant.price | money
+                  endif
+                -%}
+                <div
+                  id="spotlight-hit-{{ forloop.index }}"
+                  role="option"
+                  aria-selected="false"
+                  data-url="{{ product.url | escape }}"
+                  class="group/hit border-s-2 border-transparent aria-selected:border-accent aria-selected:bg-hover"
+                >
+                  <a href="{{ product.url | escape }}" tabindex="-1" class="grid min-h-12 grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-1.5 text-on-surface no-underline md:px-6">
+                    <span class="relative block size-8 overflow-hidden border border-line-400 bg-surface-secondary">
+                      {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: '32px', widths: '64,96', attributes: 'loading="lazy"', alt: product.title, seed: forloop.index %}{% endblock %}
+                    </span>
+                    <span class="flex min-w-0 flex-col">
+                      <span class="type-heading-sm truncate group-aria-selected/hit:text-accent">{{ product.title | escape }}</span>
+                      {%- if product.vendor != blank or product.type != blank -%}
+                        <span class="type-data-sm truncate text-ink-300">{{ product.vendor | escape }}{% if product.vendor != blank and product.type != blank %} // {% endif %}{{ product.type | escape }}</span>
+                      {%- endif -%}
+                    </span>
+                    <span class="flex items-center gap-3">{% unless product.available %}<span class="badge badge-danger max-md:hidden">{{ 'home.status.sold_out' | t }}</span>{% endunless %}<span class="type-data text-on-surface">{{ hit_price }}</span></span>
+                  </a>
+                </div>
+              {%- endfor -%}
+            {% endblock %}
+      {%- endcapture -%}
+      {%- capture spotlight_footer -%}
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line-300 px-4 py-3 md:px-6">
+          <div class="flex flex-wrap gap-3">
+            {% block 'button', url: routes.all_products_collection_url, variant: 'button-primary', class: 'h-11 px-5 text-[13px]' %}{{- 'home.spotlight.cta_primary' | t -}}{% endblock %}
+            {% block 'button', url: routes.collections_url, variant: 'button-secondary', class: 'h-11 bg-surface px-5 text-[13px]' %}{{- 'home.spotlight.cta_secondary' | t -}}{% endblock %}
+          </div>
+          {% block 'text', tag: 'p', variant: 'type-data-sm', class: 'uppercase text-ink-300 max-lg:hidden' %}{{ 'home.spotlight.hint' | t }}{% endblock %}
+        </div>
+      {%- endcapture -%}
+      {% render 'spotlight', id: 'spotlight', intro: spotlight_intro, top_hits: spotlight_top_hits, footer: spotlight_footer, form_class: 'mt-3 group-data-[querying]/spot:mt-0', list_class: 'md:max-h-[19.5rem]' %}
+    {% endblock %}
+
+    {% block 'frame', variant: 'frame-grid', readout: 'clock', id: 'win-viewport', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[21%] lg:top-6 lg:w-[min(52%,880px)]' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.viewport_title' | t }}{% endblock %}
+        {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert max-md:hidden' %}{{ 'home.hud.board' | t }}{% endblock %}
+      </div>
+      <div class="relative aspect-[3/2]">
+        {% block 'image', image: hero_image, class: 'absolute inset-0', sizes: '(min-width: 1440px) 1200px, (min-width: 1280px) 86vw, (min-width: 750px) calc(100vw - 48px), calc(100vw - 32px)', attributes: 'loading="lazy"', alt: hero_alt %}{% endblock %}
+        {% render 'hud-brackets' %}
+        <div class="absolute end-3 top-3 z-[2] p-3 md:end-5 md:top-5 md:p-4">
+          {% block 'text', tag: 'span', variant: 'hud-tag' %}<span class="size-1.5 rounded-full bg-info" aria-hidden="true"></span>{{ 'home.hud.view' | t }}{% endblock %}
+        </div>
+
+        {%- comment -%} Hotspots stay locked to the exploded storefront stack (percent coordinates); each readout repeats its SPEC row as editable copy and can link a product. {%- endcomment -%}
+        {% block 'hotspot', index: '01', x: 55, y: 18 %}
+          {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.hud.layer_1' | t }}{% endblock %}
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_1_value' | t }}{% endblock %}
+        {% endblock %}
+        {% block 'hotspot', index: '02', x: 50, y: 32 %}
+          {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.hud.layer_2' | t }}{% endblock %}
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_2_value' | t }}{% endblock %}
+        {% endblock %}
+        {% block 'hotspot', index: '03', x: 50, y: 48 %}
+          {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.hud.layer_3' | t }}{% endblock %}
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_3_value' | t }}{% endblock %}
+        {% endblock %}
+        {% block 'hotspot', index: '04', x: 55, y: 66 %}
+          {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.hud.layer_4' | t }}{% endblock %}
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_4_value' | t }}{% endblock %}
+        {% endblock %}
+      </div>
+    {% endblock %}
+
+      {%- comment -%} SPEC sheet: the four board layers, matching the hotspots. {%- endcomment -%}
+        {% block 'frame', variant: 'frame-grid', header: 'outline', border_color: settings.color_palette.interactive, entrance: 'scan', id: 'win-spec', window: 'closed', class: 'lg:absolute lg:start-[26%] lg:top-[180px] lg:w-[min(28%,400px)]' %}
+            <div class="panel-header">
+              {% block 'text', tag: 'h3', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.hud.spec_title' | t }}{% endblock %}
+              {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert' %}{{ 'home.hud.spec_count' | t }}{% endblock %}
+            </div>
+            <dl class="flex flex-col">
+              <div class="flex min-h-11 items-center gap-3 border-b border-line-400 px-3 last:border-b-0">
+                <span class="type-data-sm w-6 text-info" aria-hidden="true">01</span>
+                <dt>{% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'tracking-[0.12em] text-on-surface' %}{{ 'home.hud.layer_1' | t }}{% endblock %}</dt>
+                <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+                <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_1_value' | t }}{% endblock %}</dd>
+              </div>
+              <div class="flex min-h-11 items-center gap-3 border-b border-line-400 px-3 last:border-b-0">
+                <span class="type-data-sm w-6 text-info" aria-hidden="true">02</span>
+                <dt>{% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'tracking-[0.12em] text-on-surface' %}{{ 'home.hud.layer_2' | t }}{% endblock %}</dt>
+                <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+                <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_2_value' | t }}{% endblock %}</dd>
+              </div>
+              <div class="flex min-h-11 items-center gap-3 border-b border-line-400 px-3 last:border-b-0">
+                <span class="type-data-sm w-6 text-info" aria-hidden="true">03</span>
+                <dt>{% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'tracking-[0.12em] text-on-surface' %}{{ 'home.hud.layer_3' | t }}{% endblock %}</dt>
+                <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+                <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_3_value' | t }}{% endblock %}</dd>
+              </div>
+              <div class="flex min-h-11 items-center gap-3 border-b border-line-400 px-3 last:border-b-0">
+                <span class="type-data-sm w-6 text-info" aria-hidden="true">04</span>
+                <dt>{% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'tracking-[0.12em] text-on-surface' %}{{ 'home.hud.layer_4' | t }}{% endblock %}</dt>
+                <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+                <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-ink-200' %}{{ 'home.hud.layer_4_value' | t }}{% endblock %}</dd>
+              </div>
+            </dl>
+        {% endblock %}
+
+      {%- comment -%} LIVE UNIT: one featured product as its own window; the product binds to live_product so the editor picker rewrites the handle here. {%- endcomment -%}
+        {% block 'featured-product', product: live_product, class: 'contents' %}
+          {% block 'frame', readout: 'status', entrance: 'scan', id: 'win-live', window: 'closed', class: 'lg:absolute lg:end-[336px] lg:bottom-[112px] lg:w-[min(22%,320px)]' %}
+            <div class="panel-header">
+              {% block 'text', tag: 'h3', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.live_title' | t }}{% endblock %}
+            </div>
+            {%- if live_product != blank -%}
+              {%- assign live_variant = live_product.selected_or_first_available_variant -%}
+              {% block 'card', block.name: 't:blocks.product_card', url: live_product.url, aria_label: live_product.title, class: 'flex flex-col gap-3 p-3' %}
+                <a href="{{ live_product.url | escape }}" style="view-transition-name: pimg-{{ live_product.id }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ live_product.title | escape }}">
+                  {% block 'image', fallback_image: live_product.featured_image, aspect_ratio: 'aspect-[4/3]', sizes: '(min-width: 1280px) 300px, (min-width: 768px) 50vw, 100vw', attributes: 'loading="lazy"', alt: live_product.title %}{% endblock %}
+                  {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>
+                </a>
+                <div class="flex items-start justify-between gap-3">
+                  {% block 'text', variant: 'type-heading-sm', tag: 'h4', class: 'line-clamp-2 text-on-surface' %}{{ live_product.title | escape }}{% endblock %}
+                  {% block 'price', price: live_variant.price, compare_at_price: live_variant.compare_at_price, variant: 'type-data', class: 'shrink-0' %}{% endblock %}
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  {% render 'compare-toggle', product: live_product %}
+                  {% block 'link', url: live_product.url %}{{ 'home.os.live_cta' | t }}{% endblock %}
+                </div>
+              {% endblock %}
+            {%- endif -%}
+          {% endblock %}
+        {% endblock %}
+
+{%- comment -%} The caller owns this collection source; the shell's collection setting binds to it so the editor picker rewrites the handle here. {%- endcomment -%}
+{%- liquid
+  assign featured_collection = collections.all
+  assign featured_product_limit = 6
+  assign featured_url = featured_collection.url | default: routes.all_products_collection_url
+  assign featured_total = featured_collection.products_count
+  assign featured_shown = featured_total
+  if featured_shown > featured_product_limit
+    assign featured_shown = featured_product_limit
+  endif
+  assign featured_product_sizes = '(min-width: 1024px) calc((min(100vw, 1440px) - 80px) * 0.22), (min-width: 768px) calc((100vw - 64px) / 3), calc((100vw - 48px) / 2)'
+-%}
+
+{%- comment -%}
+  INVENTORY — the product grid as an 8-column window (target lock and compare on every
+  card), beside a stack of two utility windows: COMPARE and SHORTCUTS.
+{%- endcomment -%}
+{% block 'featured-collection', collection: featured_collection, class: 'contents' %}
+  {% block 'frame', id: 'win-inventory', window: 'closed', class: 'lg:absolute lg:start-[4%] lg:top-6 lg:w-[min(60%,880px)]' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.inventory_title' | t }}{% endblock %}
+        <span class="type-data-sm uppercase text-ink-invert">{{ 'home.inventory.units' | t: count: featured_total }}</span>
+      </div>
+
+      {%- if featured_collection != blank and featured_total > 0 -%}
+        <ul role="list" class="-mb-px -me-px grid grid-cols-2 md:grid-cols-3">
+          {% for product in featured_collection.products limit: featured_product_limit %}
+            <li class="border-b border-e border-line-400 bg-panel">
+              {%- # theme-check-disable-next-line UnknownFilter %}
+              <s-view-event class="block h-full" view-event-trigger="intersect" view-event-payload="{{ product | standard_event_data: 'view', context: 'collection' | escape }}">
+                {%- assign card_variant = product.selected_or_first_available_variant -%}
+                {% block 'card', block.name: 't:blocks.product_card', url: product.url, aria_label: product.title, class: 'h-full p-3 md:p-4' %}
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="type-data-sm text-ink-300" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+                    {%- if product.available -%}
+                      <span class="badge badge-success">{{ 'home.status.in_stock' | t }}</span>
+                    {%- else -%}
+                      <span class="badge badge-danger">{{ 'home.status.sold_out' | t }}</span>
+                    {%- endif -%}
+                  </div>
+                  {%- comment -%} The live unit above already carries its own morph name, so it is skipped here to keep names unique on the page. {%- endcomment -%}
+                  <a href="{{ product.url | escape }}"{% unless product.id == live_product.id %} style="view-transition-name: pimg-{{ product.id }}"{% endunless %} class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ product.title | escape }}">
+                    {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: featured_product_sizes, attributes: 'loading="lazy"', alt: product.title, seed: forloop.index %}{% endblock %}
+                    {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>
+                  </a>
+                  <div class="flex flex-col gap-1 pt-1">
+                    {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ product.title | escape }}{% endblock %}
+                    {% block 'price', price: card_variant.price, compare_at_price: card_variant.compare_at_price, price_min: product.price_min, price_max: product.price_max, variant: 'type-data', class: 'self-start' %}{% endblock %}
+                  </div>
+                  {% render 'compare-toggle', product: product %}
+                {% endblock %}
+              </s-view-event>
+            </li>
+          {% endfor %}
+        </ul>
+      {%- else -%}
+        <ul role="list" class="-mb-px -me-px grid grid-cols-2 md:grid-cols-3">
+          {% for placeholder_index in (1..3) %}
+            <li class="bg-panel p-3 md:p-4">
+              {%- assign placeholder_title = 'product.placeholder_title' | t -%}
+              {% block 'card', block.name: 't:blocks.product_card', aria_label: placeholder_title %}
+                <div class="border border-line-400">
+                  {% block 'image', aspect_ratio: 'aspect-square', sizes: featured_product_sizes, alt: placeholder_title, seed: placeholder_index %}{% endblock %}
+                </div>
+                {% block 'text', variant: 'type-heading-sm', tag: 'h3' %}{{ placeholder_title | escape }}{% endblock %}
+              {% endblock %}
+            </li>
+          {% endfor %}
+        </ul>
+      {%- endif -%}
+
+      <div class="flex min-h-12 items-center justify-between gap-4 border-t border-line-300 px-3 md:px-4">
+        <span class="type-data-sm text-ink-300">{{ 'home.inventory.readout' | t: shown: featured_shown, total: featured_total }}</span>
+        {% block 'link', url: featured_url %}{{ 'home.inventory.view_all' | t }}{% endblock %}
+      </div>
+  {% endblock %}
+
+    {% block 'frame', entrance: 'scan', id: 'win-compare', window: 'closed', class: 'lg:absolute lg:start-[38%] lg:top-[150px] lg:w-[min(28%,400px)]' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.compare_title' | t }}{% endblock %}
+        <span class="type-data-sm text-ink-invert"><s-compare-count>00</s-compare-count>/03</span>
+      </div>
+      <div class="flex flex-col items-start gap-4 p-4 md:p-6">
+        {% block 'text', tag: 'p', variant: 'type-heading-lg', class: 'text-on-surface' %}{{ 'home.os.compare_heading' | t }}{% endblock %}
+        {% block 'text', variant: 'type-body', class: 'text-ink-200' %}{{ 'home.os.compare_body' | t }}{% endblock %}
+        {% block 'button', commandfor: 'compare-window', command: 'show-modal', variant: 'button-secondary', class: 'h-11 px-5 text-[13px]' %}{{- 'home.os.compare_cta' | t -}}{% endblock %}
+      </div>
+    {% endblock %}
+
+    {% block 'frame', entrance: 'scan', id: 'win-shortcuts', window: 'closed', class: 'lg:absolute lg:start-[30%] lg:top-[90px] lg:w-[min(30%,420px)]', inner_class: 'flex flex-col' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.keys_title' | t }}{% endblock %}
+      </div>
+      <div class="flex flex-1 flex-col items-start gap-4 p-4 md:p-6">
+        {% block 'text', tag: 'p', variant: 'type-heading-lg', class: 'text-on-surface' %}{{ 'home.os.keys_heading' | t }}{% endblock %}
+        <dl class="flex w-full flex-col border-t border-line-400">
+          <div class="flex min-h-11 items-center gap-3 border-b border-line-400">
+            <dt class="flex w-20 shrink-0 gap-1"><kbd class="grid-kbd">⌘</kbd><kbd class="grid-kbd">K</kbd></dt>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-200' %}{{ 'home.os.key_palette' | t }}{% endblock %}</dd>
+          </div>
+          <div class="flex min-h-11 items-center gap-3 border-b border-line-400">
+            <dt class="flex w-20 shrink-0 gap-1"><kbd class="grid-kbd">/</kbd></dt>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-200' %}{{ 'home.os.key_search' | t }}{% endblock %}</dd>
+          </div>
+          <div class="flex min-h-11 items-center gap-3 border-b border-line-400">
+            <dt class="flex w-20 shrink-0 gap-1"><kbd class="grid-kbd">Esc</kbd></dt>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-200' %}{{ 'home.os.key_close' | t }}{% endblock %}</dd>
+          </div>
+        </dl>
+        <div class="mt-auto">
+          {% block 'button', commandfor: 'predictive-search', command: 'show-modal', variant: 'button-outline', class: 'h-11 px-5 text-[13px]' %}{{- 'home.os.keys_cta' | t -}}{% endblock %}
+        </div>
+      </div>
+    {% endblock %}
+{% endblock %}
+
+{%- comment -%}
+  TARGET LOCK — a cyan reticle locks onto the carving rider; a GRID window floats over
+  the open half of the art listing the series. The collection setting binds to
+  target_collection so the editor picker rewrites the handle here.
+{%- endcomment -%}
+{%- liquid
+  assign target_collection = collections['hydrogen']
+  assign target_limit = 3
+  assign target_url = target_collection.url | default: routes.collections_url
+-%}
+{% block 'featured-collection', collection: target_collection, class: 'contents' %}
+  {% block 'frame', variant: 'frame-hairline', id: 'win-target', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[3%] lg:top-4 lg:w-[min(64%,980px)]' %}
+    <div class="panel-header">
+      {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.target_window' | t }}{% endblock %}
+    </div>
+    <div class="relative aspect-[3/2]">
+      {% block 'image', image: carve_image, class: 'absolute inset-0', sizes: '(min-width: 1440px) 1392px, (min-width: 750px) calc(100vw - 48px), calc(100vw - 32px)', attributes: 'loading="lazy"', alt: carve_alt %}{% endblock %}
+      {% render 'hud-brackets' %}
+      <div class="hud-reticle" style="--x: 53%; --y: 12%; --w: 37%; --h: 82%;">
+        {% render 'hud-brackets', class: 'hud-brackets-accent !inset-0' %}
+        <div class="absolute start-0 top-0 -translate-y-[calc(100%+8px)] max-md:hidden">
+          {% block 'text', tag: 'span', variant: 'hud-tag', class: 'border-info text-info' %}{{ 'home.target.tag' | t }}{% endblock %}
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 md:p-8 xl:absolute xl:start-[4%] xl:top-1/2 xl:z-[2] xl:w-[38%] xl:-translate-y-1/2 xl:p-0">
+      {% block 'frame' %}
+          <div class="panel-header">
+            {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.target.title' | t }}{% endblock %}
+            <span class="type-data-sm uppercase text-ink-invert">{{ target_collection.products_count }}</span>
+          </div>
+          <div class="border-b border-line-300 p-4 md:p-6">
+            {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-accent' %}{{ 'home.target.overline' | t }}{% endblock %}
+            <p class="type-heading-xl mt-2 text-on-surface">{{ target_collection.title | default: shop.name | escape }}</p>
+          </div>
+          {%- if target_collection.products_count > 0 -%}
+            <ul role="list" class="flex flex-col">
+              {%- for product in target_collection.products limit: target_limit -%}
+                {%- assign target_variant = product.selected_or_first_available_variant -%}
+                <li class="border-b border-line-400 last:border-b-0">
+                  <a href="{{ product.url }}" class="group/row grid min-h-16 grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 text-on-surface no-underline hover:bg-hover motion-safe:transition-colors md:px-6">
+                    <span class="type-data-sm text-ink-300" aria-hidden="true">0{{ forloop.index }}</span>
+                    <span class="flex min-w-0 flex-col gap-1">
+                      <span class="type-heading-sm truncate">{{ product.title | escape }}</span>
+                      {%- if product.available -%}
+                        <span class="badge badge-success self-start">{{ 'home.status.in_stock' | t }}</span>
+                      {%- else -%}
+                        <span class="badge badge-danger self-start">{{ 'home.status.sold_out' | t }}</span>
+                      {%- endif -%}
+                    </span>
+                    {% block 'price', price: target_variant.price, compare_at_price: target_variant.compare_at_price, price_min: product.price_min, price_max: product.price_max, variant: 'type-data', class: 'justify-self-end' %}{% endblock %}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+          <div class="flex min-h-12 items-center justify-end border-t border-line-300 px-4 md:px-6">
+            {% block 'link', url: target_url %}{{ 'home.target.view' | t }}{% endblock %}
+          </div>
+      {% endblock %}
+    </div>
+  {% endblock %}
+{% endblock %}
+
+
+{%- comment -%}
+  FIELD SCAN — a tall survey viewport (reticle on the rider, telemetry readout over the
+  empty sky) beside an editorial window carrying the brand line, with a live scroll readout.
+{%- endcomment -%}
+  {% block 'frame', variant: 'frame-hairline', id: 'win-scan', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[12%] lg:top-4 lg:w-[min(26%,380px)]' %}
+    <div class="panel-header">
+      {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.scan_window' | t }}{% endblock %}
+    </div>
+    <div class="relative aspect-[2/3]">
+      {% block 'image', image: ridge_image, class: 'absolute inset-0', sizes: '(min-width: 1440px) 570px, (min-width: 1024px) 40vw, (min-width: 750px) calc(100vw - 48px), calc(100vw - 32px)', attributes: 'loading="lazy"', alt: ridge_alt %}{% endblock %}
+      {% render 'hud-brackets' %}
+      <div class="hud-reticle" style="--x: 37%; --y: 20%; --w: 21%; --h: 16%;">
+        {% render 'hud-brackets', class: 'hud-brackets-accent !inset-0' %}
+        <div class="absolute start-0 top-full mt-2">
+          {% block 'text', tag: 'span', variant: 'hud-tag', class: 'border-info text-info' %}{{ 'home.scan.tag' | t }}{% endblock %}
+        </div>
+      </div>
+      <dl class="absolute end-[7%] top-[6%] z-[2] w-[54%] border border-line-300 bg-surface md:w-[46%]">
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+            <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.alt_label' | t }}{% endblock %}</dt>
+            <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.alt_value' | t }}{% endblock %}</dd>
+          </div>
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+            <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.slope_label' | t }}{% endblock %}</dt>
+            <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.slope_value' | t }}{% endblock %}</dd>
+          </div>
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+            <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.temp_label' | t }}{% endblock %}</dt>
+            <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.temp_value' | t }}{% endblock %}</dd>
+          </div>
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+            <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.wind_label' | t }}{% endblock %}</dt>
+            <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.wind_value' | t }}{% endblock %}</dd>
+          </div>
+      </dl>
+    </div>
+  {% endblock %}
+
+  {% block 'frame', readout: 'status', id: 'win-readme', window: 'closed', class: 'lg:absolute lg:start-[34%] lg:top-[56px] lg:w-[min(40%,580px)]', inner_class: 'flex flex-col' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.scan.title' | t }}{% endblock %}
+        {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert' %}{{ 'home.scan.index' | t }}{% endblock %}
+      </div>
+      <div class="flex flex-1 flex-col justify-between gap-12 p-4 md:p-10">
+        {% block 'text', tag: 'h2', variant: 'type-display' %}{{ 'home.field.readme_heading' | t }}{% endblock %}
+        <div class="flex flex-col gap-6 border-t border-line-300 pt-6">
+          {% block 'text', variant: 'type-body-lg', class: 'max-w-[52ch] text-ink-200' %}{{ 'home.field.readme_body' | t }}{% endblock %}
+          <div>
+            {% block 'button', url: routes.all_products_collection_url, variant: 'button-secondary', class: 'h-11 px-5 text-[13px]' %}{{ 'home.field.readme_cta' | t }}{% endblock %}
+          </div>
+        </div>
+      </div>
+  {% endblock %}
+
+{%- comment -%}
+  SESSION + MANUAL — the shoppable park session (hotspots link real products) beside a
+  MANUAL window whose Ride / Care / Build tabs each hold an editable text block.
+{%- endcomment -%}
+  {% block 'frame', id: 'win-session', window: 'closed', class: 'lg:absolute lg:start-[8%] lg:top-6 lg:w-[min(36%,520px)]', inner_class: 'flex flex-col' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.session_title' | t }}{% endblock %}
+        {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert' %}{{ 'home.field.riders_caption' | t }}{% endblock %}
+      </div>
+      <div class="relative aspect-[4/3] overflow-hidden [container-type:size] lg:aspect-auto lg:min-h-[28rem] lg:flex-1">
+        {% block 'image', image: field_riders_image, class: 'lg:absolute lg:inset-0', sizes: '(min-width: 1024px) 40vw, 100vw', attributes: 'loading="lazy"', alt: riders_alt %}{% endblock %}
+        {% render 'hud-brackets' %}
+        {%- comment -%}
+          The square art is object-cover cropped by this frame, so hotspots sit on a centred
+          square layer sized max(frame width, frame height); percent coordinates then match
+          the art exactly at every crop. Products bind here so the editor picker rewrites the handle.
+        {%- endcomment -%}
+        <div class="pointer-events-none absolute start-1/2 top-1/2 aspect-square w-[max(100cqw,100cqh)] -translate-x-1/2 -translate-y-1/2 rtl:translate-x-1/2 *:pointer-events-auto">
+          {% block 'hotspot', index: '01', x: 77, y: 35, product: all_products['demo-product'] %}
+            {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.field.hotspot_1_title' | t }}{% endblock %}
+            {% block 'text', tag: 'span', variant: 'type-body-sm', class: 'text-ink-200' %}{{ 'home.field.hotspot_1_body' | t }}{% endblock %}
+          {% endblock %}
+          {% block 'hotspot', index: '02', x: 55, y: 53, product: all_products['heavyweight-cotton-tee'] %}
+            {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.field.hotspot_2_title' | t }}{% endblock %}
+            {% block 'text', tag: 'span', variant: 'type-body-sm', class: 'text-ink-200' %}{{ 'home.field.hotspot_2_body' | t }}{% endblock %}
+          {% endblock %}
+          {% block 'hotspot', index: '03', x: 48, y: 37, product: all_products['canvas-tote-bag'] %}
+            {% block 'text', tag: 'span', variant: 'type-heading-sm', class: 'text-on-surface' %}{{ 'home.field.hotspot_3_title' | t }}{% endblock %}
+            {% block 'text', tag: 'span', variant: 'type-body-sm', class: 'text-ink-200' %}{{ 'home.field.hotspot_3_body' | t }}{% endblock %}
+          {% endblock %}
+        </div>
+      </div>
+  {% endblock %}
+
+  {% block 'frame', id: 'win-manual', window: 'closed', class: 'lg:absolute lg:start-[38%] lg:top-[100px] lg:w-[min(36%,520px)]', inner_class: 'flex flex-col' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.manual_title' | t }}{% endblock %}
+      </div>
+      <div class="flex flex-1 flex-col gap-6 p-4 md:p-8">
+        {% block 'text', tag: 'p', variant: 'type-title' %}{{ 'home.os.manual_heading' | t }}{% endblock %}
+        <div class="grid-tabs mt-auto" role="group" aria-label="{{ 'home.os.manual_title' | t | escape }}">
+          <input type="radio" name="home-manual-tabs" id="home-manual-tab-1" checked>
+          <label for="home-manual-tab-1" class="grid-tab type-overline">{% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'home.os.tab_1' | t }}{% endblock %}</label>
+          <input type="radio" name="home-manual-tabs" id="home-manual-tab-2">
+          <label for="home-manual-tab-2" class="grid-tab type-overline">{% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'home.os.tab_2' | t }}{% endblock %}</label>
+          <input type="radio" name="home-manual-tabs" id="home-manual-tab-3">
+          <label for="home-manual-tab-3" class="grid-tab type-overline">{% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'home.os.tab_3' | t }}{% endblock %}</label>
+          <div class="grid-tab-pane">
+            {% block 'text', variant: 'type-body-lg', class: 'max-w-[60ch] text-ink-200' %}{{ 'home.os.tab_1_body' | t }}{% endblock %}
+          </div>
+          <div class="grid-tab-pane">
+            {% block 'text', variant: 'type-body-lg', class: 'max-w-[60ch] text-ink-200' %}{{ 'home.os.tab_2_body' | t }}{% endblock %}
+          </div>
+          <div class="grid-tab-pane">
+            {% block 'text', variant: 'type-body-lg', class: 'max-w-[60ch] text-ink-200' %}{{ 'home.os.tab_3_body' | t }}{% endblock %}
+          </div>
+        </div>
+      </div>
+  {% endblock %}
+
+{%- comment -%} DIRECTORY + LOG — the collection index read like a system table, beside a SYSTEM LOG window of editable log lines. {%- endcomment -%}
+  {% block 'frame', id: 'win-directory', window: 'closed', class: 'lg:absolute lg:start-[18%] lg:top-10 lg:w-[min(44%,640px)]', inner_class: 'flex flex-col' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.directory.title' | t }}{% endblock %}
+      </div>
+      <div class="border-b border-line-300 p-4 md:p-6">
+        {% block 'text', tag: 'p', variant: 'type-heading-lg' %}{{ 'home.directory.heading' | t }}{% endblock %}
+      </div>
+      {% block 'collection-directory' %}{% endblock %}
+  {% endblock %}
+
+  {% block 'frame', readout: 'status', entrance: 'scan', id: 'win-log', window: 'closed', class: 'lg:absolute lg:start-[44%] lg:top-[160px] lg:w-[min(30%,420px)]' %}
+      <div class="panel-header">
+        {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.log_title' | t }}{% endblock %}
+      </div>
+      <ol role="list" class="flex flex-col p-2 md:p-3">
+        <li class="flex min-h-10 items-center gap-3 border-b border-line-400 px-2">
+          <span class="type-data-sm text-info" aria-hidden="true">&gt;</span>
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'flex-1 uppercase text-ink-200' %}{{ 'home.os.log_1' | t }}{% endblock %}
+          <span class="type-data text-[11px] text-ink-300" aria-hidden="true">{{ 'home.os.log_ok' | t }}</span>
+        </li>
+        <li class="flex min-h-10 items-center gap-3 border-b border-line-400 px-2">
+          <span class="type-data-sm text-info" aria-hidden="true">&gt;</span>
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'flex-1 uppercase text-ink-200' %}{{ 'home.os.log_2' | t }}{% endblock %}
+          <span class="type-data text-[11px] text-ink-300" aria-hidden="true">{{ 'home.os.log_ok' | t }}</span>
+        </li>
+        <li class="flex min-h-10 items-center gap-3 border-b border-line-400 px-2">
+          <span class="type-data-sm text-info" aria-hidden="true">&gt;</span>
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'flex-1 uppercase text-ink-200' %}{{ 'home.os.log_3' | t }}{% endblock %}
+          <span class="type-data text-[11px] text-ink-300" aria-hidden="true">{{ 'home.os.log_ok' | t }}</span>
+        </li>
+        <li class="flex min-h-10 items-center gap-3 border-b border-line-400 px-2">
+          <span class="type-data-sm text-info" aria-hidden="true">&gt;</span>
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'flex-1 uppercase text-ink-200' %}{{ 'home.os.log_4' | t }}{% endblock %}
+          <span class="type-data text-[11px] text-ink-300" aria-hidden="true">{{ 'home.os.log_ok' | t }}</span>
+        </li>
+        <li class="flex min-h-10 items-center gap-3 border-b border-line-400 px-2">
+          <span class="type-data-sm text-info" aria-hidden="true">&gt;</span>
+          {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'flex-1 uppercase text-ink-200' %}{{ 'home.os.log_5' | t }}{% endblock %}
+          <span class="type-data text-[11px] text-ink-300" aria-hidden="true">{{ 'home.os.log_ok' | t }}</span>
+        </li>
+        <li class="flex min-h-10 items-center gap-3 px-2" aria-hidden="true">
+          <span class="type-data-sm text-info">&gt;</span>
+          <span class="grid-cursor text-accent"></span>
+        </li>
+      </ol>
+  {% endblock %}
+
+  {%- comment -%}
+    DESKTOP ICONS — folders and files in columns from the end edge (a 4-up app grid on phones).
+    Link icons open their page as a window on desktop computers; icons with a window id open
+    that desktop window. Each label is its own text block; links are url settings.
+  {%- endcomment -%}
+  {%- liquid
+    assign icon_hydrogen_url = collections['hydrogen'].url | default: routes.collections_url
+    assign icon_automated_url = collections['automated-collection'].url | default: routes.collections_url
+    assign icon_journal_url = blogs.news.url | default: routes.root_url
+    assign icon_contact_url = pages.contact.url | default: routes.root_url
+  -%}
+  <ul role="list" class="os-icons max-lg:order-2" aria-label="{{ 'os.icons_label' | t | escape }}">
+    {% block 'desktop-icon', icon: 'search', window: 'win-spotlight' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_spotlight' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'image', window: 'win-viewport' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_viewport' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'board', window: 'win-live' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_live' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'folder', url: routes.all_products_collection_url %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_all' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'folder', url: icon_hydrogen_url %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_hydrogen' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'folder', url: icon_automated_url %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_automated' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'folder', window: 'win-directory' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_directory' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'bag', window: 'win-inventory' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_inventory' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'journal', url: icon_journal_url %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_journal' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'mail', url: icon_contact_url %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_contact' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'file', window: 'win-spec' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_spec' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'image', window: 'win-target' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_target' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'image', window: 'win-scan' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_scan' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'file', window: 'win-readme' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_readme' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'image', window: 'win-session' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_session' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'board', window: 'win-manual' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_manual' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'terminal', window: 'win-log' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_log' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'compare', window: 'win-compare' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_compare' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'grid', window: 'win-shortcuts' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_shortcuts' | t }}{% endblock %}
+    {% endblock %}
+  </ul>
+{% endblock %}

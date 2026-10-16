@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Sivua ei löytynyt",
+    "not_found": "Sivua ei löytynyt.",
+    "back_to_shopping": "Tutustu mallistoon",
+    "suggestions_heading": "Toinen tie eteenpäin.",
+    "recovery_body": "Sivua ei löytynyt. Löydettävää riittää silti."
+  },
+  "general": {
+    "skip_to_content": "Siirry sisältöön",
+    "play_video": "Toista video",
+    "video_player": "Videosoitin",
+    "captions": "Tekstitykset",
+    "clear": "Tyhjennä",
+    "back": "Takaisin",
+    "close": "Sulje",
+    "dismiss": "Sulje",
+    "drawer": "Sivupaneeli",
+    "placeholder_image": "Paikkamerkkikuva",
+    "account": "Tili",
+    "search": "Haku",
+    "pagination": {
+      "label": "Sivunumerointi",
+      "previous_page": "Edellinen sivu",
+      "next_page": "Seuraava sivu",
+      "page": "Sivu {{ number }}",
+      "current_page": "Sivu {{ number }}, nykyinen sivu"
+    },
+    "meta": {
+      "tagged": "lisätty tunniste ”{{ tags }}”",
+      "page": "Sivu {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Tulokset päivitetty",
+    "variant_updated": "Valinta päivitetty",
+    "update_error": "Tapahtui virhe. Yritä uudelleen."
+  },
+  "blog": {
+    "articles_heading": "Artikkelit",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Kommentti",
+    "comment_form_email": "Sähköposti",
+    "comment_form_name": "Nimi",
+    "comment_form_submit": "Julkaise",
+    "comment_form_title": "Lisää kommentti",
+    "comments_count": {
+      "one": "1 kommentti",
+      "other": "{{ count }} kommenttia"
+    },
+    "no_articles": "Ei vielä artikkeleita."
+  },
+  "cart": {
+    "checkout": "Kassalle",
+    "title": "Ostoskori",
+    "remove": "Poista: {{ title }}",
+    "empty": "Ostoskorisi on tyhjä.",
+    "empty_description": "Näyttää siltä, ettet ole vielä lisännyt mitään ostoskoriisi.",
+    "icon_label": {
+      "one": "Ostoskori (1 tuote)",
+      "other": "Ostoskori ({{ count }} tuotetta)"
+    },
+    "item_count": {
+      "one": "1 tuote ostoskorissa",
+      "other": "{{ count }} tuotetta ostoskorissa"
+    },
+    "item_removed": "Tuote poistettu ostoskorista",
+    "updated": "Ostoskori päivitetty",
+    "note_label": "Tilauksen huomautukset",
+    "note_placeholder": "Lisää erityisohjeita tilauksellesi",
+    "taxes_and_shipping_at_checkout": "Verot ja toimituskulut lasketaan kassalla",
+    "discount_list": "Käytetyt alennukset",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Alennuskoodi",
+    "discount_title": "Alennus: {{ title }}",
+    "update_error": "Ostoskorin päivitys epäonnistui. Yritä uudelleen.",
+    "refresh_error": "Ostoskori päivitettiin, mutta näkymä ei ehkä ole ajan tasalla. Päivitä sivu nähdäksesi uusimman ostoskorin.",
+    "continue_shopping": "Jatka ostoksia",
+    "checkout_description": "Siirtyy suojattuun maksuun",
+    "discount_placeholder": "Anna koodi",
+    "discount_apply": "Käytä",
+    "note_accordion_label": "Erityisohjeet",
+    "total_label": "Arvioitu loppusumma"
+  },
+  "contact": {
+    "name": "Nimi",
+    "email": "Sähköposti",
+    "phone": "Puhelinnumero (valinnainen)",
+    "message": "Viesti",
+    "submit": "Lähetä viesti",
+    "success": "Kiitos yhteydenotostasi. Olemme sinuun pian yhteydessä."
+  },
+  "collections": {
+    "all_collections": "Kaikki kokoelmat",
+    "browse_heading": "Selaa kokoelmia",
+    "products_heading": "Tuotteet",
+    "placeholder_title": "Kokoelman nimi",
+    "no_collections": "Kokoelmia ei löytynyt.",
+    "no_products": "Yksikään tuote ei vastaa valittuja suodattimia.",
+    "products_count": {
+      "one": "1 tuote",
+      "other": "{{ count }} tuotetta"
+    },
+    "filter": "Suodata",
+    "filters": "Suodattimet",
+    "active_filters": "Aktiiviset suodattimet",
+    "clear_all": "Tyhjennä kaikki",
+    "remove_filter": "Poista {{ filter }}",
+    "show_results": "Näytä tulokset",
+    "value_unavailable": "Unavailable",
+    "price_min": "Vähimmäishinta",
+    "price_max": "Enimmäishinta",
+    "price_to": "–",
+    "sort_by": "Lajitteluperuste",
+    "filtering": {
+      "show_more": "Näytä lisää"
+    },
+    "view_all": "Näytä kaikki"
+  },
+  "header": {
+    "menu": "Valikko",
+    "mobile_navigation": "Mobiilinavigointi",
+    "navigation": "Päänavigointi",
+    "show_submenu": "Näytä kohteen {{ title }} alivalikko"
+  },
+  "footer": {
+    "quick_links": "Pikalinkit",
+    "policies": "Käytännöt"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Lisää Apple Walletiin",
+    "card": "Lahjakortti",
+    "expired": "Tämä lahjakortti on vanhentunut",
+    "expires_on": "Vanhenee {{ expires_on }}",
+    "use_at_checkout": "Käytä tämä lahjakortti kassalla",
+    "a_gift_for_you": "Lahja sinulle",
+    "available": "{{ amount }} käytettävissä",
+    "a_little_something": "Pieni lahja sinulle",
+    "card_label": "Kaupan {{ shop }} lahjakortti",
+    "copy_code": "Kopioi koodi",
+    "copied": "Koodi kopioitu",
+    "copy_error": "Automaattinen kopiointi epäonnistui. Kopioi koodi manuaalisesti.",
+    "disabled": "Tämä lahjakortti ei ole enää voimassa",
+    "start_shopping": "Aloita ostokset"
+  },
+  "page": {
+    "content_heading": "Sivun sisältö"
+  },
+  "password": {
+    "title": "Tämä kauppa on yksityinen",
+    "eyebrow": "Avautuu pian",
+    "launch_description": "Tutustu ensimmäisten joukossa siihen, mitä on tulossa.",
+    "enter": "Kirjaudu sisään",
+    "enter_with_password": "Siirry salasanalla",
+    "enter_store": "Siirry kauppaan",
+    "show": "Näytä",
+    "hide": "Piilota",
+    "error": "Väärä salasana. Yritä uudelleen.",
+    "field_label": "Salasana",
+    "placeholder": "Anna salasana",
+    "get_updates": "Tilaa avajaisuutiset",
+    "updates_description": "Saat ensimmäisenä tiedon, kun avaamme.",
+    "updates_submit": "Ilmoita minulle",
+    "updates_success": "Kiitos tilauksestasi."
+  },
+  "product": {
+    "details": "Tuotetiedot",
+    "placeholder_title": "Tuotenimike",
+    "quantity": "Määrä",
+    "quantity_decrease": "Vähennä määrää: {{ title }}",
+    "quantity_increase": "Lisää määrää: {{ title }}",
+    "quantity_input": "Määrä tuotteelle {{ title }}",
+    "add_to_cart": "Lisää ostoskoriin",
+    "added_to_cart": "Lisätty ostoskoriin",
+    "sold_out": "Loppuunmyyty",
+    "description": "Kuvaus",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Hinta",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "Hintahaarukka",
+      "regular_price": "Normaalihinta",
+      "sale_price": "Alennushinta",
+      "savings": "Säästä {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Vähennä määrää",
+      "increase": "Lisää määrää",
+      "input_label": "Määrä"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 aktiivinen suodatin",
+      "other": "{{ count }} aktiivista suodatinta"
+    }
+  },
+  "forms": {
+    "required": "pakollinen",
+    "form_errors_title": "Korjaa seuraavat virheet:"
+  },
+  "search": {
+    "title": "Haku",
+    "label": "Haku",
+    "placeholder": "Hae",
+    "products_heading": "Tuotteet",
+    "results_heading": "Hakutulokset",
+    "view_all_results": "Näytä kaikki tulokset",
+    "results_count_announcement": {
+      "one": "1 tulos saatavilla",
+      "other": "{{ count }} tulosta saatavilla"
+    },
+    "no_results_announcement": "Hakusanalla {{ terms }} ei löytynyt tuloksia",
+    "results_for": "Hakusanalla {{ terms }} löytyi {{ count }} tulosta",
+    "no_results": "Hakusanalla {{ terms }} ei löytynyt tuloksia",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Päivitä"
+  },
+  "home": {
+    "hero": {
+      "title": "Uutuudet",
+      "subtitle": "Tutustu mallistoon"
+    }
+  }
+}

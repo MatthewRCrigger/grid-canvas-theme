@@ -1,0 +1,90 @@
+{% doc %}
+  Renders a typography element with a variant-driven utility class. The
+  rendered tag and typographic style are both configurable. Body content
+  is composed via `{{ content }}`.
+
+  Variant is a component class defined in `@layer components` in
+  `config/styles.css`. Pass the full class name directly (e.g.
+  `type-heading-xl`), the same pattern used by button blocks.
+  Because variants live in the components layer, utility classes passed
+  via `class` will reliably override variant properties.
+
+  The `variant` setting is the shared typography contract: `price` and
+  `main-menu` expose the same id, label, `type-*` options, ordering, and default,
+  so one choice renders identically across all three blocks.
+
+  @param {string} [tag] - HTML element. Default: 'p'. One of: h1, h2, h3, h4, h5, h6, p, span
+  @param {string} [class] - Color, spacing, additional Tailwind classes appended after variant class.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category typography
+  @renders h1|h2|h3|h4|h5|h6|p|span
+
+  @example
+  {% block 'text', variant: 'type-display' %}Welcome to our store{% endblock %}
+
+  {% block 'text', variant: 'type-heading-xl', tag: 'h1' %}Featured Collection{% endblock %}
+
+  {% block 'text', variant: 'type-heading-md', tag: 'h2', class: 'text-on-surface-secondary' %}Spring 2024{% endblock %}
+
+  {% block 'text', variant: 'type-body-lg' %}
+    Discover our curated selection of premium products.
+  {% endblock %}
+
+  {% block 'text', variant: 'type-overline', class: 'text-accent' %}New Arrivals{% endblock %}
+
+  {% block 'text', variant: 'type-body-sm', tag: 'span', class: 'text-on-surface-secondary' %}Ships in 2-5 days{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign variant = variant | default: 'type-body'
+  assign tag     = tag     | default: 'p'
+  assign color   = color
+
+  if class != blank
+    assign full_class = variant | append: ' ' | append: class
+  else
+    assign full_class = variant
+  endif
+-%}
+
+<{{ tag }} class="{{ full_class }}"{% if color != blank %} style="color: {{ color }}"{% endif %}{% if attributes != blank %} {{ attributes }}{% endif %}>{{ content }}</{{ tag }}>
+
+{% schema %}
+  {
+    "name": "t:blocks.text",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color",
+        "label": "t:general.color",
+        "placeholder": "t:general.default"
+      },
+      {
+        "type": "select",
+        "id": "variant",
+        "label": "t:general.text_style",
+        "default": "type-body",
+        "options": [
+          { "value": "type-display-xl", "label": "t:variants.text_style.display_xl" },
+          { "value": "type-display", "label": "t:variants.text_style.display" },
+          { "value": "type-title", "label": "t:variants.text_style.title" },
+          { "value": "type-heading-2xl", "label": "t:variants.text_style.heading_2xl" },
+          { "value": "type-heading-xl", "label": "t:variants.text_style.heading_xl" },
+          { "value": "type-heading-lg", "label": "t:variants.text_style.heading_lg" },
+          { "value": "type-heading-md", "label": "t:variants.text_style.heading_md" },
+          { "value": "type-heading-sm", "label": "t:variants.text_style.heading_sm" },
+          { "value": "type-body-lg", "label": "t:variants.text_style.body_lg" },
+          { "value": "type-body", "label": "t:variants.text_style.body" },
+          { "value": "type-body-sm", "label": "t:variants.text_style.body_sm" },
+          { "value": "type-overline-lg", "label": "t:variants.text_style.overline_lg" },
+          { "value": "type-overline", "label": "t:variants.text_style.overline" },
+          { "value": "type-data-lg", "label": "t:variants.text_style.data_lg" },
+          { "value": "type-data", "label": "t:variants.text_style.data" },
+          { "value": "type-data-sm", "label": "t:variants.text_style.data_sm" },
+          { "value": "hud-tag", "label": "t:variants.text_style.tag" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

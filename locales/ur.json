@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — صفحہ نہیں ملا",
+    "not_found": "صفحہ نہیں ملا۔",
+    "back_to_shopping": "کلیکشن دریافت کریں",
+    "suggestions_heading": "آگے بڑھنے کا ایک اور راستہ۔",
+    "recovery_body": "یہ صفحہ نہیں مل سکا۔ ابھی بھی بہت کچھ دریافت کرنا باقی ہے۔"
+  },
+  "general": {
+    "skip_to_content": "مواد پر جائیں",
+    "play_video": "ویڈیو چلائیں",
+    "video_player": "ویڈیو پلیئر",
+    "captions": "کیپشنز",
+    "clear": "صاف کریں",
+    "back": "واپس",
+    "close": "بند کریں",
+    "dismiss": "بند کریں",
+    "drawer": "دروازہ",
+    "placeholder_image": "پلیس ہولڈر تصویر",
+    "account": "اکاؤنٹ",
+    "search": "تلاش",
+    "pagination": {
+      "label": "صفحہ بندی",
+      "previous_page": "پچھلا صفحہ",
+      "next_page": "اگلا صفحہ",
+      "page": "صفحہ {{ number }}",
+      "current_page": "صفحہ {{ number }}، موجودہ صفحہ"
+    },
+    "meta": {
+      "tagged": "ٹیگ کیا گیا \"{{ tags }}\"",
+      "page": "صفحہ {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "نتائج اپ ڈیٹ ہو گئیں",
+    "variant_updated": "انتخاب اپ ڈیٹ ہو گیا",
+    "update_error": "ایک خرابی پیش آئی۔ دوبارہ کوشش کریں۔"
+  },
+  "blog": {
+    "articles_heading": "مضامین",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "تبصرہ",
+    "comment_form_email": "ای میل",
+    "comment_form_name": "نام",
+    "comment_form_submit": "پوسٹ کریں",
+    "comment_form_title": "تبصرہ شامل کریں",
+    "comments_count": {
+      "one": "ایک تبصرہ",
+      "other": "{{ count }} تبصرے"
+    },
+    "no_articles": "ابھی تک کوئی مضمون موجود نہیں۔"
+  },
+  "cart": {
+    "checkout": "چیک آؤٹ",
+    "title": "کارٹ",
+    "remove": "ہٹا دیں: {{ title }}",
+    "empty": "آپ کا کارٹ خالی ہے۔",
+    "empty_description": "لگتا ہے آپ نے ابھی تک کارٹ میں کوئی چیز شامل نہیں کی۔",
+    "icon_label": {
+      "one": "کارٹ (ایک آئٹم)",
+      "other": "کارٹ ({{ count }} آئٹمز)"
+    },
+    "item_count": {
+      "one": "کارٹ میں ایک آئٹم",
+      "other": "کارٹ میں {{ count }} آئٹمز"
+    },
+    "item_removed": "آئٹم کارٹ سے ہٹا دیا گیا",
+    "updated": "کارٹ اپ ڈیٹ ہو گیا",
+    "note_label": "آرڈر نوٹس",
+    "note_placeholder": "اپنے آرڈر کے لیے خصوصی ہدایات شامل کریں",
+    "taxes_and_shipping_at_checkout": "ٹیکس اور شپنگ چیک آؤٹ پر حساب کیے جائیں گے",
+    "discount_list": "لاگو شدہ ڈسکاؤنٹس",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "ڈسکاؤنٹ کوڈ",
+    "discount_title": "ڈسکاؤنٹ: {{ title }}",
+    "update_error": "کارٹ اپ ڈیٹ نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
+    "refresh_error": "کارٹ اپ ڈیٹ ہو گیا ہے لیکن ڈسپلے شاید تازہ نہ ہو۔ تازہ ترین کارٹ دیکھنے کے لیے صفحہ ریفریش کریں۔",
+    "continue_shopping": "خریداری جاری رکھیں",
+    "checkout_description": "محفوظ چیک آؤٹ کی طرف بڑھیں",
+    "discount_placeholder": "کوڈ درج کریں",
+    "discount_apply": "لاگو کریں",
+    "note_accordion_label": "خصوصی ہدایات",
+    "total_label": "تخمینی کل"
+  },
+  "contact": {
+    "name": "نام",
+    "email": "ای میل",
+    "phone": "فون (اختیاری)",
+    "message": "پیغام",
+    "submit": "پیغام بھیجیں",
+    "success": "ہم سے رابطہ کرنے کا شکریہ۔ ہم جلد آپ سے رابطہ کریں گے۔"
+  },
+  "collections": {
+    "all_collections": "تمام کلیکشنز",
+    "browse_heading": "کلیکشنز دیکھیں",
+    "products_heading": "پروڈکٹس",
+    "placeholder_title": "کلیکشن کا عنوان",
+    "no_collections": "کوئی کلیکشن نہیں ملی۔",
+    "no_products": "کوئی پروڈکٹ نہیں ملی۔",
+    "products_count": {
+      "one": "1 product",
+      "other": "{{ count }} products"
+    },
+    "filter": "Filter",
+    "filters": "Filters",
+    "active_filters": "Active filters",
+    "clear_all": "Clear all",
+    "remove_filter": "Remove {{ filter }}",
+    "show_results": "Show results",
+    "value_unavailable": "Unavailable",
+    "price_min": "Min price",
+    "price_max": "Max price",
+    "price_to": "to",
+    "sort_by": "Sort by",
+    "filtering": {
+      "show_more": "Show more"
+    },
+    "view_all": "سب دیکھیں"
+  },
+  "header": {
+    "menu": "مینو",
+    "mobile_navigation": "موبائل نیویگیشن",
+    "navigation": "مین نیویگیشن",
+    "show_submenu": "{{ title }} کے لیے سب مینو دکھائیں"
+  },
+  "footer": {
+    "quick_links": "فوری لنکس",
+    "policies": "پالیسیز"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Apple Wallet میں شامل کریں",
+    "card": "گفٹ کارڈ",
+    "expired": "اس گفٹ کارڈ کی مدت ختم ہو چکی ہے",
+    "expires_on": "{{ expires_on }} کو ختم ہو جائے گا",
+    "use_at_checkout": "چیک آؤٹ پر اس گفٹ کارڈ کا استعمال کریں",
+    "a_gift_for_you": "آپ کے لیے ایک تحفہ",
+    "available": "{{ amount }} دستیاب",
+    "a_little_something": "آپ کے لیے ایک چھوٹی سی چیز",
+    "card_label": "{{ shop }} گفٹ کارڈ",
+    "copy_code": "کوڈ کاپی کریں",
+    "copied": "کوڈ کاپی ہو گیا",
+    "copy_error": "خودکار طور پر کاپی نہیں ہو سکا۔ کوڈ دستی طور پر کاپی کریں۔",
+    "disabled": "یہ گفٹ کارڈ اب درست نہیں ہے",
+    "start_shopping": "خریداری شروع کریں"
+  },
+  "page": {
+    "content_heading": "صفحے کا مواد"
+  },
+  "password": {
+    "title": "یہ دکان نجی ہے",
+    "enter": "داخل کریں",
+    "error": "پاس ورڈ غلط ہے۔ دوبارہ کوشش کریں۔",
+    "field_label": "پاس ورڈ",
+    "placeholder": "پاس ورڈ درج کریں",
+    "eyebrow": "جلد آ رہا ہے",
+    "launch_description": "آنے والی چیزوں کی ابتدائی جھلک دیکھیں۔",
+    "enter_with_password": "پاس ورڈ کے ساتھ داخل ہوں",
+    "enter_store": "اسٹور میں داخل ہوں",
+    "show": "دکھائیں",
+    "hide": "چھپائیں",
+    "get_updates": "افتتاح کی اپڈیٹس حاصل کریں",
+    "updates_description": "ہمارے کھلنے پر سب سے پہلے جانیں۔",
+    "updates_submit": "مجھے مطلع کریں",
+    "updates_success": "سبسکرائب کرنے کا شکریہ۔"
+  },
+  "product": {
+    "details": "پروڈکٹ کی تفصیلات",
+    "placeholder_title": "پروڈکٹ کا عنوان",
+    "quantity": "مقدار",
+    "quantity_decrease": "مقدار کم کریں: {{ title }}",
+    "quantity_increase": "مقدار بڑھائیں: {{ title }}",
+    "quantity_input": "{{ title }} کے لیے مقدار",
+    "add_to_cart": "کارٹ میں شامل کریں",
+    "added_to_cart": "پروڈکٹ کارٹ میں شامل کر دی گئی",
+    "sold_out": "اسٹاک ختم",
+    "description": "تفصیل",
+    "view_image": "تصویر دیکھیں: {{ title }}",
+    "image_zoom": "پروڈکٹ کی بڑھی ہوئی تصویر"
+  },
+  "products": {
+    "price": {
+      "price": "قیمت",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "قیمت کی حد",
+      "regular_price": "عام قیمت",
+      "sale_price": "سیل قیمت",
+      "savings": "بچت {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "مقدار کم کریں",
+      "increase": "مقدار بڑھائیں",
+      "input_label": "مقدار"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 active filter",
+      "other": "{{ count }} active filters"
+    }
+  },
+  "forms": {
+    "required": "لازمی",
+    "form_errors_title": "براہ کرم درج ذیل غلطیوں کو درست کریں:"
+  },
+  "search": {
+    "title": "تلاش",
+    "label": "تلاش",
+    "placeholder": "تلاش",
+    "products_heading": "پروڈکٹس",
+    "results_heading": "تلاش کے نتائج",
+    "view_all_results": "تمام نتائج دیکھیں",
+    "results_count_announcement": {
+      "one": "ایک نتیجہ دستیاب ہے",
+      "other": "{{ count }} نتائج دستیاب ہیں"
+    },
+    "no_results_announcement": "{{ terms }} کے لیے کوئی نتائج نہیں ملے",
+    "results_for": "{{ terms }} کے لیے {{ count }} نتائج ملے",
+    "no_results": "{{ terms }} کے لیے کوئی نتائج نہیں ملے",
+    "live_results_announcement": {
+      "one": "{{ terms }} کے لیے ایک نتیجہ ملا",
+      "other": "{{ terms }} کے لیے {{ count }} نتائج ملے"
+    },
+    "live_no_results_announcement": "{{ terms }} کے لیے کوئی نتائج نہیں ملے"
+  },
+  "localization": {
+    "form_label": "ریجن اور زبان",
+    "language": "زبان",
+    "country_region_currency": "ملک/ریجن اور کرنسی",
+    "update_language": "اپ ڈیٹ کریں"
+  },
+  "home": {
+    "hero": {
+      "title": "ہماری نئی کلیکشن دریافت کریں",
+      "subtitle": "اعلیٰ معیار کی منتخب پروڈکٹس کا مجموعہ دیکھیں"
+    }
+  }
+}

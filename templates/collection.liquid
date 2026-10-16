@@ -1,0 +1,154 @@
+{%- comment -%}
+  COLLECTION — a GRID OS Finder window. Title bar (controls, folder name, item count), a Finder
+  sidebar of places and collections, a toolbar with the path and the icon/list view switch, then
+  the live-filtered product folder and a status bar. Opened from the desktop it loads inside a
+  window-manager window and the page chrome folds away.
+{%- endcomment -%}
+{%- liquid
+  assign finder_all_current = false
+  if collection.handle == 'all'
+    assign finder_all_current = true
+  endif
+-%}
+{% block 'container' %}
+  {%- # theme-check-disable-next-line UnknownFilter %}
+  <s-view-event class="block" view-event-trigger="connect" view-event-payload="{{ collection | standard_event_data: 'view' | escape }}">
+  <div class="os-stage">
+    <div class="os-stage-inner">
+      {% block 'frame', window: 'page', class: 'os-page', inner_class: 'flex flex-col' %}
+        <div class="panel-header os-page-bar">
+          <span class="truncate">{{ collection.title | escape }}</span>
+          <span class="os-page-meta">{{ 'os.items' | t: count: collection.products_count }}</span>
+        </div>
+
+        <div class="os-finder">
+          <nav class="os-finder-sidebar" aria-label="{{ 'os.sidebar_label' | t | escape }}">
+            {% block 'text', tag: 'h2', class: 'os-finder-sidebar-heading' %}{{ 'os.sidebar_favorites' | t }}{% endblock %}
+            <ul role="list">
+              <li><a class="os-finder-link" href="{{ routes.root_url }}">{% render 'os-icon', name: 'grid' %}{{ 'os.sidebar_desktop' | t }}</a></li>
+              <li><a class="os-finder-link" href="{{ routes.all_products_collection_url }}"{% if finder_all_current %} aria-current="page"{% endif %}>{% render 'os-icon', name: 'bag' %}{{ 'os.sidebar_all' | t }}</a></li>
+            </ul>
+            {% block 'text', tag: 'h2', class: 'os-finder-sidebar-heading' %}{{ 'os.sidebar_locations' | t }}{% endblock %}
+            <ul role="list">
+              {%- for finder_collection in collections limit: 12 -%}
+                {%- if finder_collection.handle == 'all' -%}{%- continue -%}{%- endif -%}
+                <li><a class="os-finder-link" href="{{ finder_collection.url }}"{% if finder_collection.handle == collection.handle %} aria-current="page"{% endif %}>{% render 'os-icon', name: 'folder' %}<span class="truncate">{{ finder_collection.title | escape }}</span></a></li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+
+          <div class="os-finder-main">
+            <div class="os-finder-toolbar">
+              <nav aria-label="{{ 'os.path_label' | t | escape }}" class="min-w-0">
+                <ol role="list" class="os-path">
+                  <li><a href="{{ routes.root_url }}">{{ 'os.path_root' | t }}</a></li>
+                  <li><a href="{{ routes.collections_url }}">{{ 'os.sidebar_locations' | t }}</a></li>
+                  <li><span aria-current="page">{{ collection.title | escape }}</span></li>
+                </ol>
+              </nav>
+              <s-finder-view id="collection-view" class="os-segment" role="group" aria-label="{{ 'os.view_label' | t | escape }}">
+                <button type="button" commandfor="collection-view" command="--icons" aria-pressed="true" aria-label="{{ 'os.view_icons' | t | escape }}">{% render 'os-icon', name: 'icons' %}</button>
+                <button type="button" commandfor="collection-view" command="--list" aria-pressed="false" aria-label="{{ 'os.view_list' | t | escape }}">{% render 'os-icon', name: 'list' %}</button>
+              </s-finder-view>
+            </div>
+
+            <div class="os-finder-head">
+              {% block 'text', tag: 'span', variant: 'type-overline', class: 'mb-3 block text-ink-300' %}{{ 'collections.overline' | t }}{% endblock %}
+              {% block 'text', tag: 'h1', variant: 'type-title', class: 'max-w-full break-words text-on-surface' %}{{ collection.title | escape }}{% endblock %}
+              {% if collection.description != blank %}
+                <div class="richtext type-body mt-4 max-w-[60ch] text-ink-200">{{ collection.description }}</div>
+              {% endif %}
+            </div>
+
+            <div class="os-finder-body">
+<s-live-form class="block" partial="collection-count,collection-chips,collection-filters,collection-grid" debounce="300" data-collection-id="{{ collection.id }}" data-collection-handle="{{ collection.handle | escape }}" data-updated-message="{{ 'accessibility.results_updated' | t }}" data-error-message="{{ 'accessibility.update_error' | t }}">
+  <form action="{{ collection.url }}" method="get" role="search" aria-label="{{ 'collections.filter' | t }}">
+    {% capture collection_filter_trigger %}
+      {% block 'button', commandfor: 'collection-filter-drawer', command: 'show-modal', variant: 'button-outline', class: 'h-11 px-4 text-sm rounded-button' %}{{ 'collections.filter' | t }}{% endblock %}
+    {% endcapture %}
+    {% capture collection_toolbar_submit %}
+      {% block 'button', type: 'submit', class: 'h-11 px-4 rounded-button' %}{{ 'collections.show_results' | t }}{% endblock %}
+    {% endcapture %}
+
+    {% capture collection_results_button %}
+      {% block 'button', commandfor: 'collection-filter-drawer', command: 'close', variant: 'button-primary', class: 'h-11 w-full rounded-button' %}{{ 'collections.show_results' | t }}{% endblock %}
+    {% endcapture %}
+    {% capture collection_drawer_submit %}
+      {% block 'button', type: 'submit', class: 'h-11 w-full rounded-button' %}{{ 'collections.show_results' | t }}{% endblock %}
+    {% endcapture %}
+    {% render 'filters', page_type: 'collection', resource: collection, drawer_id: 'collection-filter-drawer', filter_trigger: collection_filter_trigger, toolbar_submit: collection_toolbar_submit, show_results_button: collection_results_button, drawer_submit: collection_drawer_submit %}
+
+    {% partial 'collection-grid' %}
+{% paginate collection.products by 20 %}
+  {% if collection.products.size > 0 %}
+    <h2 class="sr-only">{{ 'collections.products_heading' | t }}</h2>
+    {%- comment -%} Finder folder widths: page cap, gutters, 208px sidebar and window borders; mirror in snippets/lcp-preload.liquid. {%- endcomment -%}
+    {%- assign product_sizes = '(min-width: 1440px) 300px, (min-width: 1280px) calc((100vw - 300px) / 4), (min-width: 1024px) calc((100vw - 300px) / 3), (min-width: 768px) calc((100vw - 64px) / 3), calc((100vw - 48px) / 2)' -%}
+    <ul id="product-grid" role="list" class="os-finder-grid -me-px border-t border-line-400">
+      {% for product in collection.products %}
+        <li class="border-b border-e border-line-400 bg-panel">
+          {%- comment -%} The four-slot eager threshold matches one large-screen row; only slot one competes at high priority for LCP. {%- endcomment -%}
+          {%- if forloop.index <= 4 -%}{%- assign lazy_load = false -%}{%- else -%}{%- assign lazy_load = true -%}{%- endif -%}
+          {%- if forloop.first -%}{%- assign fetch_priority = 'high' -%}{%- elsif forloop.index <= 4 -%}{%- assign fetch_priority = 'low' -%}{%- else -%}{%- assign fetch_priority = 'auto' -%}{%- endif -%}
+          {%- # theme-check-disable-next-line UnknownFilter %}
+          <s-view-event class="block h-full" view-event-trigger="intersect" view-event-payload="{{ product | standard_event_data: 'view', context: 'collection' | escape }}">
+            {%- liquid
+              assign card_variant = product.selected_or_first_available_variant
+              if lazy_load
+                assign card_loading = 'lazy'
+              else
+                assign card_loading = 'eager'
+              endif
+              assign card_image_attributes = 'loading="' | append: card_loading | append: '" fetchpriority="' | append: fetch_priority | append: '"'
+              assign card_index = paginate.current_offset | plus: forloop.index
+            -%}
+            {% block 'card', block.name: 't:blocks.product_card', url: product.url, aria_label: product.title, class: 'h-full p-3 md:p-4' %}
+              <div class="flex items-center justify-between gap-2">
+                <span class="type-data-sm text-ink-300" aria-hidden="true">{% if card_index < 10 %}0{% endif %}{{ card_index }}</span>
+                {%- if product.available -%}
+                  <span class="badge badge-success">{{ 'home.status.in_stock' | t }}</span>
+                {%- else -%}
+                  <span class="badge badge-danger">{{ 'home.status.sold_out' | t }}</span>
+                {%- endif -%}
+              </div>
+              <a href="{{ product.url | escape }}" style="view-transition-name: pimg-{{ product.id }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ product.title | escape }}">
+                {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: product_sizes, attributes: card_image_attributes, alt: product.title, seed: forloop.index %}{% endblock %}
+                {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>
+              </a>
+              <div class="flex flex-col gap-1 pt-1">
+                {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ product.title | escape }}{% endblock %}
+                {% block 'price', price: card_variant.price, compare_at_price: card_variant.compare_at_price, price_min: product.price_min, price_max: product.price_max, variant: 'type-data', class: 'self-start' %}{% endblock %}
+              </div>
+              {% render 'compare-toggle', product: product %}
+            {% endblock %}
+          </s-view-event>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="px-3 pt-8 lg:px-5">
+      {% block 'pagination', paginate: paginate %}{% endblock %}
+    </div>
+  {% else %}
+    {% block 'text', variant: 'type-body', class: 'text-on-surface-secondary py-12 text-center px-margin' %}{{ 'collections.no_products' | t }}{% endblock %}
+  {% endif %}
+  <p class="os-page-status mt-8">
+    <span>{{ 'os.items' | t: count: paginate.items }}</span>
+    {%- assign finder_pages = paginate.pages | at_least: 1 -%}
+    <span>{{ 'os.status_page' | t: current: paginate.current_page, total: finder_pages }}</span>
+  </p>
+{% endpaginate %}
+    {% endpartial %}
+  </form>
+</s-live-form>
+            </div>
+          </div>
+        </div>
+      {% endblock %}
+    </div>
+  </div>
+  </s-view-event>
+
+<script type="application/ld+json">
+  {{ collection | structured_data }}
+</script>
+{% endblock %}

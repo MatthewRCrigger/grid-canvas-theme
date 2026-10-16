@@ -1,0 +1,32 @@
+{% doc %}
+  Renders rich HTML using the theme's RTE prose treatment. The schema-backed
+  text setting supports Shopify dynamic sources such as product descriptions.
+  Caller-supplied body content renders after the configured text.
+
+  @param {string} [class] - Additional Tailwind classes appended to the root element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category typography
+  @renders div
+
+  @example Product description dynamic source
+  {% block 'richtext', text: product.description %}{% endblock %}
+
+  @example Caller-composed rich HTML
+  {% block 'richtext' %}<p>Detailed information</p>{% endblock %}
+{% enddoc %}
+
+<div class="richtext{% if class != blank %} {{ class }}{% endif %}"{% if attributes != blank %} {{ attributes }}{% endif %}>{{ text }}{{ content }}</div>
+
+{% schema %}
+{
+  "name": "t:blocks.richtext",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:blocks.richtext"
+    }
+  ]
+}
+{% endschema %}

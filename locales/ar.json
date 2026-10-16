@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — لم يتم العثور على الصفحة",
+    "not_found": "لم يتم العثور على الصفحة.",
+    "back_to_shopping": "استكشف المجموعة",
+    "suggestions_heading": "طريق مختلف للمضي قدمًا.",
+    "recovery_body": "تعذر العثور على هذه الصفحة. لا يزال هناك الكثير لاكتشافه."
+  },
+  "general": {
+    "skip_to_content": "تخطي إلى المحتوى",
+    "play_video": "تشغيل الفيديو",
+    "video_player": "مشغل الفيديو",
+    "captions": "الترجمات",
+    "clear": "مسح",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "dismiss": "تجاهل",
+    "drawer": "الدرج",
+    "placeholder_image": "صورة افتراضية",
+    "account": "الحساب",
+    "search": "بحث",
+    "pagination": {
+      "label": "الترقيم",
+      "previous_page": "الصفحة السابقة",
+      "next_page": "الصفحة التالية",
+      "page": "الصفحة {{ number }}",
+      "current_page": "الصفحة {{ number }}، الصفحة الحالية"
+    },
+    "meta": {
+      "tagged": "موسوم بـ \"{{ tags }}\"",
+      "page": "الصفحة {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "تم تحديث النتائج",
+    "variant_updated": "تم تحديث الاختيار",
+    "update_error": "حدث خطأ. يرجى المحاولة مرة أخرى."
+  },
+  "blog": {
+    "articles_heading": "المقالات",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "التعليق",
+    "comment_form_email": "البريد الإلكتروني",
+    "comment_form_name": "الاسم",
+    "comment_form_submit": "نشر",
+    "comment_form_title": "إضافة تعليق",
+    "comments_count": {
+      "one": "تعليق واحد",
+      "other": "{{ count }} تعليقات"
+    },
+    "no_articles": "لا توجد مقالات بعد."
+  },
+  "cart": {
+    "checkout": "إتمام الشراء",
+    "title": "سلة التسوق",
+    "remove": "إزالة: {{ title }}",
+    "empty": "سلة التسوق فارغة.",
+    "empty_description": "يبدو أنك لم تضف أي منتجات إلى سلتك بعد.",
+    "icon_label": {
+      "one": "سلة التسوق (منتج واحد)",
+      "other": "سلة التسوق ({{ count }} منتجات)"
+    },
+    "item_count": {
+      "one": "منتج واحد في السلة",
+      "other": "{{ count }} منتجات في السلة"
+    },
+    "item_removed": "تمت إزالة المنتج من السلة",
+    "updated": "تم تحديث سلة التسوق",
+    "note_label": "ملاحظات الطلب",
+    "note_placeholder": "أضف تعليمات خاصة لطلبك",
+    "taxes_and_shipping_at_checkout": "سيتم حساب الضرائب والشحن عند إتمام الشراء",
+    "discount_list": "الخصومات المطبقة",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "رمز الخصم",
+    "discount_title": "خصم: {{ title }}",
+    "update_error": "تعذر تحديث السلة. يرجى المحاولة مرة أخرى.",
+    "refresh_error": "تم تحديث السلة، لكن العرض قد لا يكون محدثًا. قم بتحديث الصفحة لرؤية أحدث حالة للسلة.",
+    "continue_shopping": "متابعة التسوق",
+    "checkout_description": "المتابعة إلى الدفع الآمن",
+    "discount_placeholder": "أدخل الرمز",
+    "discount_apply": "تطبيق",
+    "note_accordion_label": "تعليمات خاصة",
+    "total_label": "الإجمالي التقديري"
+  },
+  "contact": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف (اختياري)",
+    "message": "الرسالة",
+    "submit": "إرسال الرسالة",
+    "success": "شكرًا لتواصلك معنا. سنرد عليك قريبًا."
+  },
+  "collections": {
+    "all_collections": "كل المجموعات",
+    "browse_heading": "تصفح المجموعات",
+    "products_heading": "المنتجات",
+    "placeholder_title": "عنوان المجموعة",
+    "no_collections": "لم يتم العثور على مجموعات.",
+    "no_products": "لم يتم العثور على منتجات.",
+    "products_count": {
+      "one": "1 product",
+      "other": "{{ count }} products"
+    },
+    "filter": "Filter",
+    "filters": "Filters",
+    "active_filters": "Active filters",
+    "clear_all": "Clear all",
+    "remove_filter": "Remove {{ filter }}",
+    "show_results": "Show results",
+    "value_unavailable": "Unavailable",
+    "price_min": "Min price",
+    "price_max": "Max price",
+    "price_to": "to",
+    "sort_by": "Sort by",
+    "filtering": {
+      "show_more": "Show more"
+    },
+    "view_all": "عرض الكل"
+  },
+  "header": {
+    "menu": "القائمة",
+    "mobile_navigation": "التنقل على الهاتف",
+    "navigation": "التنقل الرئيسي",
+    "show_submenu": "إظهار القائمة الفرعية لـ {{ title }}"
+  },
+  "footer": {
+    "quick_links": "روابط سريعة",
+    "policies": "السياسات"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "إضافة إلى Apple Wallet",
+    "card": "بطاقة هدايا",
+    "expired": "انتهت صلاحية بطاقة الهدايا هذه",
+    "expires_on": "تنتهي في {{ expires_on }}",
+    "use_at_checkout": "استخدم هذه البطاقة عند الدفع",
+    "a_gift_for_you": "هدية لك",
+    "available": "{{ amount }} متاح",
+    "a_little_something": "شيء صغير من أجلك",
+    "card_label": "بطاقة هدايا {{ shop }}",
+    "copy_code": "نسخ الرمز",
+    "copied": "تم نسخ الرمز",
+    "copy_error": "تعذّر النسخ تلقائيًا. انسخ الرمز يدويًا.",
+    "disabled": "بطاقة الهدايا هذه لم تعد صالحة",
+    "start_shopping": "ابدأ التسوق"
+  },
+  "page": {
+    "content_heading": "محتوى الصفحة"
+  },
+  "password": {
+    "title": "هذا المتجر خاص",
+    "enter": "إدخال",
+    "error": "كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+    "field_label": "كلمة المرور",
+    "placeholder": "أدخل كلمة المرور",
+    "eyebrow": "قريبًا",
+    "launch_description": "احصل على نظرة مبكرة على ما هو قادم.",
+    "enter_with_password": "الدخول بكلمة المرور",
+    "enter_store": "دخول المتجر",
+    "show": "إظهار",
+    "hide": "إخفاء",
+    "get_updates": "احصل على تحديثات الافتتاح",
+    "updates_description": "كن أول من يعرف عند افتتاحنا.",
+    "updates_submit": "أبلغني",
+    "updates_success": "شكرًا لاشتراكك."
+  },
+  "product": {
+    "details": "تفاصيل المنتج",
+    "placeholder_title": "عنوان المنتج",
+    "quantity": "الكمية",
+    "quantity_decrease": "تقليل الكمية: {{ title }}",
+    "quantity_increase": "زيادة الكمية: {{ title }}",
+    "quantity_input": "الكمية لـ {{ title }}",
+    "add_to_cart": "إضافة إلى السلة",
+    "added_to_cart": "تمت إضافة المنتج إلى السلة",
+    "sold_out": "نفد من المخزون",
+    "description": "الوصف",
+    "view_image": "عرض الصورة: {{ title }}",
+    "image_zoom": "صورة المنتج المكبرة"
+  },
+  "products": {
+    "price": {
+      "price": "السعر",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "نطاق السعر",
+      "regular_price": "السعر الأصلي",
+      "sale_price": "سعر العرض",
+      "savings": "وفّر {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "تقليل الكمية",
+      "increase": "زيادة الكمية",
+      "input_label": "الكمية"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 active filter",
+      "other": "{{ count }} active filters"
+    }
+  },
+  "forms": {
+    "required": "مطلوب",
+    "form_errors_title": "يرجى تصحيح الأخطاء التالية:"
+  },
+  "search": {
+    "title": "بحث",
+    "label": "بحث",
+    "placeholder": "بحث",
+    "products_heading": "المنتجات",
+    "results_heading": "نتائج البحث",
+    "view_all_results": "عرض جميع النتائج",
+    "results_count_announcement": {
+      "one": "نتيجة واحدة متاحة",
+      "other": "{{ count }} نتائج متاحة"
+    },
+    "no_results_announcement": "لم يتم العثور على نتائج لـ {{ terms }}",
+    "results_for": "تم العثور على {{ count }} نتائج لـ {{ terms }}",
+    "no_results": "لم يتم العثور على نتائج لـ {{ terms }}",
+    "live_results_announcement": {
+      "one": "تم العثور على نتيجة واحدة لـ {{ terms }}",
+      "other": "تم العثور على {{ count }} نتائج لـ {{ terms }}"
+    },
+    "live_no_results_announcement": "لم يتم العثور على نتائج لـ {{ terms }}"
+  },
+  "localization": {
+    "form_label": "المنطقة واللغة",
+    "language": "اللغة",
+    "country_region_currency": "البلد/المنطقة والعملة",
+    "update_language": "تحديث"
+  },
+  "home": {
+    "hero": {
+      "title": "اكتشف أحدث مجموعاتنا",
+      "subtitle": "استكشف مجموعتنا المختارة من المنتجات المميزة"
+    }
+  }
+}

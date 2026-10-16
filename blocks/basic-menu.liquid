@@ -1,0 +1,59 @@
+{% doc %}
+  Renders a straightforward link list without primary-navigation dropdown or
+  mobile-drawer behavior. Links stack vertically below `md` and become a
+  horizontal wrapping row at larger widths. The first 5 links are shown. When
+  no menu is selected, the standard `footer` link list is used automatically.
+  Optional body content renders above the link list.
+
+  @param {string} [aria_label] - Accessible navigation label. Defaults to the translated quick-links label.
+  @param {string} [class] - Additional CSS classes applied to the root `<nav>` element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root `<nav>` element.
+
+  @category navigation
+  @renders nav
+
+  @example
+  {% block 'basic-menu' %}{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign menu = menu | default: linklists.footer
+  if aria_label == blank
+    assign aria_label = 'footer.quick_links' | t
+  endif
+-%}
+
+{% if menu.links.size > 0 %}
+  <nav aria-label="{{ aria_label | escape }}"{% if class != blank %} class="{{ class }}"{% endif %}{% if attributes != blank %} {{ attributes }}{% endif %}>
+    {{ content }}
+    {%- comment -%} Stack links for an easy mobile scan; md switches to a horizontal row that wraps without shrinking touch targets. {%- endcomment -%}
+    <ul role="list" class="flex flex-col items-start gap-y-1 md:flex-row md:flex-wrap md:items-center md:gap-x-6">
+      {% for link in menu.links limit: 5 %}
+        <li class="m-0">
+          <a
+            href="{{ link.url }}"
+            class="type-overline inline-flex items-center min-h-touch-target no-underline text-ink-200 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-colors"
+            {%- if link.current %} aria-current="page"{% endif %}
+          >
+            {{ link.title | escape }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "t:blocks.basic_menu",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "t:blocks.menu_settings.menu",
+        "info": "t:blocks.menu_settings.menu_info",
+        "default": "footer"
+      }
+    ]
+  }
+{% endschema %}

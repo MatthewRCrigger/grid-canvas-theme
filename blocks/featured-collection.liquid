@@ -1,0 +1,40 @@
+{% doc %}
+  Full-width semantic section shell for a caller-authored featured collection.
+  The caller owns the collection source, heading, link, and product/placeholder
+  cards; the entire pre-rendered body is placed inside this section. It cannot
+  read this block's settings from the body.
+
+  The collection setting is an editor binding: callers pass the same resource
+  their body reads (`collection: featured_collection`), and the
+  editor's picker follows that value's provenance to rewrite the caller's
+  `collections.<handle>` source.
+
+  @param {string} [class] - Additional CSS classes on the <section>. Vertical padding belongs to the padding setting.
+  @param {string} [attributes] - Additional HTML attributes passed through to the <section>.
+
+  @category content
+  @renders section
+
+  @example
+  {% assign featured_collection = collections.all %}
+  {% block 'featured-collection', collection: featured_collection %}
+    {% block 'text', tag: 'h2', variant: 'type-heading-xl' %}{{ featured_collection.title | escape }}{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+<section class="py-16{{ class | prepend: ' ' }}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  {{ content }}
+</section>
+
+{% schema %}
+  {
+    "name": "t:blocks.featured_collection",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "t:general.collection"
+      }
+    ]
+  }
+{% endschema %}

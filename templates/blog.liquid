@@ -1,0 +1,70 @@
+{% block 'container', class: 'os-stage' %}
+  {%- comment -%} JOURNAL: the blog as a folder window; entries are files in a hairline grid. {%- endcomment -%}
+  <div class="os-stage-inner">
+    {% paginate blog.articles by 12 %}
+      {% block 'frame', window: 'page', class: 'os-page', inner_class: 'flex flex-col' %}
+        <div class="panel-header os-page-bar">
+          <span class="truncate">{{ blog.title | escape }}</span>
+          <span class="os-page-meta">{{ 'blog.entries' | t: count: blog.articles_count }}</span>
+        </div>
+        <div class="os-finder-head">
+          {% block 'text', tag: 'span', variant: 'type-overline', class: 'mb-3 block text-ink-300' %}{{ 'blog.overline' | t }}{% endblock %}
+          {% block 'text', tag: 'h1', variant: 'type-title', class: 'max-w-full break-words text-on-surface' %}{{ blog.title | escape }}{% endblock %}
+        </div>
+      {%- if blog.articles.size > 0 -%}
+            {%- comment -%} Hairline cells (borders, not gap fill) so empty trailing cells stay black, matching the Inventory grid. {%- endcomment -%}
+            <ul role="list" class="-me-px grid grid-cols-1 border-t border-line-400 md:grid-cols-2 lg:grid-cols-3">
+              {%- for article in blog.articles -%}
+                {%- comment -%} The three-slot eager threshold matches one large-screen row; the slot-one image receives the LCP priority hint when present. {%- endcomment -%}
+                {%- if forloop.index <= 3 -%}{%- assign image_loading = 'loading="eager"' -%}{%- else -%}{%- assign image_loading = 'loading="lazy"' -%}{%- endif -%}
+                {%- if forloop.first -%}{%- assign fetch_priority = 'high' -%}{%- else -%}{%- assign fetch_priority = 'auto' -%}{%- endif -%}
+                {%- assign image_attributes = image_loading | append: ' fetchpriority="' | append: fetch_priority | append: '"' -%}
+                {%- assign card_article = article -%}
+                {%- assign entry_index = paginate.current_offset | plus: forloop.index -%}
+                {%- assign article_date = card_article.published_at | date: '%Y.%m.%d' -%}
+                {%- assign article_datetime = card_article.published_at | date: '%Y-%m-%d' -%}
+                {%- assign escaped_author = card_article.author | escape -%}
+
+                <li class="border-b border-e border-line-400 bg-panel">
+                  {% block 'card', block.name: 't:blocks.article_card', url: card_article.url, aria_label: card_article.title, class: 'h-full p-3 md:p-4' %}
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="type-data-sm text-ink-300" aria-hidden="true">{% if entry_index < 10 %}0{% endif %}{{ entry_index }}</span>
+                      <span class="type-data-sm text-ink-300"><time datetime="{{ article_datetime }}">{{ article_date }}</time></span>
+                    </div>
+                    {%- comment -%} Reserve the frame even without an image so every cell keeps the same rhythm. {%- endcomment -%}
+                    <a href="{{ card_article.url | escape }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ card_article.title | escape }}">
+                      {%- assign card_article_image = card_article.image | default: images['grid-dev-notebook.png'] -%}
+                      {% block 'image', fallback_image: card_article_image, sizes: '(min-width: 1440px) 440px, (min-width: 990px) calc((100vw - 96px) / 3), (min-width: 750px) calc((100vw - 96px) / 2), calc(100vw - 64px)', aspect_ratio: 'aspect-landscape', alt: card_article.title, attributes: image_attributes, seed: forloop.index, placeholder_kind: 'article' %}{% endblock %}
+                    </a>
+                    <div class="flex flex-col gap-2 pt-1">
+                      {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ card_article.title | escape }}{% endblock %}
+                      {%- if card_article.author != blank -%}
+                        {% block 'text', variant: 'type-overline', class: 'text-ink-300' %}{{ escaped_author }}{% endblock %}
+                      {%- endif -%}
+                      {%- if card_article.excerpt_or_content != blank -%}
+                        {% block 'text', variant: 'type-body-sm', class: 'line-clamp-3 text-ink-200' %}{{ card_article.excerpt_or_content | strip_html | truncatewords: 25 }}{% endblock %}
+                      {%- endif -%}
+                    </div>
+                  {% endblock %}
+                </li>
+              {%- endfor -%}
+            </ul>
+      {%- else -%}
+        <div class="flex flex-col items-start gap-3 px-4 py-6 lg:px-5">
+          <span class="badge">{{ 'blog.entries' | t: count: 0 }}</span>
+          {% block 'text', variant: 'type-body', class: 'text-ink-200' %}{{ 'blog.no_articles' | t }}{% endblock %}
+        </div>
+      {%- endif -%}
+
+        <div class="px-3 pt-8 lg:px-5">
+          {% block 'pagination', paginate: paginate %}{% endblock %}
+        </div>
+        {%- assign journal_pages = paginate.pages | at_least: 1 -%}
+        <p class="os-page-status mt-auto">
+          <span>{{ 'os.items' | t: count: paginate.items }}</span>
+          <span>{{ 'os.status_page' | t: current: paginate.current_page, total: journal_pages }}</span>
+        </p>
+      {% endblock %}
+    {% endpaginate %}
+  </div>
+{% endblock %}

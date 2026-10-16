@@ -1,0 +1,159 @@
+{% block 'container', class: 'os-stage' %}
+  {%- liquid
+    assign name_error = ''
+    assign email_error = ''
+    assign phone_error = ''
+    assign body_error = ''
+  -%}
+
+  {%- comment -%} GRID header band: cyan overline, display title, closed by a hairline. {%- endcomment -%}
+  <div class="mb-6">
+    <div class="mx-auto max-w-page px-margin pt-2 md:pt-4">
+      <div class="mb-4 flex items-center gap-3">
+        {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-accent' %}{{ 'contact.overline' | t }}{% endblock %}
+      </div>
+      {% block 'text', tag: 'h1', variant: 'type-title', class: 'max-w-full break-words text-on-surface' %}{{ page.title | escape }}{% endblock %}
+    </div>
+  </div>
+
+  {%- comment -%} Split into copy + form only when the page has copy; otherwise the form panel sits alone at reading width. {%- endcomment -%}
+  <div class="mx-auto grid max-w-page grid-cols-1 gap-10 px-margin{% if page.content != blank %} lg:grid-cols-5 lg:gap-12{% endif %}">
+    {%- if page.content != blank -%}
+      <div class="lg:col-span-2">
+        <div class="richtext type-body text-ink-200">{{ page.content }}</div>
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign contact_frame_class = 'w-full max-w-3xl'
+      if page.content != blank
+        assign contact_frame_class = 'lg:col-span-3'
+      endif
+    -%}
+    {% block 'frame', window: 'page', class: contact_frame_class %}
+        <div class="panel-header os-pane-bar">
+          {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'contact.panel_title' | t }}{% endblock %}
+          <span class="os-page-meta">{{ 'os.icon_contact' | t }}</span>
+        </div>
+        <div class="p-4 md:p-6">
+      {% form 'contact' %}
+        {%- if form.posted_successfully? -%}
+          <div role="status" tabindex="-1" autofocus class="mb-6 flex flex-col items-start gap-2 border border-success p-4 text-on-surface">
+            <span class="badge badge-success">{{ 'contact.sent' | t }}</span><p class="type-body">{{ 'contact.success' | t }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          <div role="alert" tabindex="-1" autofocus class="mb-6 border border-critical p-4 text-on-surface">
+            <p class="type-overline mb-2 text-critical">{{ 'forms.form_errors_title' | t }}</p>
+            <ul class="type-body-sm list-disc ps-4">
+              {% for field in form.errors %}
+                <li>{{ form.errors.translated_fields[field] | escape }} {{ form.errors.messages[field] | escape }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          {%- for field in form.errors -%}
+            {%- capture field_error_message -%}{{ form.errors.translated_fields[field] }} {{ form.errors.messages[field] }}{%- endcapture -%}
+            {%- case field -%}
+              {%- when 'name' -%}
+                {%- assign name_error = field_error_message -%}
+              {%- when 'email' -%}
+                {%- assign email_error = field_error_message -%}
+              {%- when 'phone' -%}
+                {%- assign phone_error = field_error_message -%}
+              {%- when 'body' -%}
+                {%- assign body_error = field_error_message -%}
+            {%- endcase -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        <div class="flex flex-col gap-4">
+          <div>
+            <label for="contact-name" class="type-overline mb-2 block text-ink-300">
+              {{- 'contact.name' | t -}}
+              <span class="text-critical ms-0.5" aria-hidden="true">*</span><span class="sr-only"> ({{ 'forms.required' | t }})</span>
+            </label>
+            <input
+              type="text"
+              id="contact-name"
+              name="contact[name]"
+              class="w-full"
+              value="{{ form.name | default: customer.name | escape }}"
+              autocomplete="name"
+              required
+              aria-required="true"
+              {%- if name_error != blank %} aria-invalid="true" aria-describedby="contact-name-error"{% endif %}
+            >
+            {%- if name_error != blank -%}
+              <p id="contact-name-error" class="mt-1 text-[12px] text-critical">{{ name_error | escape }}</p>
+            {%- endif -%}
+          </div>
+
+          <div>
+            <label for="contact-email" class="type-overline mb-2 block text-ink-300">
+              {{- 'contact.email' | t -}}
+              <span class="text-critical ms-0.5" aria-hidden="true">*</span><span class="sr-only"> ({{ 'forms.required' | t }})</span>
+            </label>
+            <input
+              type="email"
+              id="contact-email"
+              name="contact[email]"
+              class="w-full"
+              value="{{ form.email | default: customer.email | escape }}"
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="off"
+              required
+              aria-required="true"
+              {%- if email_error != blank %} aria-invalid="true" aria-describedby="contact-email-error"{% endif %}
+            >
+            {%- if email_error != blank -%}
+              <p id="contact-email-error" class="mt-1 text-[12px] text-critical">{{ email_error | escape }}</p>
+            {%- endif -%}
+          </div>
+
+          <div>
+            <label for="contact-phone" class="type-overline mb-2 block text-ink-300">{{ 'contact.phone' | t }}</label>
+            <input
+              type="tel"
+              id="contact-phone"
+              name="contact[phone]"
+              class="w-full"
+              value="{{ form.phone | escape }}"
+              autocomplete="tel"
+              {%- if phone_error != blank %} aria-invalid="true" aria-describedby="contact-phone-error"{% endif %}
+            >
+            {%- if phone_error != blank -%}
+              <p id="contact-phone-error" class="mt-1 text-[12px] text-critical">{{ phone_error | escape }}</p>
+            {%- endif -%}
+          </div>
+
+          <div>
+            <label for="contact-message" class="type-overline mb-2 block text-ink-300">
+              {{- 'contact.message' | t -}}
+              <span class="text-critical ms-0.5" aria-hidden="true">*</span><span class="sr-only"> ({{ 'forms.required' | t }})</span>
+            </label>
+            <textarea
+              id="contact-message"
+              name="contact[body]"
+              class="w-full"
+              rows="6"
+              required
+              aria-required="true"
+              {%- if body_error != blank %} aria-invalid="true" aria-describedby="contact-message-error"{% endif %}
+            >{{ form.body | escape }}</textarea>
+            {%- if body_error != blank -%}
+              <p id="contact-message-error" class="mt-1 text-[12px] text-critical">{{ body_error | escape }}</p>
+            {%- endif -%}
+          </div>
+
+          <div>
+            {% block 'button', type: 'submit', variant: 'button-primary', class: 'h-11 px-5 text-[13px]' %}{{- 'contact.submit' | t -}}{% endblock %}
+          </div>
+        </div>
+      {% endform %}
+        </div>
+    {% endblock %}
+  </div>
+{% endblock %}

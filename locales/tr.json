@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Sayfa bulunamadı",
+    "not_found": "Sayfa bulunamadı.",
+    "back_to_shopping": "Koleksiyonu keşfedin",
+    "suggestions_heading": "İleriye giden farklı bir yol.",
+    "recovery_body": "Bu sayfa bulunamadı. Keşfedilecek daha çok şey var."
+  },
+  "general": {
+    "skip_to_content": "Ana içeriğe atla",
+    "play_video": "Videoyu oynat",
+    "video_player": "Video oynatıcı",
+    "captions": "Altyazılar",
+    "clear": "Temizle",
+    "back": "Geri",
+    "close": "Kapat",
+    "dismiss": "Kapat",
+    "drawer": "Çekmece",
+    "placeholder_image": "Yer tutucu görsel",
+    "account": "Hesap",
+    "search": "Ara",
+    "pagination": {
+      "label": "Sayfalara ayırma",
+      "previous_page": "Önceki sayfa",
+      "next_page": "Sonraki sayfa",
+      "page": "Sayfa {{ number }}",
+      "current_page": "Sayfa {{ number }}, geçerli sayfa"
+    },
+    "meta": {
+      "tagged": "\"{{ tags }}\" etiketli",
+      "page": "Sayfa {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Sonuçlar güncellendi",
+    "variant_updated": "Seçim güncellendi",
+    "update_error": "Bir hata oluştu. Lütfen tekrar deneyin."
+  },
+  "blog": {
+    "articles_heading": "Makaleler",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Yorum",
+    "comment_form_email": "E-posta",
+    "comment_form_name": "Ad",
+    "comment_form_submit": "Gönder",
+    "comment_form_title": "Yorum ekle",
+    "comments_count": {
+      "one": "1 yorum",
+      "other": "{{ count }} yorum"
+    },
+    "no_articles": "Henüz makale yok."
+  },
+  "cart": {
+    "checkout": "Ödeme",
+    "title": "Sepet",
+    "remove": "Kaldır: {{ title }}",
+    "empty": "Sepetiniz boş.",
+    "empty_description": "Görünüşe göre sepetinize henüz bir şey eklemediniz.",
+    "icon_label": {
+      "one": "Sepet (1 ürün)",
+      "other": "Sepet ({{ count }} ürün)"
+    },
+    "item_count": {
+      "one": "Sepette 1 ürün var",
+      "other": "Sepette {{ count }} ürün var"
+    },
+    "item_removed": "Ürün sepetten kaldırıldı",
+    "updated": "Sepet güncellendi",
+    "note_label": "Sipariş notları",
+    "note_placeholder": "Siparişiniz için özel talimatlar ekleyin",
+    "taxes_and_shipping_at_checkout": "Vergiler ve kargo ücreti ödeme sayfasında hesaplanır",
+    "discount_list": "Uygulanan indirimler",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "İndirim kodu",
+    "discount_title": "İndirim: {{ title }}",
+    "update_error": "Sepet güncellenemedi. Lütfen tekrar deneyin.",
+    "refresh_error": "Sepet güncellendi ancak görüntülenen bilgiler güncel olmayabilir. En son sepeti görmek için sayfayı yenileyin.",
+    "continue_shopping": "Alışverişe devam et",
+    "checkout_description": "Güvenli ödeme sayfasına ilerler",
+    "discount_placeholder": "Kodu girin",
+    "discount_apply": "Uygula",
+    "note_accordion_label": "Özel talimatlar",
+    "total_label": "Tahmini toplam"
+  },
+  "contact": {
+    "name": "Ad",
+    "email": "E-posta",
+    "phone": "Telefon (isteğe bağlı)",
+    "message": "Mesaj",
+    "submit": "Mesaj gönder",
+    "success": "Bizimle iletişime geçtiğiniz için teşekkür ederiz. Yakında dönüş yapacağız."
+  },
+  "collections": {
+    "all_collections": "Tüm koleksiyonlar",
+    "browse_heading": "Koleksiyonlara göz atın",
+    "products_heading": "Ürünler",
+    "placeholder_title": "Koleksiyon başlığı",
+    "no_collections": "Koleksiyon bulunamadı.",
+    "no_products": "Seçili filtrelerle eşleşen ürün yok.",
+    "products_count": {
+      "one": "1 ürün",
+      "other": "{{ count }} ürün"
+    },
+    "filter": "Filtrele",
+    "filters": "Filtreler",
+    "active_filters": "Etkin filtreler",
+    "clear_all": "Tümünü temizle",
+    "remove_filter": "{{ filter }} öğesini kaldır",
+    "show_results": "Sonuçları göster",
+    "value_unavailable": "Unavailable",
+    "price_min": "Minimum fiyat",
+    "price_max": "Maksimum fiyat",
+    "price_to": "ila",
+    "sort_by": "Şuna göre sırala:",
+    "filtering": {
+      "show_more": "Daha fazla göster"
+    },
+    "view_all": "Tümünü görüntüle"
+  },
+  "header": {
+    "menu": "Menü",
+    "mobile_navigation": "Mobil gezinme",
+    "navigation": "Ana gezinme",
+    "show_submenu": "{{ title }} alt menüsünü göster"
+  },
+  "footer": {
+    "quick_links": "Hızlı bağlantılar",
+    "policies": "Politikalar"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Apple Wallet'a ekle",
+    "card": "Hediye kartı",
+    "expired": "Bu hediye kartının süresi doldu",
+    "expires_on": "Son geçerlilik tarihi: {{ expires_on }}",
+    "use_at_checkout": "Ödeme sayfasında bu hediye kartını kullanın",
+    "a_gift_for_you": "Sizin için bir hediye",
+    "available": "{{ amount }} kullanılabilir",
+    "a_little_something": "Sizin için küçük bir hediye",
+    "card_label": "{{ shop }} hediye kartı",
+    "copy_code": "Kodu kopyala",
+    "copied": "Kod kopyalandı",
+    "copy_error": "Otomatik olarak kopyalanamadı. Kodu manuel olarak kopyalayın.",
+    "disabled": "Bu hediye kartı artık geçerli değil",
+    "start_shopping": "Alışverişe başla"
+  },
+  "page": {
+    "content_heading": "Sayfa içeriği"
+  },
+  "password": {
+    "title": "Bu mağaza gizlidir",
+    "eyebrow": "Yakında açılıyor",
+    "launch_description": "Sırada ne olduğuna erkenden göz atın.",
+    "enter": "Giriş yap",
+    "enter_with_password": "Parolayla gir",
+    "enter_store": "Mağazaya gir",
+    "show": "Göster",
+    "hide": "Gizle",
+    "error": "Yanlış parola. Lütfen tekrar deneyin.",
+    "field_label": "Şifre",
+    "placeholder": "Şifreyi girin",
+    "get_updates": "Açılış güncellemelerini al",
+    "updates_description": "Ne zaman açıldığımızı ilk siz öğrenin.",
+    "updates_submit": "Bana haber ver",
+    "updates_success": "Abone olduğunuz için teşekkürler."
+  },
+  "product": {
+    "details": "Ürün bilgileri",
+    "placeholder_title": "Ürün başlığı",
+    "quantity": "Miktar",
+    "quantity_decrease": "Miktarı azalt: {{ title }}",
+    "quantity_increase": "Miktarı artır: {{ title }}",
+    "quantity_input": "{{ title }} için miktar",
+    "add_to_cart": "Sepete ekle",
+    "added_to_cart": "Sepete eklendi",
+    "sold_out": "Tükendi",
+    "description": "Açıklama",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Fiyat",
+      "price_range_html": "{{ min }}-{{ max }}",
+      "price_range_label": "Fiyat aralığı",
+      "regular_price": "Normal fiyat",
+      "sale_price": "İndirimli fiyat",
+      "savings": "{{ amount }} tasarruf edin"
+    },
+    "quantity": {
+      "decrease": "Miktarı azalt",
+      "increase": "Miktarı artır",
+      "input_label": "Miktar"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 etkin filtre",
+      "other": "{{ count }} etkin filtre"
+    }
+  },
+  "forms": {
+    "required": "zorunlu",
+    "form_errors_title": "Lütfen aşağıdaki hataları düzeltin:"
+  },
+  "search": {
+    "title": "Arama",
+    "label": "Ara",
+    "placeholder": "Ara",
+    "products_heading": "Ürünler",
+    "results_heading": "Arama sonuçları",
+    "view_all_results": "Tüm sonuçları görüntüle",
+    "results_count_announcement": {
+      "one": "1 sonuç var",
+      "other": "{{ count }} sonuç var"
+    },
+    "no_results_announcement": "{{ terms }} için sonuç bulunamadı",
+    "results_for": "{{ terms }} için {{ count }} sonuç bulundu",
+    "no_results": "{{ terms }} için sonuç bulunamadı",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Güncelle"
+  },
+  "home": {
+    "hero": {
+      "title": "Yeni gelenler",
+      "subtitle": "Koleksiyonu keşfedin"
+    }
+  }
+}

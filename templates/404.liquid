@@ -1,0 +1,67 @@
+{%- liquid
+  assign default_image = images['grid-dev-broken-route.png'] | default: collections.all.products.first.featured_image
+  assign request_path = request.path | escape
+  assign not_found_image_alt = '404.image_alt' | t
+-%}
+
+{% comment %} Reserve breathing room independently of the shared footer's height; longer content can still grow naturally. {% endcomment %}
+{% block 'container', class: 'mx-auto flex min-h-[80svh] w-full max-w-page flex-col justify-center px-margin', attributes: 'aria-labelledby="not-found-title"' %}
+  <div class="grid gap-10 py-12 md:py-16 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:gap-16">
+    {%- comment -%} SYSTEM ALERT: the error as the focused alert window; the diagnostic window sits beside it. {%- endcomment -%}
+    {% block 'frame', window: 'page', class: 'min-w-0' %}
+    <div class="panel-header os-pane-bar">
+      {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'os.alert_title' | t }}{% endblock %}
+    </div>
+    <div class="p-5 md:p-10">
+      <div class="mb-6 flex items-center gap-3">
+        {% render 'os-icon', name: 'alert', class: 'size-8 text-critical' %}
+        <span class="badge badge-danger"><span class="size-1.5 rounded-full bg-critical" aria-hidden="true"></span>{{ '404.status_value' | t }}</span>
+        {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ '404.not_found' | t }}{% endblock %}
+      </div>
+
+      {%- capture not_found_title_attributes -%}id="not-found-title" aria-label="{{ '404.title_accessible' | t | escape }}"{%- endcapture -%}
+      {% block 'text', tag: 'h1', variant: 'type-display-xl', class: 'leading-[0.85] text-on-surface', attributes: not_found_title_attributes %}{{ '404.title' | t }}{% endblock %}
+      {% block 'text', variant: 'type-data', class: 'mt-6 flex flex-wrap items-center gap-2 uppercase text-critical' %}<span class="grid-status-dot grid-status-dot-alert" aria-hidden="true"></span>{{ '404.error_line' | t: path: request_path }}<span class="grid-cursor" aria-hidden="true"></span>{% endblock %}
+
+      <div class="mt-8 grid max-w-xl gap-4 border-t border-line-400 pt-6">
+        {% block 'text', tag: 'h2', variant: 'type-heading-lg', class: 'text-on-surface' %}{{ '404.suggestions_heading' | t }}{% endblock %}
+        {% block 'text', variant: 'type-body', class: 'text-ink-200' %}{{ '404.recovery_body' | t }}{% endblock %}
+        {% block 'button', url: routes.all_products_collection_url, variant: 'button-primary', class: 'mt-2 h-11 justify-self-start gap-3 px-5 text-[13px]' %}
+          <span>{{ '404.back_to_shopping' | t }}</span>
+          <span class="inline-flex size-4 shrink-0 items-center justify-center rtl:-scale-x-100" aria-hidden="true">{{- 'icon-arrow-right.svg' | inline_asset_content -}}</span>
+        {% endblock %}
+      </div>
+    </div>
+    {% endblock %}
+
+    {%- comment -%} Diagnostic panel: key-value readout of the failed request, then a framed image to keep the page on-brand. {%- endcomment -%}
+    {% block 'frame', window: 'pane', class: 'min-w-0', readout: 'alert' %}
+        <div class="panel-header os-pane-bar">
+          {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ '404.panel_title' | t }}{% endblock %}
+          <span class="os-page-meta" aria-hidden="true">ERR.404</span>
+        </div>
+        <dl class="px-4">
+          <div class="flex items-baseline gap-3 border-b border-line-400 py-3">
+            <dt class="type-body-sm text-ink-300">{{ '404.status_label' | t }}</dt>
+            <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd class="type-data uppercase text-critical">{{ '404.status_value' | t }}</dd>
+          </div>
+          <div class="flex items-baseline gap-3 border-b border-line-400 py-3">
+            <dt class="type-body-sm text-ink-300">{{ '404.code_label' | t }}</dt>
+            <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd class="type-data text-on-surface">404</dd>
+          </div>
+          <div class="flex items-baseline gap-3 py-3">
+            <dt class="shrink-0 type-body-sm text-ink-300">{{ '404.path_label' | t }}</dt>
+            <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+            <dd class="min-w-0 truncate type-data text-on-surface"><bdi>{{ request_path }}</bdi></dd>
+          </div>
+        </dl>
+        <div class="border-t border-line-300 p-4">
+          <div class="overflow-hidden border border-line-400 bg-surface">
+            {% block 'image', fallback_image: default_image, alt: not_found_image_alt, aspect_ratio: 'aspect-square', sizes: '(min-width: 990px) 480px, calc(100vw - 64px)', attributes: 'loading="eager" fetchpriority="high"' %}{% endblock %}
+          </div>
+        </div>
+    {% endblock %}
+  </div>
+{% endblock %}

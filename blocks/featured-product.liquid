@@ -1,0 +1,37 @@
+{% doc %}
+  Shell for a caller-authored featured product window. The caller owns the product
+  source and every card inside; this block only renders the body.
+
+  The product setting is an editor binding: callers pass the same resource their
+  body reads (`product: live_product`), and the editor's picker follows that value's
+  provenance to rewrite the caller's `all_products['<handle>']` source.
+
+  @param {string} [class] - Additional CSS classes on the wrapper.
+  @param {string} [attributes] - Additional HTML attributes on the wrapper.
+
+  @category content
+  @renders div
+
+  @example
+  {% assign live_product = all_products['demo-product'] %}
+  {% block 'featured-product', product: live_product %}
+    {% block 'text', tag: 'h3' %}{{ live_product.title | escape }}{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+<div{% if class != blank %} class="{{ class }}"{% endif %}{% if attributes != blank %} {{ attributes }}{% endif %}>
+  {{ content }}
+</div>
+
+{% schema %}
+  {
+    "name": "t:blocks.featured_product",
+    "settings": [
+      {
+        "type": "product",
+        "id": "product",
+        "label": "t:blocks.featured_product_settings.product"
+      }
+    ]
+  }
+{% endschema %}

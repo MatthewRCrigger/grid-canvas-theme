@@ -1,0 +1,163 @@
+{% doc %}
+  Wraps page-region content in a configurable HTML element. The storefront
+  shell uses dedicated `header` and `footer` blocks instead. Pass layout
+  constraints and spacing via class. Fill defaults to Automatic: it infers
+  Image when the resolved image source exists and Color otherwise. Color
+  suppresses the background image. Switching Fill
+  never clears retained color or image settings; Image keeps the color underlay.
+  Callers can pass the image through `background_image:`.
+  Content between {% block 'container' %}...{% endblock %} tags is rendered via
+  `content`.
+
+  @param {string} [class] - Tailwind utilities other than vertical padding; the padding setting owns `py-*`, `pt-*`, and `pb-*`.
+  @param {string} [tag] - HTML element for the wrapper. Default: 'section'.
+  @param {string} [background_image_loading] - Loading behavior for the background image. Default: 'lazy'.
+  @param {string} [background_image_fetchpriority] - Optional fetchpriority for the background image. Use 'high' with eager LCP images.
+  @param {string} [background_image_sizes] - Responsive sizes attribute for the background image. Default: 'auto' for lazy images, '100vw' for eager images.
+  @param {string} [background_image_widths] - Comma-separated pixel widths for the background image srcset. Default: '375,550,750,1100,1500'.
+  @param {string} [attributes] - Arbitrary HTML attributes on the wrapper (e.g. role, aria-*, id, data-*).
+
+  @category layout
+  @renders section
+
+  @example Constrained page content
+  {% block 'container', class: 'w-full max-w-page mx-auto px-margin' %}
+    <h1>Page title</h1>
+    <p>Body copy goes here.</p>
+  {% endblock %}
+
+  @example Color Fill suppressing an existing hero image
+  {% block 'container', fill: 'color', background_image: hero_image %}
+    <h1>Welcome</h1>
+  {% endblock %}
+
+  @example Image Fill with an eager full-bleed hero
+  {% block 'container', fill: 'image', class: 'min-h-hero overflow-hidden', background_image: hero_image, background_image_loading: 'eager', background_image_fetchpriority: 'high', background_image_sizes: '100vw', attributes: 'aria-labelledby="hero-heading"' %}
+    <h1 id="hero-heading">Welcome</h1>
+  {% endblock %}
+
+  @example Semantic tag override for a page region
+  {% block 'container', tag: 'aside', class: 'px-margin max-w-page mx-auto w-full' %}
+    <p>Related information</p>
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign tag = tag | default: 'section'
+  assign bg_color = background
+  assign background_image = background_image
+  assign fill = fill | default: 'auto'
+  unless fill == 'color' or fill == 'image'
+    assign fill = 'auto'
+  endunless
+  assign effective_fill = fill
+  if fill == 'auto'
+    assign effective_fill = 'color'
+    if background_image != blank
+      assign effective_fill = 'image'
+    endif
+  endif
+  assign render_background_image = false
+  if effective_fill == 'image' and background_image != blank
+    assign render_background_image = true
+  endif
+  assign background_image_loading = background_image_loading | default: 'lazy'
+  assign background_image_widths = background_image_widths | default: '375,550,750,1100,1500'
+  assign background_image_widths_array = background_image_widths | split: ','
+  if background_image_sizes == blank
+    if background_image_loading == 'lazy'
+      assign background_image_sizes = 'auto'
+    else
+      assign background_image_sizes = '100vw'
+    endif
+  endif
+  assign composed_class = padding
+  if class != blank
+    assign composed_class = composed_class | append: ' ' | append: class | strip
+  endif
+  if render_background_image
+    if composed_class == blank
+      assign composed_class = 'relative isolate'
+    else
+      unless composed_class contains 'relative'
+        assign composed_class = 'relative ' | append: composed_class
+      endunless
+      unless composed_class contains 'isolate'
+        assign composed_class = 'isolate ' | append: composed_class
+      endunless
+    endif
+  endif
+-%}
+
+<{{ tag }} {% if composed_class != blank %}class="{{ composed_class }}"{% endif %}{% if attributes %} {{ attributes }}{% endif %}{% if bg_color %} style="background-color: {{ bg_color }}"{% endif %}>
+  {%- if render_background_image -%}
+    {%- capture background_srcset -%}
+      {%- for width in background_image_widths_array -%}
+        {%- assign w = width | strip | plus: 0 -%}
+        {{ background_image | image_url: width: w }} {{ w }}w{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- comment -%} Backgrounds use a real img so the browser can choose from srcset and honor LCP loading hints. {%- endcomment -%}
+    <img
+      src="{{ background_image | image_url: width: 1500 }}"
+      srcset="{{ background_srcset | strip }}"
+      sizes="{{ background_image_sizes | escape }}"
+      loading="{{ background_image_loading | escape }}"
+      {% if background_image_fetchpriority != blank %}fetchpriority="{{ background_image_fetchpriority | escape }}"{% endif %}
+      alt=""
+      width="{{ background_image.width }}"
+      height="{{ background_image.height }}"
+      class="pointer-events-none absolute inset-0 -z-10 size-full object-cover"
+      aria-hidden="true"
+    >
+  {%- endif -%}
+
+  {{ content }}
+</{{ tag }}>
+
+{% comment %} Fill selects one background control, so only Fill, the active background setting, and padding are shown. {% endcomment %}
+{% schema %}
+  {
+    "name": "t:blocks.container",
+    "settings": [
+      {
+        "type": "select",
+        "id": "fill",
+        "label": "t:blocks.container_settings.fill",
+        "info": "t:blocks.container_settings.fill_info",
+        "default": "auto",
+        "options": [
+          { "value": "auto", "label": "t:blocks.container_settings.fill_automatic" },
+          { "value": "color", "label": "t:general.color" },
+          { "value": "image", "label": "t:blocks.image" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "background",
+        "label": "t:general.background",
+        "visible_if": "{{ fill != 'image' }}"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "t:blocks.container_settings.background_image",
+        "visible_if": "{{ fill != 'color' }}"
+      },
+      {
+        "type": "select",
+        "id": "padding",
+        "label": "t:blocks.container_settings.padding",
+        "default": "",
+        "options": [
+          { "value": "", "label": "t:general.none" },
+          { "value": "py-8", "label": "t:blocks.container_settings.padding_small" },
+          { "value": "py-16", "label": "t:blocks.container_settings.padding_medium" },
+          { "value": "py-24", "label": "t:blocks.container_settings.padding_large" },
+          { "value": "py-32", "label": "t:blocks.container_settings.padding_extra_large" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

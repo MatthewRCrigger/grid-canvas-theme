@@ -1,0 +1,105 @@
+{% doc %}
+  Renders a numeric quantity selector using the `<s-quantity-selector>` Web
+  Component. Decrement and increment buttons flank a number input. The Web
+  Component handles clamping, step arithmetic, and button disabled states.
+
+  @param {string} [name] - Input name attribute.
+  @param {string} [id] - Input id attribute.
+  @param {number} [value] - Initial quantity. Default: 1.
+  @param {number} [min] - Minimum allowed value. Default: 1.
+  @param {number} [max] - Maximum allowed value. When blank/nil, no maximum is enforced.
+  @param {number} [step] - Step increment. Default: 1.
+  @param {boolean} [disabled] - Disables all interactive elements. Default: false.
+  @param {string} [class] - Additional CSS classes to append to the component element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category forms
+  @renders s-quantity-selector
+
+  @example
+  {% block 'quantity-selector' %}{% endblock %}
+  {% block 'quantity-selector', name: 'quantity', value: 2, min: 1, max: 10 %}{% endblock %}
+  {% block 'quantity-selector', name: 'qty', id: 'product-qty', disabled: true %}{% endblock %}
+
+{% enddoc %}
+
+{%- liquid
+  assign name     = name
+  assign value    = value | default: 1
+  assign min      = min | default: 1
+  assign step     = step | default: 1
+  assign disabled = disabled | default: false
+  assign style    = style
+  assign button_style = ''
+  # Lock icon color to an auto-derived contrast value when merchants set a custom button background.
+  if button_color != blank
+    assign button_style = 'background-color: ' | append: button_color | append: ';'
+    assign button_brightness = button_color | color_brightness
+    if button_brightness > 128
+      assign button_style = button_style | append: 'color: #000;'
+    else
+      assign button_style = button_style | append: 'color: #fff;'
+    endif
+  endif
+-%}
+
+{%- comment -%} Instance scope prevents repeated public blocks from sharing a command target. {%- endcomment -%}
+{%- liquid
+  # Fall back to form attributes only in static/test contexts where block.id is blank.
+  if block.id != blank
+    assign _qs_id = 'qs-' | append: block.id | handleize
+  else
+    assign _qs_id = 'qs-' | append: name | append: '-' | append: id | handleize
+  endif
+-%}
+
+{%- comment -%} <s-quantity-selector> reads [data-decrement], [data-increment], the nested <input>, and data-quantity-label. Commands: --step-up, --step-down (custom, not native step). See assets/s-quantity-selector.js class JSDoc. {%- endcomment -%}
+<s-quantity-selector id="{{ _qs_id }}" min="{{ min }}"{% if max != blank %} max="{{ max }}"{% endif %} step="{{ step }}" value="{{ value }}"
+  data-quantity-label="{{ 'products.quantity.input_label' | t }}"
+  class="inline-flex items-center {{ style }} rounded-input{% if class != blank %} {{ class }}{% endif %}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  <button type="button" data-decrement commandfor="{{ _qs_id }}" command="--step-down"
+    class="inline-flex items-center justify-center size-11 text-on-surface-secondary{% if button_style == blank %} hover:text-on-surface{% endif %} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed motion-safe:transition-colors"
+    aria-label="{{ 'products.quantity.decrease' | t }}"
+    {% if button_style != blank %}style="{{ button_style }}" {% endif %}{% if disabled %}disabled{% endif %}>
+    <span class="inline-flex items-center justify-center shrink-0 size-4" aria-hidden="true">{{- 'icon-minus.svg' | inline_asset_content -}}</span>
+  </button>
+  {%- comment -%} This number input (name="{{ name }}") is authoritative for quantity in the form POST.
+    Display-only mirror inputs (e.g. in cart-line-item.liquid) must stay in sync but are not submitted. {%- endcomment -%}
+  <input type="number" name="{{ name }}"{% if id != blank %} id="{{ id }}"{% endif %}
+    value="{{ value }}"
+    min="{{ min }}"{% if max != blank %} max="{{ max }}"{% endif %} step="{{ step }}"
+    class="w-12 h-11 text-center border-0 rounded-none p-0 bg-transparent text-on-surface text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+    {% if disabled %}disabled{% endif %}
+    aria-label="{{ 'products.quantity.input_label' | t }}">
+  <button type="button" data-increment commandfor="{{ _qs_id }}" command="--step-up"
+    class="inline-flex items-center justify-center size-11 text-on-surface-secondary{% if button_style == blank %} hover:text-on-surface{% endif %} cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed motion-safe:transition-colors"
+    aria-label="{{ 'products.quantity.increase' | t }}"
+    {% if button_style != blank %}style="{{ button_style }}" {% endif %}{% if disabled %}disabled{% endif %}>
+    <span class="inline-flex items-center justify-center shrink-0 size-4" aria-hidden="true">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+  </button>
+</s-quantity-selector>
+
+<script type="module" src="{{ 's-quantity-selector.js' | asset_url }}"></script>
+
+{% schema %}
+  {
+    "name": "t:blocks.quantity_selector",
+    "settings": [
+      {
+        "type": "select",
+        "id": "style",
+        "label": "t:general.style",
+        "default": "quantity-selector-outlined",
+        "options": [
+          { "value": "quantity-selector-outlined", "label": "t:variants.quantity_selector.outlined" },
+          { "value": "quantity-selector-filled", "label": "t:variants.quantity_selector.filled" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "t:blocks.quantity_selector_settings.button_color"
+      }
+    ]
+  }
+{% endschema %}

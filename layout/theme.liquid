@@ -1,0 +1,436 @@
+<!doctype html>
+{%- comment -%} dir comes from the platform (request.locale.direction); never derive it from a theme-local RTL language list. {%- endcomment -%}
+<html lang="{{ request.locale.iso_code }}" dir="{{ request.locale.direction | default: 'ltr' }}">
+  <head>
+    {%- comment -%} The import map must precede the first module script, so it stays first in the head. {%- endcomment -%}
+    {% render 'import-map' %}
+    {% render 'meta-tags' %}
+    {{ 'styles.min.css' | asset_url | stylesheet_tag: preload: true }}
+    {% render 'theme-styles' %}
+
+    {% render 'lcp-preload' %}
+
+    {%- comment -%}
+      Standard Actions configuration must register before content_for_header so
+      platform cart mutations use the theme handler instead of the full-page fallback.
+    {%- endcomment -%}
+    {% render 'standard-actions-config' %}
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="flex flex-col min-h-svh bg-surface text-on-surface font-body antialiased pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-24 lg:h-dvh lg:min-h-0 lg:overflow-hidden lg:pb-0">
+    {% render 'skip-link' %}
+    {%- comment -%} GRID OS menu bar: the system mark (logo), the focused window's name, the main menu, then status items and the clock. {%- endcomment -%}
+    {% block 'header', class: 'border-b border-line-300 bg-surface', logo_position: 'logo-left', scroll_behavior: 'sticky' %}
+      <div
+        class="grid w-full min-h-11 grid-cols-[auto_minmax(0,1fr)_auto] [grid-template-areas:'brand_nav_actions'] items-center px-margin py-0 md:group-data-[layout=logo-center]/header:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] group-data-[layout=logo-center]/header:[grid-template-areas:'nav_logo_actions'] group-data-[scrolled]/header:min-h-13 group-data-[scrolled]/header:py-1 motion-safe:transition-[min-height,padding] motion-safe:duration-200 motion-safe:ease-ui"
+        data-header-nav-group
+      >
+        {%- comment -%} Logo position: with the logo centred this wrapper dissolves (contents) so the menu toggle and logo take their own grid cells. {%- endcomment -%}
+        <div class="[grid-area:brand] flex min-w-0 items-center gap-1 md:gap-2 group-data-[layout=logo-center]/header:contents">
+          <div class="hidden max-md:block ms-[min(0px,calc(var(--safe-area-inset-inline)-0.5rem))] group-data-[layout=logo-center]/header:[grid-area:nav] group-data-[layout=logo-center]/header:justify-self-start">
+            {%- capture menu_button_attrs -%}aria-label="{{ 'header.menu' | t | escape }}"{%- endcapture -%}
+            {% block 'button',
+              commandfor: 'mobile-nav-drawer',
+              command: 'show-modal',
+              variant: 'button-ghost',
+              class: 'size-touch-target rounded hover:bg-transparent hover:opacity-70',
+              attributes: menu_button_attrs -%}
+              <span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">
+                {{- 'icon-menu.svg' | inline_asset_content -}}
+              </span>
+            {%- endblock %}
+          </div>
+
+          {% block 'logo', class: 'min-w-0 truncate font-heading text-[16px] font-semibold uppercase tracking-[0.2em] md:text-[15px] md:tracking-[0.26em] group-data-[layout=logo-center]/header:[grid-area:logo] group-data-[layout=logo-center]/header:justify-self-center group-data-[scrolled]/header:text-[14px]! group-data-[scrolled]/header:tracking-[0.22em]! group-data-[scrolled]/header:[&_img]:h-6! group-data-[scrolled]/header:[&_img]:w-auto! motion-safe:transition-[font-size,letter-spacing] motion-safe:duration-200 motion-safe:ease-ui motion-safe:[&_img]:transition-[height] motion-safe:[&_img]:duration-200' %}{% endblock %}
+          {%- comment -%} App slot: the editable default name, swapped by s-window-manager for the focused window's title. {%- endcomment -%}
+          <span class="os-menubar-app hidden md:inline-flex ms-3 border-s border-line-300 ps-4">
+            <span data-os-app-default>{% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-on-surface' %}{{ 'os.menubar_app' | t }}{% endblock %}</span>
+            <span data-os-app-title class="type-overline-lg truncate text-nowrap text-accent" hidden></span>
+          </span>
+        </div>
+
+        {%- capture mobile_nav_localization_submit -%}
+          {% block 'button', type: 'submit', variant: 'button-secondary', class: 'h-11 rounded-button px-3 text-xs' %}{{ 'localization.update_language' | t }}{% endblock %}
+        {%- endcapture -%}
+        {% block 'main-menu', variant: 'type-overline', class: '[grid-area:nav] hidden md:flex min-w-0 flex-wrap items-center gap-x-6 gap-y-1 mx-6 group-data-[layout=logo-center]/header:ms-0 group-data-[layout=logo-center]/header:justify-self-start', mobile_nav_localization_submit: mobile_nav_localization_submit %}{% endblock %}
+
+        <div class="[grid-area:actions] justify-self-end flex shrink-0 items-center gap-0">
+          {%- capture header_localization_submit -%}
+            {% block 'button', type: 'submit', variant: 'button-secondary', class: 'h-11 rounded-button px-3 text-xs' %}{{ 'localization.update_language' | t }}{% endblock %}
+          {%- endcapture -%}
+          {% render 'localization-form', show_country: true, id: 'header-localization', class: 'hidden md:block me-2', submit_button: header_localization_submit %}
+          <span class="hidden lg:inline-flex items-center gap-2 me-3 type-data-sm uppercase text-ink-200" aria-hidden="true"><span class="grid-status-dot"></span><s-clock>--:--:--</s-clock></span>
+
+          {%- capture search_button_attrs -%}aria-label="{{ 'general.search' | t | escape }}"{%- endcapture -%}
+          {% block 'button',
+            commandfor: 'predictive-search',
+            command: 'show-modal',
+            variant: 'button-ghost',
+            class: 'size-touch-target rounded hover:bg-transparent hover:opacity-70',
+            attributes: search_button_attrs -%}
+            <span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">
+              {{- 'icon-search.svg' | inline_asset_content -}}
+            </span>
+          {%- endblock %}
+
+          {% if shop.customer_accounts_enabled %}
+            {%- comment -%} This menu handle matches Shopify customer accounts' default Orders/Profile menu. {%- endcomment -%}
+            <shopify-account
+              menu="customer-account-main-menu"
+              title="{{ 'general.account' | t | escape }}"
+              class="inline-flex h-11 min-w-11 items-center justify-center rounded text-on-surface hover:opacity-70 motion-safe:transition motion-safe:active:scale-[0.97] [--shopify-account-avatar-size:2.75rem] [--shopify-account-signed-in-avatar-size:1.75rem] [--shopify-account-signed-in-avatar-color-background:var(--color-interactive)] [--shopify-account-signed-in-avatar-color-text:var(--color-interactive-text)] [--shopify-account-font-heading:var(--font-heading)] [--shopify-account-font-heading-weight:600] [--shopify-account-font-body:var(--font-body)] [--shopify-account-font-body-weight:400] [--shopify-account-radius-base:var(--radius-card)] [--shopify-account-radius-button:var(--radius-button)] [--shopify-account-radius-button-small:var(--radius-button)] [--shopify-account-radius-input:var(--radius-input)] [--shopify-account-color-background:var(--color-hover)] [--shopify-account-color-text:var(--color-on-surface)] [--shopify-account-color-accent:var(--color-interactive)] [--shopify-account-color-accent-text:var(--color-interactive-text)] [--shopify-account-dialog-position-top:4.5rem] not-[&:defined]:flex not-[&:defined]:h-11 not-[&:defined]:min-w-11 not-[&:defined]:items-center not-[&:defined]:justify-center"
+            >
+              {% if customer %}
+                <div class="size-7 rounded-full bg-interactive" aria-hidden="true"></div>
+              {% else %}
+                <span
+                  slot="signed-out-avatar"
+                  class="inline-flex size-5 items-center justify-center [&_svg]:size-full"
+                  aria-hidden="true"
+                >
+                  {{- 'icon-account.svg' | inline_asset_content -}}
+                </span>
+              {% endif %}
+            </shopify-account>
+          {% endif %}
+
+          {%- comment -%}
+            The cart-count partial is swapped by s-cart.js after every cart mutation
+            to keep the header badge count in sync — do not remove or rename this partial.
+          {%- endcomment -%}
+          {% partial 'cart-count' %}
+            {%- comment -%} The label carries the live count so the trigger stays correctly named for assistive tech after each partial swap. {%- endcomment -%}
+            {%- capture cart_button_attrs -%}id="header-cart-trigger" data-cart-count="{{ cart.item_count }}" aria-label="{{ 'cart.icon_label' | t: count: cart.item_count | escape }}"{%- endcapture -%}
+            {% block 'button',
+              commandfor: 'cart-drawer',
+              command: 'show-modal',
+              variant: 'button-ghost',
+              class: 'h-11 min-w-11 px-2 gap-1.5 rounded-none',
+              attributes: cart_button_attrs -%}
+              {%- comment -%} GRID readout: the icon and the mono count sit side by side so neither hides the other. {%- endcomment -%}
+              <span class="inline-flex items-center justify-center shrink-0 size-5 [&_svg]:size-full" aria-hidden="true">
+                {{- 'icon-cart.svg' | inline_asset_content -}}
+              </span>
+              {%- if cart.item_count > 0 -%}
+                <span class="inline-flex items-center justify-center min-w-5 h-5 px-1 border border-line-200 rounded-chip font-mono text-[12px] leading-none text-on-surface" aria-hidden="true">
+                  {{- cart.item_count -}}
+                </span>
+              {%- endif -%}
+            {%- endblock %}
+            <span aria-live="polite" aria-atomic="true" class="sr-only">
+              {{ 'cart.item_count' | t: count: cart.item_count }}
+            </span>
+          {% endpartial %}
+        </div>
+      </div>
+      {% block 'predictive-search' %}
+        {%- comment -%}
+          Search pop-up window: the same GRID Spotlight as the homepage window (snippets/spotlight.liquid):
+          query bar, top hits + command palette before a query, "/" commands, grouped live results for
+          every resource type. This layout usage owns its top hits (Featured collection picker binds
+          to ps_collection) and footer copy.
+        {%- endcomment -%}
+        <div class="panel-header">
+          {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'flex-1 text-ink-invert' %}{{ 'home.spotlight.title' | t }}{% endblock %}
+        </div>
+        {%- liquid
+          assign ps_collection = collections.all
+          assign ps_limit = 5
+          assign ps_shown = ps_collection.products_count
+          if ps_shown > ps_limit
+            assign ps_shown = ps_limit
+          endif
+        -%}
+        {%- capture ps_top_hits -%}
+          {% block 'featured-collection', collection: ps_collection, class: 'block !py-0', attributes: 'role="group" aria-labelledby="ps-top-hits" data-spotlight-default' %}
+            <div class="flex min-h-8 items-center justify-between gap-3 px-4 pt-2 md:px-6">
+              <span id="ps-top-hits">{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.spotlight.top_hits' | t }}{% endblock %}</span>
+              <span class="type-data-sm text-ink-300" aria-hidden="true">{{ ps_shown | prepend: '0' | slice: -2, 2 }}</span>
+            </div>
+            {%- for product in ps_collection.products limit: ps_limit -%}
+              {%- liquid
+                assign ps_variant = product.selected_or_first_available_variant
+                if product.price_varies
+                  assign ps_price_max = product.price_max | money
+                  assign ps_price = product.price_min | money | append: ' – ' | append: ps_price_max
+                else
+                  assign ps_price = ps_variant.price | money
+                endif
+              -%}
+              <div id="ps-hit-{{ forloop.index }}" role="option" aria-selected="false" data-url="{{ product.url | escape }}" class="group/hit border-s-2 border-transparent aria-selected:border-accent aria-selected:bg-hover">
+                <a href="{{ product.url | escape }}" tabindex="-1" class="grid min-h-12 grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-1.5 text-on-surface no-underline md:px-6">
+                  <span class="relative block size-8 overflow-hidden border border-line-400 bg-surface-secondary">
+                    {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: '32px', widths: '64,96', attributes: 'loading="lazy"', alt: product.title, seed: forloop.index %}{% endblock %}
+                  </span>
+                  <span class="flex min-w-0 flex-col">
+                    <span class="type-heading-sm truncate group-aria-selected/hit:text-accent">{{ product.title | escape }}</span>
+                    {%- if product.vendor != blank or product.type != blank -%}
+                      <span class="type-data-sm truncate text-ink-300">{{ product.vendor | escape }}{% if product.vendor != blank and product.type != blank %} // {% endif %}{{ product.type | escape }}</span>
+                    {%- endif -%}
+                  </span>
+                  <span class="flex items-center gap-3">{% unless product.available %}<span class="badge badge-danger max-md:hidden">{{ 'home.status.sold_out' | t }}</span>{% endunless %}<span class="type-data text-on-surface">{{ ps_price }}</span></span>
+                </a>
+              </div>
+            {%- endfor -%}
+          {% endblock %}
+        {%- endcapture -%}
+        {%- capture ps_footer -%}
+          <div class="border-t border-line-300 px-4 py-3 max-md:hidden md:px-6">
+            {% block 'text', tag: 'p', variant: 'type-data-sm', class: 'uppercase text-ink-300' %}{{ 'home.spotlight.hint' | t }}{% endblock %}
+          </div>
+        {%- endcapture -%}
+        {% render 'spotlight', id: 'predictive-search', top_hits: ps_top_hits, footer: ps_footer, autofocus: true, list_class: 'max-h-[min(30rem,calc(100dvh-14rem))]' %}
+      {% endblock %}
+
+      <script type="module" src="{{ 's-live-form.js' | asset_url }}"></script>
+
+      {%- comment -%} === CART DRAWER (commerce-critical) ===
+        This <s-cart> instance manages the drawer's cart UI via partial rendering.
+        Its id ("cart-drawer-items") and data-partials values are coupled to s-cart.js —
+        renaming breaks live quantity updates and header counters. cart-drawer-footer
+        is included so the footer refreshes with cart mutations (additional checkout buttons
+        depend on cart state). {%- endcomment -%}
+      {%- capture cart_drawer_content -%}
+        <s-cart class="block" id="cart-drawer-items" data-partials="cart-drawer,cart-count,cart-drawer-count,cart-drawer-footer">
+          {% partial 'cart-drawer' %}
+          {%- comment -%} standard_event_data encodes the less-than character as <,
+            so a literal closing-script tag in cart line attributes (note,
+            line-item properties) cannot terminate this <script> early. {%- endcomment -%}
+          {%- # theme-check-disable UnknownFilter %}
+          <script type="application/json" data-view-event-payload>{{ cart | standard_event_data: 'view', context: 'dialog' }}</script>
+          {%- # theme-check-enable UnknownFilter %}
+          {% if cart.item_count > 0 %}
+            <div class="divide-y divide-line-400 -mt-4 md:-mt-5">
+              {% for item in cart.items %}
+                {%- comment -%} Drawer images lazy — display:none until opened, 64px thumbs defer imperceptibly {%- endcomment -%}
+                {%- capture line_media -%}
+                  {% if item.image %}{% block 'image', fallback_image: item.image, sizes: '96px', widths: '96,192', alt: item.product.title, class: 'size-full object-contain', attributes: 'loading="lazy"' %}{% endblock %}{% endif %}
+                {%- endcapture -%}
+                {%- capture line_unit_price -%}
+                  {% block 'price', price: item.original_price, class: 'text-xs font-medium [&_span]:text-on-surface-secondary' %}{% endblock %}
+                {%- endcapture -%}
+                {%- assign remove_label = 'cart.remove' | t: title: item.product.title -%}
+                {%- capture line_remove_attributes -%}aria-label="{{ remove_label | escape }}" data-variant-id="{{ item.variant_id }}" data-line-key="{{ item.key | escape }}"{%- endcapture -%}
+                {%- capture line_remove_button -%}
+                  {% block 'button', commandfor: 'cart-drawer-items', command: '--remove', variant: 'button-ghost', class: 'size-touch-target rounded hover:bg-transparent hover:opacity-70', attributes: line_remove_attributes %}<span class="inline-flex items-center justify-center shrink-0 size-4" aria-hidden="true">{{- 'icon-trash.svg' | inline_asset_content -}}</span>{% endblock %}
+                {%- endcapture -%}
+                {% render 'cart-line-item', item: item, cart_id: 'cart-drawer-items', compact: true, media: line_media, unit_price: line_unit_price, remove_button: line_remove_button %}
+              {% endfor %}
+            </div>
+          {% else %}
+            {%- assign drawer_empty_image = images['grid-empty-cart-crate.png'] -%}
+            <div class="flex flex-col items-start gap-4 py-6">
+              {%- if drawer_empty_image -%}
+                {%- assign drawer_empty_alt = 'cart.empty_image_alt' | t -%}
+                <div class="w-full border border-line-400 bg-surface">
+                  {% block 'image', fallback_image: drawer_empty_image, aspect_ratio: 'aspect-landscape', sizes: '(min-width: 640px) 400px, calc(100vw - 32px)', alt: drawer_empty_alt, attributes: 'loading="lazy"' %}{% endblock %}
+                </div>
+              {%- endif -%}
+              <span class="badge">{{ 'cart.empty' | t }}</span>
+            </div>
+          {% endif %}
+          {% endpartial %}
+        </s-cart>
+      {%- endcapture -%}
+
+      {%- capture cart_drawer_footer -%}
+        {% partial 'cart-drawer-footer' %}
+        {% if cart.item_count > 0 %}
+          {%- comment -%} The footer has its own s-cart so discount input events and disclosure state stay locally owned while this pinned region refreshes. {%- endcomment -%}
+          <s-cart class="block" id="cart-drawer-summary" data-partials="cart-drawer,cart-count,cart-drawer-count,cart-drawer-footer">
+            {% form 'cart', cart, class: 'flex flex-col gap-3' %}
+              {% render 'cart-discount-list', cart: cart %}
+              <div class="flex items-baseline gap-3">
+                <span class="type-overline text-ink-300">{{ 'cart.total_label' | t }}</span>
+                <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+                <span class="font-mono text-[18px] text-on-surface [view-transition-name:cart-total]" data-cart-total><bdi>{{ cart.total_price | money }}</bdi></span>
+              </div>
+              {% block 'button', type: 'submit', name: 'checkout', variant: 'button-primary', class: 'h-11 px-4 text-[13px] w-full' %}{{- 'cart.checkout' | t -}}{% endblock %}
+
+              {%- comment -%} Additional checkout buttons are server-rendered by Shopify when accelerated checkout methods are available. The platform class is required by Shopify's injected markup. {%- endcomment -%}
+              {% if additional_checkout_buttons %}
+                <div class="additional-checkout-buttons [--shopify-accelerated-checkout-button-block-size:var(--spacing-touch-target)] [--shopify-accelerated-checkout-button-border-radius:0px] [--shopify-accelerated-checkout-button-box-shadow:none] [--shopify-accelerated-checkout-skeleton-background-color:var(--color-surface-secondary)]">
+                  {{ content_for_additional_checkout_buttons }}
+                </div>
+              {% endif %}
+
+              {% render 'cart-discount-code', cart_id: 'cart-drawer-summary', input_id: 'cart-drawer-discount-input' %}
+            {% endform %}
+          </s-cart>
+        {% endif %}
+        {% endpartial %}
+      {%- endcapture -%}
+
+      {%- capture cart_drawer_header -%}
+        {%- comment -%} Pop-up window title bar: caps title and mono unit count; the window seats its lights at the start. {%- endcomment -%}
+        <div class="panel-header">
+          <div class="flex min-w-0 flex-1 items-center justify-between gap-3">
+            <h2 id="cart-drawer-title" class="type-overline-lg text-ink-invert">{{ 'cart.title' | t }}</h2>
+            {%- comment -%} {% partial 'cart-drawer-count' %} is swapped with the drawer cart partials so the title badge stays in sync after cart mutations. {%- endcomment -%}
+            {% partial 'cart-drawer-count' %}
+              {% if cart.item_count > 0 %}
+                <span class="type-data-sm uppercase text-ink-invert">{{ 'home.inventory.units' | t: count: cart.item_count }}</span>
+              {% endif %}
+            {% endpartial %}
+          </div>
+        </div>
+      {%- endcapture -%}
+      {% render 'cart-drawer',
+        header: cart_drawer_header,
+        content: cart_drawer_content,
+        footer: cart_drawer_footer,
+        attributes: 'aria-labelledby="cart-drawer-title"'
+      %}
+    {% endblock %}
+
+    {%- comment -%} GRID OS wallpaper: the global fixed, animated grid floor behind every page (64rem+). {%- endcomment -%}
+    {% render 'os-wallpaper' %}
+
+    <main class="flex-1 lg:min-h-0 lg:overflow-hidden" id="main-content" tabindex="-1" data-template="{{ request.page_type }}">
+      {%- comment -%} The editor refreshes this content region for live setting changes, while head-level :root styles can stay cached. {%- endcomment -%}
+      <div style="{% render 'theme-type-scale-variables' %}">
+        {{ content_for_layout }}
+      </div>
+    </main>
+
+    {% render 'sr-announcer' %}
+
+    {%- comment -%}
+      GRID OS footer: © + shop name at the start, policy links at the end; no menu or wordmark. From 64rem pinned to the
+      bottom corners either side of the dock (the page never scrolls); below that it is a single
+      hairline row above the dock bar.
+    {%- endcomment -%}
+    {% block 'footer', class: 'os-footer' %}
+      <div class="os-footer-start flex flex-wrap items-center gap-x-6 gap-y-1">
+        <p class="m-0">&copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}</p>
+        {% render 'social-links', class: 'justify-start' %}
+      </div>
+      {%- comment -%} End corner: published store policies plus the privacy choices page when it exists. {%- endcomment -%}
+      {%- assign privacy_choices_page = pages['data-sharing-opt-out'] -%}
+      {%- if shop.policies.size > 0 or privacy_choices_page != empty -%}
+        <nav class="os-footer-end" aria-label="{{ 'footer.policies' | t | escape }}">
+          <ul role="list" class="os-footer-links">
+            {%- for policy in shop.policies -%}
+              {%- if policy != blank -%}
+                <li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if privacy_choices_page != empty -%}
+              <li><a href="{{ privacy_choices_page.url }}">{{ privacy_choices_page.title | escape }}</a></li>
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+    {% endblock %}
+
+    {%- comment -%}
+      GRID OS dock: app tiles (each an editable dock item with its own icon, link and label), then
+      the tray of minimized windows. Search, compare and cart open their windows in place; counts
+      mirror the header cart trigger and the compare store.
+    {%- endcomment -%}
+    {% block 'dock' %}
+      {% block 'dock-item', icon: 'finder', url: routes.root_url %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_home' | t }}{% endblock %}
+      {% endblock %}
+      {% block 'dock-item', icon: 'bag', url: routes.all_products_collection_url %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_shop' | t }}{% endblock %}
+      {% endblock %}
+      {% block 'dock-item', icon: 'folder', url: routes.collections_url, class: 'max-md:hidden' %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_collections' | t }}{% endblock %}
+      {% endblock %}
+      {%- assign journal_url = blogs.news.url | default: routes.root_url -%}
+      {% block 'dock-item', icon: 'journal', url: journal_url, class: 'max-md:hidden' %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_journal' | t }}{% endblock %}
+      {% endblock %}
+      {% block 'dock-item', icon: 'search', commandfor: 'predictive-search', command: 'show-modal' %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_search' | t }}{% endblock %}
+      {% endblock %}
+      {%- capture compare_badge -%}<s-compare-count class="os-dock-badge" aria-hidden="true">00</s-compare-count>{%- endcapture -%}
+      {% block 'dock-item', icon: 'compare', commandfor: 'compare-window', command: 'show-modal', class: 'max-md:hidden', badge: compare_badge %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_compare' | t }}{% endblock %}
+      {% endblock %}
+      {%- capture cart_badge -%}<s-dock-count class="os-dock-badge" source="#header-cart-trigger" attr="data-cart-count" aria-hidden="true" hidden></s-dock-count>{%- endcapture -%}
+      {% block 'dock-item', icon: 'cart', commandfor: 'cart-drawer', command: 'show-modal', badge: cart_badge %}
+        {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_cart' | t }}{% endblock %}
+      {% endblock %}
+    {% endblock %}
+
+    {%- comment -%}
+      GRID OS window manager: from 64rem internal links open as windows built from the template
+      below. Cart and account always load as pages. Labels carry %TITLE% for the script to fill.
+    {%- endcomment -%}
+    {%- assign os_restore_label = 'os.dock_restore' | t: title: '%TITLE%' -%}
+    {%- assign os_opened_label = 'os.window_opened' | t: title: '%TITLE%' -%}
+    <s-window-manager
+      template="os-window-template"
+      data-root="{{ routes.root_url }}"
+      data-native-paths="{{ routes.cart_url }},{{ routes.account_url }}"
+      data-loading-label="{{ 'os.window_loading' | t | escape }}"
+      data-restore-label="{{ os_restore_label | escape }}"
+      data-opened-label="{{ os_opened_label | escape }}"
+    >
+      <div class="os-window-layer" data-os-layer></div>
+      <p class="sr-only" aria-live="polite" data-os-live></p>
+    </s-window-manager>
+    {%- comment -%} Streamed page windows are the same Frame block window as every other; s-window-manager clones this and gives each copy its own id. {%- endcomment -%}
+    <template id="os-window-template">
+      {% block 'frame', id: 'os-window', window: 'open', entrance: 'none', attributes: 'data-dynamic role="dialog" aria-modal="false"' %}
+        <div class="panel-header" data-window-bar>
+          <button type="button" class="os-window-back" commandfor="os-window" command="--back" data-window-back hidden aria-label="{{ 'os.window_back' | t | escape }}">
+            <span class="inline-flex size-4 items-center justify-center" aria-hidden="true">{{- 'icon-chevron-left.svg' | inline_asset_content -}}</span>
+          </button>
+          <h2 class="os-window-title" data-window-title tabindex="-1"></h2>
+          <span class="os-window-path" data-window-path aria-hidden="true"></span>
+          {%- comment -%} Streamed windows only carry the page's main content; this leaves the desktop for the real page. {%- endcomment -%}
+          <a class="os-window-open" href="{{ routes.root_url }}" data-window-open data-os-native>
+            <span>{{ 'os.window_open_page' | t }}</span>
+            <span class="inline-flex size-4 items-center justify-center rtl:-scale-x-100" aria-hidden="true">{{- 'icon-arrow-up-right.svg' | inline_asset_content -}}</span>
+          </a>
+        </div>
+        <div class="os-window-body" data-window-body></div>
+      {% endblock %}
+    </template>
+    <s-command-key target="predictive-search"></s-command-key>
+    <s-entrance></s-entrance>
+
+    {%- comment -%} GRID compare window: up to three products side by side; differing specs read cyan. Filled by s-compare from product card toggles. {%- endcomment -%}
+    <s-dialog>
+      <dialog id="compare-window" class="overlay-panel grid-window-modal" aria-labelledby="compare-window-title">
+        {% block 'frame', id: 'compare-window-frame', window: 'dialog', entrance: 'none' %}
+          <div class="panel-header">
+            <h2 id="compare-window-title" class="type-overline-lg flex-1 text-ink-invert">{{ 'compare.title' | t }}</h2>
+            <button type="button" commandfor="compare-window" command="--compare-clear" class="type-overline inline-flex min-h-touch-target lg:min-h-0 lg:self-stretch items-center px-3 text-ink-invert cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-ink-invert">{{ 'compare.clear' | t }}</button>
+          </div>
+          <s-compare
+            class="block min-h-0 flex-1 overflow-auto overscroll-contain"
+            data-empty="{{ 'compare.empty' | t | escape }}"
+            data-remove-label="{{ 'compare.remove' | t | escape }}"
+            data-label-price="{{ 'compare.row_price' | t | escape }}"
+            data-label-type="{{ 'compare.row_type' | t | escape }}"
+            data-label-vendor="{{ 'compare.row_vendor' | t | escape }}"
+            data-label-status="{{ 'compare.row_status' | t | escape }}"
+          >
+            <div data-compare-body></div>
+          </s-compare>
+        {% endblock %}
+      </dialog>
+    </s-dialog>
+
+    <script type="module" src="{{ 's-entrance.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-clock.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-window.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-window-manager.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-dock-count.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-finder-view.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-command-key.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-compare.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-compare-toggle.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-compare-count.js' | asset_url }}"></script>
+
+    {% render 'notification-host' %}
+    {% render 'theme-scripts' %}
+    {% render 'command-polyfill' %}
+  </body>
+</html>

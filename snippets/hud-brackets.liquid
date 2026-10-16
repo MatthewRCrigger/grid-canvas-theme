@@ -1,0 +1,12 @@
+{% doc %}
+  Decorative GRID viewfinder: four 1px corner brackets laid over a positioned
+  parent (use inside `.hud-viewport`, a reticle, or any relative box). Hidden
+  from assistive technology; it carries no content.
+
+  @param {string} [class] - Extra classes, e.g. `hud-brackets-accent` for cyan corners or an inset override.
+
+  @example
+  {% render 'hud-brackets' %}
+  {% render 'hud-brackets', class: 'hud-brackets-accent !inset-0' %}
+{% enddoc %}
+<span class="hud-brackets{% if class != blank %} {{ class }}{% endif %}" aria-hidden="true"><span></span><span></span><span></span><span></span></span>

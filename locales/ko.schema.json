@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "배경",
+    "buttons": "버튼",
+    "cards": "카드",
+    "color": "색상",
+    "collection": "컬렉션",
+    "default": "기본값",
+    "forms": "양식",
+    "link": "링크",
+    "pill": "알약 모양",
+    "rounded": "둥글게",
+    "sharp": "직각",
+    "size": "크기",
+    "small": "작게",
+    "style": "스타일",
+    "text_style": "텍스트 스타일",
+    "transparent": "투명",
+    "video": "동영상",
+    "alignment": "정렬",
+        "none": "없음",
+    "medium": "중간",
+    "large": "크게",
+    "corner_radius": "모서리 반경",
+    "extra_small": "아주 작게",
+    "extra_large": "아주 크게"
+  },
+  "settings": {
+    "border_radius": "테두리 반경",
+    "colors": "색상",
+    "fonts": "글꼴",
+    "type_styles": "문자 스타일"
+  },
+  "variants": {
+    "text_style": {
+      "display": "디스플레이",
+      "heading_xl": "제목 XL",
+      "heading_lg": "제목 LG",
+      "heading_md": "제목 MD",
+      "heading_sm": "제목 SM",
+      "body_lg": "본문 크게",
+      "body": "본문",
+      "body_sm": "본문 작게",
+      "overline": "오버라인"
+    },
+    "quantity_selector": {
+      "outlined": "윤곽선",
+      "filled": "채우기"
+    },
+    "button": {
+      "custom": "사용자 지정",
+      "outline": "윤곽선",
+      "plain": "일반",
+      "primary": "기본",
+      "secondary": "보조"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "견본",
+        "buttons": "버튼",
+        "dropdown": "드롭다운"
+      }
+    }
+  },
+  "blocks": {
+    "button": "버튼",
+    "container": "컨테이너",
+    "container_settings": {
+      "fill": "채우기",
+      "fill_info": "자동은 기존 배경을 유지합니다.",
+      "fill_automatic": "자동",
+      "background_image": "배경 이미지",
+      "padding": "패딩",
+      "padding_small": "작게",
+      "padding_medium": "중간",
+      "padding_large": "크게",
+      "padding_extra_large": "특대"
+    },
+    "featured_collection": "추천 컬렉션",
+    "image": "이미지",
+    "link": "링크",
+    "image_settings": {
+      "image": "이미지",
+      "aspect_ratio": "비율",
+      "auto": "자동",
+      "square": "정사각형",
+      "portrait": "세로"
+    },
+    "logo": "로고",
+    "logo_settings": {
+      "image": "로고 이미지",
+      "image_info": "이 배치에 사용할 사용자 지정 로고 이미지입니다.",
+      "height_info": "사용자 지정 크기 옵션을 선택한 경우에만 적용됩니다.",
+      "size": "크기",
+      "size_small": "작게",
+      "size_medium": "중간",
+      "size_large": "크게",
+      "size_custom": "사용자 지정",
+      "height": "로고 높이"
+    },
+    "main_menu": "주 메뉴",
+    "basic_menu": "기본 메뉴",
+    "header": "헤더",
+    "footer": "푸터",
+    "menu_settings": {
+      "menu": "메뉴",
+      "menu_info": "표시할 탐색 메뉴를 선택하십시오.",
+      "dropdown_color": "드롭다운 색상"
+    },
+    "card": "카드",
+    "product_card": "제품 카드",
+    "collection_card": "컬렉션 카드",
+    "article_card": "게시물 카드",
+    "text": "텍스트",
+    "richtext": "서식있는 텍스트",
+    "video": "동영상",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "비율",
+      "ratio_auto": "자동",
+      "ratio_square": "정사각형",
+      "ratio_video": "동영상(16:9)",
+      "ratio_portrait": "세로(3:4)",
+      "autoplay": "자동 재생",
+      "loop": "반복",
+      "muted": "음소거",
+      "plays_inline": "인라인 재생",
+      "pause_on_hover": "마우스 오버 시 일시 중지"
+    },
+    "pagination": "페이지 매김",
+    "predictive_search": "자동 완성 검색",
+    "price": "가격",
+    "quantity_selector": "수량 선택기",
+    "quantity_selector_settings": {
+      "button_color": "버튼 색상"
+    },
+    "variant_picker_settings": {
+      "shape": "모양",
+      "shape_square": "정사각형",
+      "shape_rounded": "둥근 사각형",
+      "shape_circle": "원형"
+    },
+    "variant_picker": "이형 상품 피커",
+    "gift_card": "기프트 카드"
+  },
+  "type_styles": {
+    "paragraph_size": "문단 크기",
+    "heading_size": "제목 크기"
+  },
+  "typography": {
+    "primary_font": "기본 글꼴",
+    "secondary_font": "보조 글꼴"
+  },
+  "direction": {
+    "start": "왼쪽",
+    "center": "가운데",
+    "end": "오른쪽"
+  }
+}

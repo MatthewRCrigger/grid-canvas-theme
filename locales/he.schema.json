@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Background",
+    "buttons": "Buttons",
+    "cards": "Cards",
+    "color": "Color",
+    "collection": "Collection",
+    "default": "Default",
+    "forms": "Forms",
+    "link": "Link",
+    "pill": "Pill",
+    "rounded": "Rounded",
+    "sharp": "Sharp",
+    "size": "Size",
+    "small": "Small",
+    "style": "Style",
+    "text_style": "Text style",
+    "transparent": "Transparent",
+    "video": "Video",
+    "alignment": "יישור",
+    "none": "None",
+    "medium": "Medium",
+    "large": "Large",
+    "corner_radius": "Corner radius",
+    "extra_small": "Extra small",
+    "extra_large": "Extra large"
+  },
+  "direction": {
+    "start": "התחלה",
+    "center": "אמצע",
+    "end": "סוף"
+  },
+  "settings": {
+    "border_radius": "Border radius",
+    "colors": "Colors",
+    "fonts": "Fonts",
+    "type_styles": "Type styles"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Display",
+      "heading_xl": "Heading extra large",
+      "heading_lg": "Heading large",
+      "heading_md": "Heading medium",
+      "heading_sm": "Heading small",
+      "body_lg": "Body large",
+      "body": "Body",
+      "body_sm": "Body small",
+      "overline": "Overline"
+    },
+    "quantity_selector": {
+      "outlined": "Outlined",
+      "filled": "Filled"
+    },
+    "button": {
+      "custom": "Custom",
+      "outline": "Outline",
+      "plain": "Plain",
+      "primary": "Primary",
+      "secondary": "Secondary"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Swatch",
+        "buttons": "Buttons",
+        "dropdown": "Dropdown"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Button",
+    "container": "Container",
+    "container_settings": {
+      "fill": "Fill",
+      "fill_info": "Automatic keeps the existing background.",
+      "fill_automatic": "Automatic",
+      "background_image": "Background image",
+      "padding": "Padding",
+      "padding_small": "Small",
+      "padding_medium": "Medium",
+      "padding_large": "Large",
+      "padding_extra_large": "Extra large"
+    },
+    "featured_collection": "Featured collection",
+    "image": "Image",
+    "link": "Link",
+    "image_settings": {
+      "image": "Image",
+      "aspect_ratio": "Ratio",
+      "auto": "Auto",
+      "square": "Square",
+      "portrait": "Portrait"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Logo image",
+      "image_info": "Custom logo image for this placement.",
+      "height_info": "Only applied when the custom size option is selected.",
+      "size": "Size",
+      "size_small": "Small",
+      "size_medium": "Medium",
+      "size_large": "Large",
+      "size_custom": "Custom",
+      "height": "Logo height"
+    },
+    "main_menu": "תפריט ראשי",
+    "basic_menu": "תפריט בסיסי",
+    "header": "Header",
+    "footer": "Footer",
+    "menu_settings": {
+      "menu": "Menu",
+      "menu_info": "Pick which navigation menu to display.",
+      "dropdown_color": "Dropdown color"
+    },
+    "card": "Card",
+    "product_card": "Product Card",
+    "collection_card": "Collection Card",
+    "article_card": "Article Card",
+    "text": "Text",
+    "richtext": "טקסט עשיר",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "Ratio",
+      "ratio_auto": "Auto",
+      "ratio_square": "Square",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Portrait (3:4)",
+      "autoplay": "Autoplay",
+      "loop": "Loop",
+      "muted": "Muted",
+      "plays_inline": "Plays inline",
+      "pause_on_hover": "Pause on hover"
+    },
+    "pagination": "Pagination",
+    "predictive_search": "Predictive search",
+    "price": "Price",
+    "quantity_selector": "Quantity selector",
+    "quantity_selector_settings": {
+      "button_color": "Button color"
+    },
+    "variant_picker_settings": {
+      "shape": "Shape",
+      "shape_square": "Square",
+      "shape_rounded": "Rounded",
+      "shape_circle": "Circle"
+    },
+    "variant_picker": "Variant picker",
+    "gift_card": "כרטיס מתנה"
+  },
+  "type_styles": {
+    "paragraph_size": "Paragraph size",
+    "heading_size": "Heading size"
+  },
+  "typography": {
+    "primary_font": "Primary font",
+    "secondary_font": "Secondary font"
+  }
+}

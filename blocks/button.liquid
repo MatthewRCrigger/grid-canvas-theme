@@ -1,0 +1,156 @@
+{% doc %}
+  Renders a standalone button or link element. Renders an `<a>` tag when the
+  `url` setting is set, otherwise a `<button>` element. Body content is composed
+  via `{{ content }}`.
+
+  `variant` and `url` are schema settings. Call sites override them using bare
+  kwargs (`variant:`, `url:`); the dotted `block.settings.*` form fails
+  `validate:block-settings`. `variant` controls
+  color/treatment only and takes 'button-primary', 'button-secondary',
+  'button-outline', 'button-ghost', 'button-surface', or 'custom', defaulting to
+  'button-primary'. `class` controls size and shape. A `url` set on a command
+  or form button (submit, reset, or named) is ignored, so those call sites always
+  render `<button>`.
+
+  The Link control is also hidden in the editor on those call sites.
+
+  @param {string} [class] - Additional classes (sizing, shape, positioning, width, etc.). Default: 'rounded-button'. Pass e.g. 'px-4 h-11 text-sm' here to override sizing.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element
+  @param {string} [type] - HTML button type attribute (button/submit/reset). Default: 'button'.
+  @param {boolean} [disabled] - Disabled state. Renders aria-disabled="true" (not native disabled) so the button remains focusable and selectable in the theme editor. Use type="button" on submit buttons when disabled to prevent keyboard form submission. Default: false.
+  @param {string} [commandfor] - Invoker Commands target element id
+  @param {string} [command] - Invoker Commands command name
+  @param {string} [name] - Form button name attribute
+  @param {string} [value] - Form button value attribute
+  @param {boolean} [autofocus] - When true, adds the autofocus attribute to the button. Default: false.
+  @param {boolean} [inert] - Ignore and hide the Link setting on a call site that carries none of the command or form signals. Does not emit the HTML inert attribute. Default: false.
+
+  @category interactive
+  @renders button|a
+
+  @example
+  {% block 'button', type: 'submit' %}Add to cart{% endblock %}
+
+  {% block 'button', type: 'submit', class: 'rounded-button w-full' %}Add to cart{% endblock %}
+
+  {% block 'button', url: routes.all_products_collection_url, variant: 'button-surface' %}Browse products{% endblock %}
+
+  {%- capture search_attrs -%}aria-label="{{ 'general.search' | t }}"{%- endcapture -%}
+  {% block 'button', variant: 'button-ghost', class: 'size-touch-target rounded hover:bg-transparent hover:opacity-70', attributes: search_attrs %}
+    <span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">{{- 'icon-search.svg' | inline_asset_content -}}</span>
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign type     = type     | default: 'button'
+  assign disabled = disabled | default: false
+  assign variant  = variant | default: 'button-primary'
+  assign url      = url
+
+  # A command or form button has to stay a <button>: an <a> drops command/commandfor and cannot submit or reset.
+  # Ignoring the Link setting here keeps a merchant value from breaking checkout, drawers, or line removal.
+  # `inert` buttons (commands, submits, named form buttons) ignore the Link setting.
+  # The capture runs first because the rebind would otherwise clobber the call-site value.
+  assign inert_kwarg = inert
+  assign inert = false
+  if command != blank or commandfor != blank or type == 'submit' or type == 'reset' or name != blank or inert_kwarg
+    assign inert = true
+    assign url = ''
+  endif
+
+  assign class = class | default: 'rounded-button'
+
+  # Opacity is transitioned so caller-composed hover fades and the disabled state animate instead of snapping.
+  assign base_class = 'inline-flex items-center justify-center gap-2 font-medium motion-safe:transition-[color,background-color,border-color,opacity,transform] motion-safe:active:scale-[0.97] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+
+  if disabled
+    assign disabled_class = 'opacity-50'
+    # In design mode, disabled controls still need pointer events so the editor can select and style them.
+    unless request.design_mode
+      assign disabled_class = disabled_class | append: ' pointer-events-none'
+    endunless
+  else
+    assign disabled_class = ''
+  endif
+
+  assign custom_style = ''
+  if variant == 'custom'
+    assign bg_color = background_color
+    if bg_color != blank
+      assign custom_style = 'background-color: ' | append: bg_color | append: ';'
+      assign bg_brightness = bg_color | color_brightness
+      if bg_brightness > 128
+        assign custom_style = custom_style | append: 'color: #000;'
+      else
+        assign custom_style = custom_style | append: 'color: #fff;'
+      endif
+    endif
+  endif
+
+  if variant == 'custom'
+    assign full_class = base_class | append: ' button-primary ' | append: class
+  else
+    assign full_class = base_class | append: ' ' | append: variant | append: ' ' | append: class
+  endif
+  if disabled_class != ''
+    assign full_class = full_class | append: ' ' | append: disabled_class
+  endif
+-%}
+
+{%- if url != blank -%}
+  <a href="{{ url | escape }}"
+    class="{{ full_class }} no-underline"
+    {%- if custom_style != blank %} style="{{ custom_style }}"{% endif %}
+    {%- if disabled %} aria-disabled="true" tabindex="-1"{% endif %}
+    {%- if attributes != blank %} {{ attributes }}{% endif %}>
+    {{- content -}}
+  </a>
+{%- else -%}
+  <button type="{{ type }}"
+    class="{{ full_class }}"
+    {%- if custom_style != blank %} style="{{ custom_style }}"{% endif %}
+    {%- if name != blank %} name="{{ name }}"{% endif %}
+    {%- if value != blank %} value="{{ value | escape }}"{% endif %}
+    {%- if commandfor != blank %} commandfor="{{ commandfor }}"{% endif %}
+    {%- if command != blank %} command="{{ command }}"{% endif %}
+    {%- comment -%} aria-disabled preserves the tab stop; the disabled class only blocks pointer activation outside design mode. {%- endcomment -%}
+    {%- if disabled %} aria-disabled="true"{% endif %}
+    {%- if autofocus %} autofocus{% endif %}
+    {%- if attributes != blank %} {{ attributes }}{% endif %}>
+    {{- content -}}
+  </button>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "t:blocks.button",
+    "settings": [
+      {
+        "type": "select",
+        "id": "variant",
+        "label": "t:general.style",
+        "default": "button-primary",
+        "options": [
+          { "value": "button-primary", "label": "t:variants.button.primary" },
+          { "value": "button-secondary", "label": "t:variants.button.secondary" },
+          { "value": "button-outline", "label": "t:variants.button.outline" },
+          { "value": "button-ghost", "label": "t:variants.button.plain" },
+          { "value": "custom", "label": "t:variants.button.custom" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "t:general.color",
+        "placeholder": "t:general.transparent",
+        "visible_if": "{{ variant == 'custom' }}"
+      },
+      {
+        "type": "url",
+        "id": "url",
+        "label": "t:general.link",
+        "info": "t:blocks.button_settings.url_info"
+      }
+    ]
+  }
+{% endschema %}

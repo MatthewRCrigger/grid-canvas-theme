@@ -1,0 +1,83 @@
+{% doc %}
+  One app tile in the GRID OS dock: a framed wireframe glyph, a caps label that rises on hover
+  and focus, and a running square under the tile when its page is the current page or its
+  window is open. A link by default; pass `commandfor` + `command` to open a dialog instead.
+
+  Compositional: the caller writes the label (a text block) inside the call. Pass a `badge`
+  capture for live counts (cart, compare).
+
+  @param {string} [commandfor] - Id of the element the tile commands (cart drawer, search, compare).
+  @param {string} [command] - Command sent with commandfor, e.g. 'show-modal'.
+  @param {string} [badge] - Captured markup for a count badge on the tile.
+  @param {string} [class] - Utilities on the list item (e.g. max-md:hidden).
+  @param {string} [attributes] - Extra attributes on the tile link or button.
+
+  @category navigation
+  @renders li
+
+  @example
+  {% block 'dock-item', icon: 'bag', url: routes.all_products_collection_url %}
+    {% block 'text', tag: 'span', variant: 'type-overline' %}Shop{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign icon = icon | default: 'grid'
+  assign url = url | default: routes.root_url
+  assign running = false
+  if commandfor == blank and request.path == url
+    assign running = true
+  endif
+-%}
+
+<li class="os-dock-item {{ class }}"{% if running %} data-running{% endif %} {{ block.shopify_attributes }}>
+  {%- if commandfor != blank -%}
+    <button type="button" class="os-dock-tile" commandfor="{{ commandfor }}" command="{{ command | default: 'show-modal' }}" {{ attributes }}>
+  {%- else -%}
+    <a href="{{ url | escape }}" class="os-dock-tile" data-os-dock-url="{{ url | escape }}"{% if running %} aria-current="page"{% endif %} {{ attributes }}>
+  {%- endif -%}
+      {% render 'os-icon', name: icon, class: 'size-6' %}
+      <span class="os-dock-label">{{ content }}</span>
+      {{ badge }}
+  {%- if commandfor != blank -%}
+    </button>
+  {%- else -%}
+    </a>
+  {%- endif -%}
+  <span class="os-dock-run" aria-hidden="true"></span>
+</li>
+
+{% schema %}
+  {
+    "name": "t:blocks.dock_item",
+    "settings": [
+      {
+        "type": "select",
+        "id": "icon",
+        "label": "t:blocks.dock_item_settings.icon",
+        "default": "grid",
+        "options": [
+          { "value": "finder", "label": "t:blocks.os_icons.finder" },
+          { "value": "bag", "label": "t:blocks.os_icons.bag" },
+          { "value": "folder", "label": "t:blocks.os_icons.folder" },
+          { "value": "file", "label": "t:blocks.os_icons.file" },
+          { "value": "image", "label": "t:blocks.os_icons.image" },
+          { "value": "board", "label": "t:blocks.os_icons.board" },
+          { "value": "search", "label": "t:blocks.os_icons.search" },
+          { "value": "compare", "label": "t:blocks.os_icons.compare" },
+          { "value": "cart", "label": "t:blocks.os_icons.cart" },
+          { "value": "journal", "label": "t:blocks.os_icons.journal" },
+          { "value": "terminal", "label": "t:blocks.os_icons.terminal" },
+          { "value": "mail", "label": "t:blocks.os_icons.mail" },
+          { "value": "grid", "label": "t:blocks.os_icons.grid" }
+        ]
+      },
+      {
+        "type": "url",
+        "id": "url",
+        "label": "t:blocks.dock_item_settings.url",
+        "info": "t:blocks.dock_item_settings.url_info"
+      }
+    ]
+  }
+{% endschema %}

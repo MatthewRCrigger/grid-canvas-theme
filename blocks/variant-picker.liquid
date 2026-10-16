@@ -1,0 +1,179 @@
+{% doc %}
+  Renders one product option as a fieldset. Swatch controls are generated from
+  option values via the internal swatch snippet only when every value has swatch
+  data and the effective style is swatch. Otherwise it renders a native dropdown
+  or pill controls. Size and shape belong to this picker usage, not individual
+  generated swatches. This block is self-contained: callers must leave the
+  required block/endblock body empty; it has no content outlet. The product
+  form owns the sole selected-variant hidden input outside this block. See
+  docs/variant-picker-source-migration.md.
+
+  @param {product} product - Shopify product object used for the default form ID. @required
+  @param {object} option - One entry from product.options_with_values. @required
+  @param {string} [form_id] - HTML id of the parent `<form>` element. Defaults to the product id.
+  @param {string} [option_type] - Selector style. Overrides style when provided. Default: 'swatch'. One of: 'buttons'|'dropdown'|'swatch'. Swatch mode falls back to buttons for options without swatch data.
+  @param {boolean} [show_selected_value] - When true, append `: <selected value>` after the option name in the legend. Default: false.
+  @param {string} [class] - Additional CSS classes to append to the root element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category commerce
+  @renders div
+  @context product
+
+  @example
+  {% for option in product.options_with_values %}
+    {% block 'variant-picker', product: product, option: option, show_selected_value: true, radius: 'rounded-full', size: 'swatch-lg', shape: 'rounded-md' %}{% endblock %}
+  {% endfor %}
+{% enddoc %}
+
+{%- liquid
+  assign form_id             = form_id | default: product.id
+  assign show_selected_value = show_selected_value | default: false
+
+  assign style_setting = style | default: 'swatch'
+  if option_type == blank
+    if style_setting == 'dropdown'
+      assign option_type = 'dropdown'
+    elsif style_setting == 'buttons'
+      assign option_type = 'buttons'
+    else
+      assign option_type = 'swatch'
+    endif
+  endif
+
+  assign radius = radius | default: 'rounded-md'
+  assign size = size | default: 'swatch-md'
+  assign shape = shape | default: 'rounded-full'
+  assign has_swatches = false
+  if option_type == 'swatch' and option.values.size > 0
+    assign has_swatches = true
+    for value in option.values
+      if value.swatch == blank
+        assign has_swatches = false
+        break
+      endif
+    endfor
+  endif
+-%}
+
+<div class="{% if class != blank %}{{ class }}{% endif %}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  <fieldset class="space-y-2">
+    <legend class="type-overline mb-2 text-ink-300">
+      {{- option.name | escape -}}
+      {%- if show_selected_value %}: {{ option.selected_value | escape }}{% endif -%}
+    </legend>
+
+    {%- if option_type == 'swatch' and has_swatches -%}
+      <div class="flex flex-wrap gap-2">
+        {%- for value in option.values -%}
+          {%- assign variant_unavailable = false -%}
+          {%- if value.variant.available == false -%}
+            {%- assign variant_unavailable = true -%}
+          {%- endif -%}
+          {%- render 'swatch', name: option.name, value: value, swatch: value.swatch,
+            selected: value.selected, unavailable: variant_unavailable,
+            disabled: variant_unavailable, data_variant_id: value.variant.id,
+            size: size, shape: shape -%}
+        {%- endfor -%}
+      </div>
+
+    {%- elsif option_type == 'dropdown' -%}
+      <select
+        name="{{ option.name | escape }}"
+        id="{{ form_id | escape }}-option-{{ option.position }}-{{ option.name | handleize }}"
+        class="cursor-pointer hover:border-interactive {{ radius }}"
+        aria-label="{{ option.name | escape }}">
+        {%- for value in option.values -%}
+          <option value="{{ value | escape }}" data-variant-id="{{ value.variant.id }}"{% if value.selected %} selected{% endif %}>
+            {{- value | escape -}}
+          </option>
+        {%- endfor -%}
+      </select>
+
+    {%- else -%}
+      <div class="flex flex-wrap gap-2">
+        {%- for value in option.values -%}
+          {%- assign input_id = form_id | append: '-' | append: option.name | handleize | append: '-' | append: value | handleize -%}
+          {%- assign variant_available = value.variant.available -%}
+          <label class="relative{% if variant_available %} cursor-pointer{% else %} cursor-not-allowed pointer-events-none{% endif %}" for="{{ input_id }}">
+            <input
+              type="radio"
+              name="{{ option.name | escape }}"
+              value="{{ value | escape }}"
+              id="{{ input_id }}"
+              class="peer sr-only"
+              data-variant-id="{{ value.variant.id }}"
+              {% if value.selected %}checked{% endif %}
+              {% unless variant_available %}disabled{% endunless %}>
+            <span class="inline-flex min-h-touch-target min-w-touch-target items-center justify-center px-3 type-overline border rounded-chip cursor-pointer motion-safe:transition-colors
+              {% if variant_available == false %}border-line-400 text-ink-400{% else %}border-line-300 text-on-surface{% endif %}
+              peer-not-checked:hover:border-line-200 peer-not-checked:hover:bg-hover
+              peer-checked:bg-interactive/12 peer-checked:text-interactive peer-checked:border-interactive
+              peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent
+              {% if variant_available == false %}relative overflow-hidden{% endif %}">
+              {{- value | escape -}}
+              {%- if variant_available == false -%}
+                <span class="sr-only">({{ 'product.sold_out' | t }})</span>
+                {%- comment -%} Linear-gradient strikethrough (not `<s>`) because these pills are an inline-flex container with no text baseline for native strikethrough to draw against — the gradient spans the full pill corner-to-corner regardless of label length. The sr-only "(sold out)" above carries the semantics. {%- endcomment -%}
+                <span class="absolute inset-0 pointer-events-none rounded-chip [background:linear-gradient(to_top_right,transparent_calc(50%_-_0.5px),var(--color-line-300)_50%,transparent_calc(50%_+_0.5px))]" aria-hidden="true"></span>
+              {%- endif -%}
+            </span>
+          </label>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </fieldset>
+</div>
+
+{% comment %} Style, radius, size, and shape together control the selector UX for this picker usage. {% endcomment %}
+{% schema %}
+  {
+    "name": "t:blocks.variant_picker",
+    "settings": [
+      {
+        "type": "select",
+        "id": "style",
+        "label": "t:general.style",
+        "default": "swatch",
+        "options": [
+          { "value": "swatch", "label": "t:variants.variant_picker.style.swatch" },
+          { "value": "buttons", "label": "t:variants.variant_picker.style.buttons" },
+          { "value": "dropdown", "label": "t:variants.variant_picker.style.dropdown" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "size",
+        "label": "t:general.size",
+        "default": "swatch-md",
+        "options": [
+          { "value": "swatch-sm", "label": "t:general.small" },
+          { "value": "swatch-md", "label": "t:general.medium" },
+          { "value": "swatch-lg", "label": "t:general.large" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "shape",
+        "label": "t:blocks.variant_picker_settings.shape",
+        "default": "rounded-full",
+        "options": [
+          { "value": "rounded-none", "label": "t:blocks.variant_picker_settings.shape_square" },
+          { "value": "rounded-md", "label": "t:blocks.variant_picker_settings.shape_rounded" },
+          { "value": "rounded-full", "label": "t:blocks.variant_picker_settings.shape_circle" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "radius",
+        "label": "t:general.corner_radius",
+        "default": "rounded-md",
+        "options": [
+          { "value": "rounded-none", "label": "t:general.none" },
+          { "value": "rounded-md", "label": "t:general.medium" },
+          { "value": "rounded-full", "label": "t:general.pill" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

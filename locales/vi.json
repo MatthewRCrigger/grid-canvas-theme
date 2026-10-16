@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — Không tìm thấy trang",
+    "not_found": "Không tìm thấy trang.",
+    "back_to_shopping": "Khám phá bộ sưu tập",
+    "suggestions_heading": "Một lối đi khác để tiến về phía trước.",
+    "recovery_body": "Không tìm thấy trang này. Vẫn còn rất nhiều điều để khám phá."
+  },
+  "general": {
+    "skip_to_content": "Chuyển đến nội dung",
+    "play_video": "Phát video",
+    "video_player": "Trình phát video",
+    "captions": "Phụ đề",
+    "clear": "Xóa",
+    "back": "Quay lại",
+    "close": "Đóng",
+    "dismiss": "Bỏ qua",
+    "drawer": "Ngăn kéo",
+    "placeholder_image": "Hình ảnh giữ chỗ",
+    "account": "Tài khoản",
+    "search": "Tìm kiếm",
+    "pagination": {
+      "label": "Phân trang",
+      "previous_page": "Trang trước",
+      "next_page": "Trang tiếp theo",
+      "page": "Trang {{ number }}",
+      "current_page": "Trang {{ number }}, trang hiện tại"
+    },
+    "meta": {
+      "tagged": "được gắn thẻ \"{{ tags }}\"",
+      "page": "Trang {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "Đã cập nhật kết quả",
+    "variant_updated": "Đã cập nhật lựa chọn",
+    "update_error": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "blog": {
+    "articles_heading": "Bài viết",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "Bình luận",
+    "comment_form_email": "Email",
+    "comment_form_name": "Tên",
+    "comment_form_submit": "Đăng",
+    "comment_form_title": "Thêm bình luận",
+    "comments_count": {
+      "one": "1 bình luận",
+      "other": "{{ count }} bình luận"
+    },
+    "no_articles": "Chưa có bài viết nào."
+  },
+  "cart": {
+    "checkout": "Thanh toán",
+    "title": "Giỏ hàng",
+    "remove": "Xóa: {{ title }}",
+    "empty": "Giỏ hàng trống.",
+    "empty_description": "Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ hàng.",
+    "icon_label": {
+      "one": "Giỏ hàng (1 mục)",
+      "other": "Giỏ hàng ({{ count }} mục)"
+    },
+    "item_count": {
+      "one": "1 mục trong giỏ hàng",
+      "other": "{{ count }} mục trong giỏ hàng"
+    },
+    "item_removed": "Đã xóa mục khỏi giỏ hàng",
+    "updated": "Đã cập nhật giỏ hàng",
+    "note_label": "Ghi chú đơn hàng",
+    "note_placeholder": "Thêm hướng dẫn đặc biệt cho đơn hàng",
+    "taxes_and_shipping_at_checkout": "Thuế và phí vận chuyển được tính khi thanh toán",
+    "discount_list": "Khoản giảm giá đã áp dụng",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "Mã giảm giá",
+    "discount_title": "Giảm giá: {{ title }}",
+    "update_error": "Không thể cập nhật giỏ hàng. Vui lòng thử lại.",
+    "refresh_error": "Giỏ hàng đã được cập nhật, nhưng nội dung hiển thị có thể chưa mới nhất. Hãy tải lại trang để xem giỏ hàng mới nhất.",
+    "continue_shopping": "Tiếp tục mua sắm",
+    "checkout_description": "Chuyển đến trang thanh toán an toàn",
+    "discount_placeholder": "Nhập mã",
+    "discount_apply": "Áp dụng",
+    "note_accordion_label": "Hướng dẫn đặc biệt",
+    "total_label": "Tổng ước tính"
+  },
+  "contact": {
+    "name": "Tên",
+    "email": "Email",
+    "phone": "Số điện thoại (tùy chọn)",
+    "message": "Tin nhắn",
+    "submit": "Gửi tin nhắn",
+    "success": "Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm."
+  },
+  "collections": {
+    "all_collections": "Tất cả bộ sưu tập",
+    "browse_heading": "Duyệt bộ sưu tập",
+    "products_heading": "Sản phẩm",
+    "placeholder_title": "Tên bộ sưu tập",
+    "no_collections": "Không tìm thấy bộ sưu tập nào.",
+    "no_products": "Không có sản phẩm nào khớp với bộ lọc đã chọn.",
+    "products_count": {
+      "one": "1 sản phẩm",
+      "other": "{{ count }} sản phẩm"
+    },
+    "filter": "Bộ lọc",
+    "filters": "Bộ lọc",
+    "active_filters": "Bộ lọc đang hoạt động",
+    "clear_all": "Xóa tất cả",
+    "remove_filter": "Xóa {{ filter }}",
+    "show_results": "Hiển thị kết quả",
+    "value_unavailable": "Unavailable",
+    "price_min": "Giá tối thiểu",
+    "price_max": "Giá tối đa",
+    "price_to": "đến",
+    "sort_by": "Sắp xếp theo",
+    "filtering": {
+      "show_more": "Xem thêm"
+    },
+    "view_all": "Xem tất cả"
+  },
+  "header": {
+    "menu": "Menu",
+    "mobile_navigation": "Điều hướng trên thiết bị di động",
+    "navigation": "Điều hướng chính",
+    "show_submenu": "Hiển thị menu phụ {{ title }}"
+  },
+  "footer": {
+    "quick_links": "Liên kết nhanh",
+    "policies": "Chính sách"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Thêm vào Apple Wallet",
+    "card": "Thẻ quà tặng",
+    "expired": "Thẻ quà tặng này đã hết hạn",
+    "expires_on": "Hết hạn vào {{ expires_on }}",
+    "use_at_checkout": "Sử dụng thẻ quà tặng này khi thanh toán",
+    "a_gift_for_you": "Một món quà dành cho bạn",
+    "available": "Còn {{ amount }}",
+    "a_little_something": "Một món quà nhỏ dành cho bạn",
+    "card_label": "Thẻ quà tặng {{ shop }}",
+    "copy_code": "Sao chép mã",
+    "copied": "Đã sao chép mã",
+    "copy_error": "Không thể tự động sao chép. Hãy sao chép mã theo cách thủ công.",
+    "disabled": "Thẻ quà tặng này không còn hiệu lực",
+    "start_shopping": "Bắt đầu mua sắm"
+  },
+  "page": {
+    "content_heading": "Nội dung trang"
+  },
+  "password": {
+    "title": "Cửa hàng này là riêng tư",
+    "eyebrow": "Sắp khai trương",
+    "launch_description": "Xem trước những điều sắp tới.",
+    "enter": "Vào",
+    "enter_with_password": "Vào bằng mật khẩu",
+    "enter_store": "Vào cửa hàng",
+    "show": "Hiện",
+    "hide": "Ẩn",
+    "error": "Mật khẩu không đúng. Vui lòng thử lại.",
+    "field_label": "Mật khẩu",
+    "placeholder": "Nhập mật khẩu",
+    "get_updates": "Nhận thông tin khai trương",
+    "updates_description": "Hãy là người đầu tiên biết khi chúng tôi mở cửa.",
+    "updates_submit": "Thông báo cho tôi",
+    "updates_success": "Cảm ơn bạn đã đăng ký."
+  },
+  "product": {
+    "details": "Chi tiết sản phẩm",
+    "placeholder_title": "Tên sản phẩm",
+    "quantity": "Số lượng",
+    "quantity_decrease": "Giảm số lượng: {{ title }}",
+    "quantity_increase": "Tăng số lượng: {{ title }}",
+    "quantity_input": "Số lượng cho {{ title }}",
+    "add_to_cart": "Thêm vào giỏ hàng",
+    "added_to_cart": "Đã thêm vào giỏ hàng",
+    "sold_out": "Hết hàng",
+    "description": "Mô tả",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "Giá",
+      "price_range_html": "{{ min }} – {{ max }}",
+      "price_range_label": "Khoảng giá",
+      "regular_price": "Giá gốc",
+      "sale_price": "Giá ưu đãi",
+      "savings": "Tiết kiệm {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "Giảm số lượng",
+      "increase": "Tăng số lượng",
+      "input_label": "Số lượng"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "1 bộ lọc đang hoạt động",
+      "other": "{{ count }} bộ lọc đang hoạt động"
+    }
+  },
+  "forms": {
+    "required": "bắt buộc",
+    "form_errors_title": "Vui lòng khắc phục các lỗi sau:"
+  },
+  "search": {
+    "title": "Tìm kiếm",
+    "label": "Tìm kiếm",
+    "placeholder": "Tìm kiếm",
+    "products_heading": "Sản phẩm",
+    "results_heading": "Kết quả tìm kiếm",
+    "view_all_results": "Xem tất cả kết quả",
+    "results_count_announcement": {
+      "one": "Có 1 kết quả",
+      "other": "Có {{ count }} kết quả"
+    },
+    "no_results_announcement": "Không tìm thấy kết quả nào cho {{ terms }}",
+    "results_for": "Tìm thấy {{ count }} kết quả cho {{ terms }}",
+    "no_results": "Không tìm thấy kết quả nào cho {{ terms }}",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "Cập nhật"
+  },
+  "home": {
+    "hero": {
+      "title": "Hàng mới về",
+      "subtitle": "Khám phá bộ sưu tập"
+    }
+  }
+}

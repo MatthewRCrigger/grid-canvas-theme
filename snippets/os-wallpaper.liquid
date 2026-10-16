@@ -1,0 +1,27 @@
+{% doc %}
+  The GRID OS grid-floor wallpaper: a global fixed layer behind every page from 64rem (hidden
+  only when the home page desktop's Wallpaper is Image or Plain). Render it once per layout,
+  directly inside <body>. The floor is static and runs deep into the horizon. In Cursor glow
+  mode the cells near a mouse pointer light cyan, and only then is s-wallpaper.js loaded.
+  Controlled by the global Wallpaper setting. Decorative.
+
+  @example
+  {% render 'os-wallpaper' %}
+{% enddoc %}
+
+{%- assign wallpaper_motion = settings.wallpaper_motion | default: 'live' -%}
+<s-wallpaper class="os-wallpaper" mode="{{ wallpaper_motion }}" aria-hidden="true">
+  <div class="os-floor">
+    <div class="os-floor-grid"></div>
+  </div>
+  {%- if wallpaper_motion == 'live' -%}
+    <div class="os-floor-lit">
+      <div class="os-floor">
+        <div class="os-floor-grid"></div>
+      </div>
+    </div>
+  {%- endif -%}
+</s-wallpaper>
+{%- if wallpaper_motion == 'live' -%}
+  <script type="module" src="{{ 's-wallpaper.js' | asset_url }}"></script>
+{%- endif -%}

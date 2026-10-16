@@ -1,0 +1,138 @@
+{% doc %}
+  Renders the complete gift-card redemption experience from the active
+  `gift_card` and `shop` drops: heading and available balance, the flat GRID
+  card panel carrying the merchant identity and value, the store-name
+  wordmark, redemption instructions, the copyable code, and the
+  caller-composed actions. Its body renders in the action slot after the code
+  and before copy feedback / Wallet. The caller must derive its copy target and
+  code description ID from the same `id` it passes here; body content cannot
+  read this block's locals. The card treatment is code-owned; no design selector
+  is rendered or exposed as a block setting. Render at most once per page.
+
+
+  @param {string} [id] - Stable component/command target ID. Defaults to `gift-card-<block.id>`; callers composing copy actions must supply a known unique ID and use `<id>-code` for aria-describedby.
+  @param {string} [class] - Additional Tailwind utilities for the top-level element.
+  @param {string} [attributes] - Additional attributes passed through to the top-level element.
+
+  @category commerce
+  @renders s-gift-card
+
+  @example
+  {% assign gift_card_id = 'gift-card-redemption' %}
+  {% assign gift_card_code_id = gift_card_id | append: '-code' %}
+  {% assign gift_card_unusable = false %}
+  {% if gift_card.enabled == false or gift_card.expired %}{% assign gift_card_unusable = true %}{% endif %}
+  {% block 'gift-card', id: gift_card_id %}
+    {% capture copy_attributes %}aria-describedby="{{ gift_card_code_id | escape }}"{% endcapture %}
+    {% block 'button', commandfor: gift_card_id, command: '--copy-code', disabled: gift_card_unusable, attributes: copy_attributes %}{{ 'gift_card.copy_code' | t }}{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign root_class = 'block w-full overflow-x-clip text-start'
+  if class != blank
+    assign root_class = root_class | append: ' ' | append: class
+  endif
+
+  assign default_id = 'gift-card-' | append: block.id
+  assign root_id = id | default: default_id
+  assign code_id = root_id | append: '-code'
+
+  assign balance_money = gift_card.balance | money
+  assign available_text = 'gift_card.available' | t: amount: balance_money
+  assign card_value = gift_card.initial_value | default: gift_card.balance
+  assign card_value_money = card_value | money
+  assign card_label = 'gift_card.card_label' | t: shop: shop.name
+-%}
+
+<s-gift-card
+  id="{{ root_id | escape }}"
+  class="{{ root_class }}"
+  data-code="{{ gift_card.code | escape }}"
+  data-copy-label="{{ 'gift_card.copy_code' | t | escape }}"
+  data-copy-success="{{ 'gift_card.copied' | t | escape }}"
+  data-copy-error="{{ 'gift_card.copy_error' | t | escape }}"
+  {% if attributes != blank %}{{ attributes }}{% endif %}
+>
+  <div class="mx-auto w-full max-w-2xl">
+    {%- comment -%} GRID: wordmark as text, caps heading, then the card as a flat panel readout. No tilt, glow, or gradient. {%- endcomment -%}
+    <p class="mb-8 font-heading text-[14px] font-semibold uppercase tracking-[0.28em] text-on-surface">{{ shop.name | escape }}</p>
+    <div class="mb-6 flex items-center gap-3">
+      <span class="type-overline text-accent">{{ 'gift_card.card' | t }}</span>
+    </div>
+    <h1 class="type-heading-xl text-on-surface">{{ 'gift_card.a_gift_for_you' | t }}</h1>
+    <p class="type-body mt-3 text-ink-200" data-gift-card-balance><bdi>{{ available_text }}</bdi></p>
+
+    <section class="panel mt-8" aria-label="{{ card_label | escape }}">
+      <div class="panel-inner">
+        <div class="panel-header">
+          <span>{{ card_label | escape }}</span>
+          {%- if gift_card.last_four_characters != blank -%}
+            <span class="type-data-sm uppercase text-ink-invert" dir="ltr">•••• {{ gift_card.last_four_characters | escape }}</span>
+          {%- endif -%}
+        </div>
+        <div class="p-4 sm:p-6">
+          <span class="type-overline text-ink-300">{{ 'gift_card.a_little_something' | t }}</span>
+          <strong class="mt-2 block font-mono text-[clamp(32px,8vw,56px)] font-normal leading-none text-on-surface wrap-anywhere"><bdi>{{ card_value_money }}</bdi></strong>
+
+          <dl class="mt-6">
+            <div class="flex items-baseline gap-3 border-t border-line-400 py-3">
+              <dt class="type-body-sm text-ink-300">{{ 'gift_card.status_label' | t }}</dt>
+              <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+              <dd>
+                {%- if gift_card.expired -%}
+                  <span class="badge badge-danger">{{ 'gift_card.status_expired' | t }}</span>
+                {%- elsif gift_card.enabled == false -%}
+                  <span class="badge badge-danger">{{ 'gift_card.status_disabled' | t }}</span>
+                {%- else -%}
+                  <span class="badge badge-success">{{ 'gift_card.status_active' | t }}</span>
+                {%- endif -%}
+              </dd>
+            </div>
+            <div class="flex items-baseline gap-3 border-t border-line-400 py-3">
+              <dt class="type-body-sm text-ink-300">{{ 'gift_card.balance_label' | t }}</dt>
+              <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+              <dd class="type-data text-on-surface"><bdi>{{ balance_money }}</bdi></dd>
+            </div>
+            {%- if gift_card.expires_on -%}
+              <div class="flex items-baseline gap-3 border-t border-line-400 py-3">
+                <dt class="type-body-sm text-ink-300">{{ 'gift_card.expires_label' | t }}</dt>
+                <span class="flex-1 translate-y-[-3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
+                <dd class="type-data text-on-surface"><time datetime="{{ gift_card.expires_on | date: '%Y-%m-%d' }}">{{ gift_card.expires_on | date: '%Y.%m.%d' }}</time></dd>
+              </div>
+            {%- endif -%}
+          </dl>
+
+          <div class="border-t border-line-300 pt-4">
+            <p class="type-overline mb-2 text-ink-300">{{ 'gift_card.code_label' | t }}</p>
+            <code id="{{ code_id | escape }}" class="block select-all whitespace-normal break-words border border-line-300 bg-surface-secondary px-4 py-3 font-mono text-[clamp(15px,3.6vw,22px)] tracking-[0.13em] text-on-surface" dir="ltr" tabindex="-1" data-gift-card-code>{{ gift_card.code | format_code }}</code>
+            <p class="type-body-sm mt-3 text-ink-300">{{ 'gift_card.use_at_checkout' | t }}</p>
+          </div>
+
+          {{ content }}
+
+          <p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-gift-card-feedback></p>
+
+          {% if gift_card.pass_url %}
+            <a href="{{ gift_card.pass_url }}" class="mt-6 inline-flex min-h-touch-target items-center justify-center">
+              <img
+                src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+                alt="{{ 'gift_card.add_to_apple_wallet' | t }}"
+                width="200"
+                height="60"
+                class="h-10 w-auto"
+              >
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </div>
+</s-gift-card>
+
+{% schema %}
+  {
+    "name": "t:blocks.gift_card",
+    "settings": []
+  }
+{% endschema %}

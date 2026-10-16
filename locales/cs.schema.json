@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Pozadí",
+    "buttons": "Tlačítka",
+    "cards": "Karty",
+    "color": "Barva",
+    "collection": "Kolekce",
+    "default": "Výchozí",
+    "forms": "Formuláře",
+    "link": "Odkaz",
+    "pill": "Pilulka",
+    "rounded": "Zaoblené",
+    "sharp": "Ostré",
+    "size": "Velikost",
+    "small": "Malá",
+    "style": "Styl",
+    "text_style": "Styl textu",
+    "transparent": "Průhledné",
+    "video": "Video",
+    "alignment": "Zarovnání",
+        "none": "Žádné",
+    "medium": "Střední",
+    "large": "Velká",
+    "corner_radius": "Poloměr rohu",
+    "extra_small": "Extra malý",
+    "extra_large": "Extra velký"
+  },
+  "settings": {
+    "border_radius": "Poloměr ohraničení",
+    "colors": "Barvy",
+    "fonts": "Písma",
+    "type_styles": "Styly písma"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Zobrazení",
+      "heading_xl": "Nadpis XL",
+      "heading_lg": "Nadpis LG",
+      "heading_md": "Nadpis MD",
+      "heading_sm": "Nadpis SM",
+      "body_lg": "Text LG",
+      "body": "Text",
+      "body_sm": "Text – malý",
+      "overline": "Nadřádek"
+    },
+    "quantity_selector": {
+      "outlined": "S obrysem",
+      "filled": "Vyplněné"
+    },
+    "button": {
+      "custom": "Vlastní",
+      "outline": "Obrys",
+      "plain": "Jednoduché",
+      "primary": "Primární",
+      "secondary": "Sekundární"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Vzorek",
+        "buttons": "Tlačítka",
+        "dropdown": "Rozevírací nabídka"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Tlačítko",
+    "container": "Kontejner",
+    "container_settings": {
+      "fill": "Výplň",
+      "fill_info": "Automatické nastavení zachová stávající pozadí.",
+      "fill_automatic": "Automaticky",
+      "background_image": "Obrázek na pozadí",
+      "padding": "Vnitřní okraj",
+      "padding_small": "Malý",
+      "padding_medium": "Střední",
+      "padding_large": "Velký",
+      "padding_extra_large": "Extra velký"
+    },
+    "featured_collection": "Doporučená kolekce",
+    "image": "Obrázek",
+    "link": "Odkaz",
+    "image_settings": {
+      "image": "Obrázek",
+      "aspect_ratio": "Poměr",
+      "auto": "Auto",
+      "square": "Čtverec",
+      "portrait": "Na výšku"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Obrázek loga",
+      "image_info": "Vlastní obrázek loga pro toto umístění.",
+      "height_info": "Použije se pouze tehdy, když je vybrána možnost vlastní velikosti.",
+      "size": "Velikost",
+      "size_small": "Malá",
+      "size_medium": "Střední",
+      "size_large": "Velká",
+      "size_custom": "Vlastní",
+      "height": "Výška loga"
+    },
+    "main_menu": "Hlavní menu",
+    "basic_menu": "Základní menu",
+    "header": "Záhlaví",
+    "footer": "Zápatí",
+    "menu_settings": {
+      "menu": "Nabídka",
+      "menu_info": "Vyberte, kterou navigační nabídku chcete zobrazit.",
+      "dropdown_color": "Barva rozevírací nabídky"
+    },
+    "card": "Karta",
+    "product_card": "Karta produktu",
+    "collection_card": "Karta kolekce",
+    "article_card": "Karta článku",
+    "text": "Text",
+    "richtext": "Formátovaný text",
+    "video": "Video",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "Poměr",
+      "ratio_auto": "Auto",
+      "ratio_square": "Čtverec",
+      "ratio_video": "Video (16:9)",
+      "ratio_portrait": "Na výšku (3:4)",
+      "autoplay": "Automatické přehrávání",
+      "loop": "Smyčka",
+      "muted": "Ztlumeno",
+      "plays_inline": "Přehrávat vložené",
+      "pause_on_hover": "Pozastavit při najetí myší"
+    },
+    "pagination": "Stránkování",
+    "predictive_search": "Prediktivní vyhledávání",
+    "price": "Cena",
+    "quantity_selector": "Výběr množství",
+    "quantity_selector_settings": {
+      "button_color": "Barva tlačítka"
+    },
+    "variant_picker_settings": {
+      "shape": "Tvar",
+      "shape_square": "Čtverec",
+      "shape_rounded": "Zaoblené",
+      "shape_circle": "Kruh"
+    },
+    "variant_picker": "Selektor variant",
+    "gift_card": "Dárková karta"
+  },
+  "type_styles": {
+    "paragraph_size": "Velikost odstavce",
+    "heading_size": "Velikost nadpisu"
+  },
+  "typography": {
+    "primary_font": "Primární písmo",
+    "secondary_font": "Sekundární písmo"
+  },
+  "direction": {
+    "start": "Vlevo",
+    "center": "Na střed",
+    "end": "Vpravo"
+  }
+}

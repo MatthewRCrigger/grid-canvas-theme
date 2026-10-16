@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Plano de fundo",
+    "buttons": "Botões",
+    "cards": "Cartões",
+    "color": "Cor",
+    "collection": "Coleção",
+    "default": "Padrão",
+    "forms": "Formulários",
+    "link": "Link",
+    "pill": "Pílula",
+    "rounded": "Arredondado",
+    "sharp": "Reto",
+    "size": "Tamanho",
+    "small": "Pequeno",
+    "style": "Estilo",
+    "text_style": "Estilo do texto",
+    "transparent": "Transparente",
+    "video": "Vídeo",
+    "alignment": "Alinhamento",
+        "none": "Nenhum",
+    "medium": "Médio",
+    "large": "Grande",
+    "corner_radius": "Raio do canto",
+    "extra_small": "Muito pequeno",
+    "extra_large": "Muito grande"
+  },
+  "settings": {
+    "border_radius": "Raio da borda",
+    "colors": "Cores",
+    "fonts": "Fontes",
+    "type_styles": "Estilos de tipografia"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Exibição",
+      "heading_xl": "Título XL",
+      "heading_lg": "Título LG",
+      "heading_md": "Título MD",
+      "heading_sm": "Título SM",
+      "body_lg": "Corpo LG",
+      "body": "Corpo",
+      "body_sm": "Corpo pequeno",
+      "overline": "Sobrelinha"
+    },
+    "quantity_selector": {
+      "outlined": "Com contorno",
+      "filled": "Preenchido"
+    },
+    "button": {
+      "custom": "Personalizado",
+      "outline": "Contorno",
+      "plain": "Simples",
+      "primary": "Primário",
+      "secondary": "Secundário"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Amostra",
+        "buttons": "Botões",
+        "dropdown": "Menu suspenso"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Botão",
+    "container": "Contêiner",
+    "container_settings": {
+      "fill": "Preenchimento",
+      "fill_info": "Automático mantém o fundo existente.",
+      "fill_automatic": "Automático",
+      "background_image": "Imagem de fundo",
+      "padding": "Preenchimento",
+      "padding_small": "Pequeno",
+      "padding_medium": "Médio",
+      "padding_large": "Grande",
+      "padding_extra_large": "Extra grande"
+    },
+    "featured_collection": "Coleção em destaque",
+    "image": "Imagem",
+    "link": "Link",
+    "image_settings": {
+      "image": "Imagem",
+      "aspect_ratio": "Proporção",
+      "auto": "Automático",
+      "square": "Quadrado",
+      "portrait": "Retrato"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Imagem do logo",
+      "image_info": "Imagem personalizada do logo para este posicionamento.",
+      "height_info": "Aplicado apenas quando a opção de tamanho personalizado for selecionada.",
+      "size": "Tamanho",
+      "size_small": "Pequeno",
+      "size_medium": "Médio",
+      "size_large": "Grande",
+      "size_custom": "Personalizado",
+      "height": "Altura do logo"
+    },
+    "main_menu": "Menu principal",
+    "basic_menu": "Menu básico",
+    "header": "Cabeçalho",
+    "footer": "Rodapé",
+    "menu_settings": {
+      "menu": "Menu",
+      "menu_info": "Selecione qual menu de navegação exibir.",
+      "dropdown_color": "Cor do menu suspenso"
+    },
+    "card": "Cartão",
+    "product_card": "Cartão de produto",
+    "collection_card": "Cartão de coleção",
+    "article_card": "Cartão de artigo",
+    "text": "Texto",
+    "richtext": "Rich text",
+    "video": "Vídeo",
+    "video_settings": {
+      "vimeo_id": "ID do Vimeo",
+      "youtube_id": "ID do YouTube",
+      "ratio": "Proporção",
+      "ratio_auto": "Automático",
+      "ratio_square": "Quadrado",
+      "ratio_video": "Vídeo (16:9)",
+      "ratio_portrait": "Retrato (3:4)",
+      "autoplay": "Reprodução automática",
+      "loop": "Loop",
+      "muted": "Silenciado",
+      "plays_inline": "Reproduzir inline",
+      "pause_on_hover": "Pausar ao passar o mouse"
+    },
+    "pagination": "Paginação",
+    "predictive_search": "Pesquisa preditiva",
+    "price": "Preço",
+    "quantity_selector": "Seletor de quantidade",
+    "quantity_selector_settings": {
+      "button_color": "Cor do botão"
+    },
+    "variant_picker_settings": {
+      "shape": "Formato",
+      "shape_square": "Quadrado",
+      "shape_rounded": "Arredondado",
+      "shape_circle": "Círculo"
+    },
+    "variant_picker": "Seletor de variante",
+    "gift_card": "Cartão-presente"
+  },
+  "type_styles": {
+    "paragraph_size": "Tamanho do parágrafo",
+    "heading_size": "Tamanho do título"
+  },
+  "typography": {
+    "primary_font": "Fonte principal",
+    "secondary_font": "Fonte secundária"
+  },
+  "direction": {
+    "start": "Esquerda",
+    "center": "Centro",
+    "end": "Direita"
+  }
+}

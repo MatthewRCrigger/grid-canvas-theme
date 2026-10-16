@@ -1,0 +1,29 @@
+{% doc %}
+  Renders a native discount-code disclosure for an owning `<s-cart>` element.
+  The input stays outside cart form submission; `s-cart.js` applies it through
+  Shopify Standard Actions when the button is pressed or Enter is used.
+
+  @param {string} cart_id - The id of the owning `<s-cart>` element for command targeting. @required
+  @param {string} input_id - A unique id for the discount-code input and label. @required
+  @param {string} [class] - Additional CSS classes for the disclosure.
+
+  @category commerce
+  @renders details
+
+  @example
+  {% render 'cart-discount-code', cart_id: 'cart', input_id: 'cart-discount-input' %}
+{% enddoc %}
+
+<details class="group border-t border-line-400 {{ class }}">
+  <summary class="list-none [&::-webkit-details-marker]:hidden flex min-h-touch-target cursor-pointer items-center justify-between type-overline text-ink-200 motion-safe:transition-colors hover:text-on-surface">
+    {{ 'cart.discount_code' | t }}
+    <span class="ms-4 inline-flex size-4 shrink-0 items-center justify-center" aria-hidden="true"><span class="group-open:hidden">{{- 'icon-plus.svg' | inline_asset_content -}}</span><span class="hidden group-open:inline-flex">{{- 'icon-minus.svg' | inline_asset_content -}}</span></span>
+  </summary>
+  <div class="flex gap-2 pb-4">
+    {%- comment -%} The summary is not programmatically associated with this input, so retain a real label. {%- endcomment -%}
+    <label for="{{ input_id | escape }}" class="sr-only">{{ 'cart.discount_code' | t }}</label>
+    {%- comment -%} form="" prevents Enter from submitting a parent cart form; the owning s-cart handles Enter and the command. {%- endcomment -%}
+    <input type="text" id="{{ input_id | escape }}" form="" data-discount-code placeholder="{{ 'cart.discount_placeholder' | t }}" class="min-w-0 flex-1 font-mono text-[13px] uppercase">
+    <button type="button" commandfor="{{ cart_id | escape }}" command="--apply-discount" class="button-secondary min-h-touch-target shrink-0 px-4 text-[13px]">{{ 'cart.discount_apply' | t }}</button>
+  </div>
+</details>

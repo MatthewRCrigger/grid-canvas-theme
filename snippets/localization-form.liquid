@@ -1,0 +1,164 @@
+{%- doc -%}
+  Renders Shopify localization selectors.
+
+  Country selection is used as the currency picker because Shopify associates
+  storefront currency with the active market country.
+
+  @param {boolean} [show_country] - Whether to show the country/currency selector. Default: false.
+  @param {string} id - Unique ID prefix for form controls.
+  @param {string} [class] - Classes for the wrapper element.
+  @param {string} [presentation] - Display mode: 'dropdown' or 'accordion'. Default: 'dropdown'.
+  @param {boolean} [show_labels] - Whether labels should be visible in the panel. Default: false.
+  @param {string} submit_button - Caller-captured language-update button with type="submit"; rendered only when the language selector is shown. @required
+
+  @example
+  {% capture update_button %}
+    {% block 'button', type: 'submit', variant: 'button-secondary', class: 'h-11 rounded-button px-3 text-xs' %}{{ 'localization.update_language' | t }}{% endblock %}
+  {% endcapture %}
+  {% render 'localization-form', show_country: true, id: 'header-localization', submit_button: update_button %}
+{%- enddoc -%}
+
+{%- liquid
+  assign id = id | default: 'localization-form'
+  assign wrapper_class = class | default: ''
+  assign presentation = presentation | default: 'dropdown'
+  assign show_labels = show_labels | default: false
+  assign form_label = 'localization.form_label' | t
+  assign return_to = canonical_url | default: routes.root_url
+  assign canonical_protocol = canonical_url | split: '://' | first | append: '://'
+  assign canonical_after_protocol = canonical_url | split: '://' | last
+  assign canonical_host = canonical_after_protocol | split: '/' | first
+  assign canonical_origin = canonical_protocol | append: canonical_host
+  assign currencies = localization.available_countries | map: 'currency' | map: 'iso_code' | uniq
+
+  assign show_country_selector = false
+  if show_country and localization.available_countries.size > 1 and currencies.size > 1
+    assign show_country_selector = true
+  endif
+
+  assign show_language_selector = false
+  if localization.available_languages.size > 1
+    assign show_language_selector = true
+  endif
+-%}
+
+{%- if show_country_selector or show_language_selector -%}
+  {%- capture localization_trigger_content -%}
+    {%- if show_country_selector -%}
+      <img src="{{ localization.country | image_url: width: 32 }}" alt="" width="16" height="16" loading="lazy" class="size-[1em] rounded-full object-cover me-1">
+      <span data-testid="localization-currency-code">{{ localization.country.currency.iso_code }}</span>
+    {%- endif -%}
+    {%- if show_country_selector and show_language_selector -%}
+      <span aria-hidden="true">/</span>
+    {%- endif -%}
+    {%- if show_language_selector -%}
+      <span>{{ localization.language.iso_code | upcase }}</span>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture localization_form_controls -%}
+    {%- comment -%} Shopify CLI does not reliably proxy localization POSTs, so change only the generated action's origin from localhost to the canonical storefront. {%- endcomment -%}
+    <s-live-form native-submit data-canonical-origin="{{ canonical_origin }}">
+      {%- form 'localization', id: id, class: 'min-w-72', return_to: return_to -%}
+        <span class="sr-only">{{ form_label }}</span>
+
+        {%- if show_country_selector -%}
+          <div class="max-h-82 overflow-y-auto p-2 scrollbar-none [&::-webkit-scrollbar]:hidden">
+            <h2 id="{{ id }}-country-heading" class="sr-only">{{ 'localization.country_region_currency' | t }}</h2>
+            <ul role="list" aria-labelledby="{{ id }}-country-heading" class="m-0 list-none p-0">
+              {%- for country in localization.available_countries -%}
+                {%- assign country_is_current = false -%}
+                {%- if country.iso_code == localization.country.iso_code -%}
+                  {%- assign country_is_current = true -%}
+                {%- endif -%}
+                <li>
+                  <button
+                    type="submit"
+                    name="country_code"
+                    value="{{ country.iso_code }}"
+                    class="group flex w-full cursor-pointer items-center gap-3 rounded-lg p-2 text-start text-sm hover:bg-surface-secondary motion-safe:transition-[background-color,transform] motion-safe:active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent{% if country_is_current %} bg-surface-secondary font-medium{% endif %}"
+                    {% if country_is_current %}aria-current="true"{% endif %}
+                  >
+                    <span class="inline-flex size-3 shrink-0 items-center justify-center{% unless country_is_current %} invisible{% endunless %}" aria-hidden="true">
+                      {{- 'icon-check.svg' | inline_asset_content -}}
+                    </span>
+                    <span class="min-w-0 flex-1 truncate">{{ country.name | escape }}</span>
+                    <span class="shrink-0 text-on-surface-secondary{% unless country_is_current %} opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100{% endunless %} motion-safe:transition-opacity">
+                      {{ country.currency.iso_code }} {{ country.currency.symbol }}
+                    </span>
+                  </button>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if show_language_selector -%}
+          <div class="flex items-center justify-between gap-2 p-2{% if show_country_selector %} border-t border-border{% endif %}">
+            <label for="{{ id }}-language" class="{% unless show_labels or show_country_selector %}sr-only{% else %}shrink-0 text-sm text-on-surface-secondary{% endunless %}">
+              {{ 'localization.language' | t }}
+            </label>
+            <div class="flex items-center gap-2">
+              <select id="{{ id }}-language" name="language_code" class="w-auto max-w-full cursor-pointer border-0 bg-transparent text-end text-sm hover:bg-surface-secondary">
+                {%- for language in localization.available_languages -%}
+                  <option
+                    value="{{ language.iso_code }}"
+                    lang="{{ language.iso_code }}"
+                    {% if language.iso_code == localization.language.iso_code %}selected{% endif %}
+                  >
+                    {{- language.endonym_name | capitalize -}}
+                  </option>
+                {%- endfor -%}
+              </select>
+              {{ submit_button }}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endform -%}
+    </s-live-form>
+  {%- endcapture -%}
+
+  {%- if presentation == 'accordion' -%}
+    <details class="group text-sm {{ wrapper_class }}">
+      <summary class="list-none [&::-webkit-details-marker]:hidden flex min-h-touch-target cursor-pointer items-center justify-between gap-3 rounded-sm text-on-surface hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-opacity">
+        <span>{{ form_label }}</span>
+        <span class="inline-flex items-center gap-1 font-medium">
+          {{ localization_trigger_content }}
+          <span class="inline-flex size-3 items-center justify-center motion-safe:transition-transform group-open:rotate-180" aria-hidden="true">
+            {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+          </span>
+        </span>
+      </summary>
+      <div class="mt-2 overflow-hidden rounded-card bg-surface text-on-surface">
+        {{ localization_form_controls }}
+      </div>
+    </details>
+  {%- else -%}
+    <s-localization-dropdown id="{{ id }}-dropdown" class="relative text-sm {{ wrapper_class }}">
+      <button
+        type="button"
+        commandfor="{{ id }}-dropdown"
+        command="--toggle"
+        class="group inline-flex min-h-touch-target cursor-pointer items-center gap-1 rounded px-2 -mx-2 bg-transparent text-on-surface font-medium hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition motion-safe:active:scale-[0.97]"
+        aria-expanded="false"
+        aria-controls="{{ id }}-panel"
+        data-localization-trigger
+      >
+        <span class="sr-only">{{ form_label }}</span>
+        {{ localization_trigger_content }}
+        <span class="inline-flex size-3 items-center justify-center motion-safe:transition-transform motion-safe:group-aria-expanded:rotate-180" aria-hidden="true">
+          {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+        </span>
+      </button>
+
+      <div
+        id="{{ id }}-panel"
+        class="absolute inset-e-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-card border border-border bg-surface text-on-surface shadow-xl"
+        data-localization-panel
+        hidden
+      >
+        {{ localization_form_controls }}
+      </div>
+    </s-localization-dropdown>
+  {%- endif -%}
+{%- endif -%}

@@ -1,0 +1,140 @@
+{% doc %}
+  Renders a product price block, handling sale prices, compare-at prices,
+  savings percentages, and price ranges. Uses semantic color tokens so sale
+  prices are visually distinct from regular prices.
+
+  @param {number} price - Current price in cents (e.g. variant.price). @required
+  @param {number} [compare_at_price] - Original/compare-at price in cents. When greater than price, the item is considered on sale.
+  @param {number} [price_min] - Minimum price for product ranges (e.g. product.price_min).
+  @param {number} [price_max] - Maximum price for product ranges (e.g. product.price_max).
+  @param {boolean} [show_currency] - When true, uses the money_with_currency filter. Default: false.
+  @param {string} [class] - Additional CSS classes to append to the root element. Weight follows the variant, so pass `font-medium` here when the composition wants an emphasized price.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root element.
+
+  @category commerce
+  @renders div
+
+  @example
+  {% block 'price', price: variant.price %}{% endblock %}
+  {% block 'price', price: variant.price, compare_at_price: variant.compare_at_price %}{% endblock %}
+  {% block 'price', price: variant.price, price_min: product.price_min, price_max: product.price_max %}{% endblock %}
+  {% block 'price', price: variant.price, compare_at_price: variant.compare_at_price, show_currency: true %}{% endblock %}
+  {% block 'price', price: variant.price, variant: 'type-heading-sm', class: 'font-medium' %}{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign show_currency = show_currency | default: false
+  assign variant       = variant | default: 'type-body'
+  assign color         = color
+
+  assign price_style = ''
+  if color != blank
+    assign price_style = 'color: ' | append: color
+  endif
+
+  assign is_range = false
+  if price_min != blank and price_max != blank and price_min != price_max
+    assign is_range = true
+  endif
+
+  assign on_sale = false
+  if compare_at_price != blank and compare_at_price > price
+    assign on_sale = true
+  endif
+
+  if is_range
+    if show_currency
+      assign min_formatted = price_min | money_with_currency
+      assign max_formatted = price_max | money_with_currency
+    else
+      assign min_formatted = price_min | money
+      assign max_formatted = price_max | money
+    endif
+  elsif on_sale
+    if show_currency
+      assign price_formatted          = price | money_with_currency
+      assign compare_at_price_formatted = compare_at_price | money_with_currency
+    else
+      assign price_formatted          = price | money
+      assign compare_at_price_formatted = compare_at_price | money
+    endif
+    assign savings         = compare_at_price | minus: price
+    assign savings_percent = savings | times: 100.0 | divided_by: compare_at_price | round
+  else
+    if show_currency
+      assign price_formatted = price | money_with_currency
+    else
+      assign price_formatted = price | money
+    endif
+  endif
+-%}
+
+{%- comment -%} No hardcoded weight inside: the variant (or a caller `font-medium`) owns font-weight so a given text style matches the text block.
+  Each formatted amount sits in <bdi> so the bidi algorithm cannot reorder currency symbols, minus signs or range separators inside RTL text; a no-op in LTR. {%- endcomment -%}
+<div class="{{ variant }} font-mono tracking-[0.02em] inline-flex items-baseline gap-2 flex-wrap{% if class %} {{ class }}{% endif %}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  {%- if is_range -%}
+    <span class="text-on-surface"{% if price_style != blank %} style="{{ price_style }}"{% endif %}>
+      <span class="sr-only">{{ 'products.price.price_range_label' | t }}: </span>
+      {%- capture range_text -%}{{ 'products.price.price_range_html' | t: min: min_formatted, max: max_formatted }}{%- endcapture -%}
+      <bdi>{{ range_text }}</bdi>
+    </span>
+  {%- elsif on_sale -%}
+    <span class="text-sale"{% if price_style != blank %} style="{{ price_style }}"{% endif %}>
+      <span class="sr-only">{{ 'products.price.sale_price' | t }}: </span>
+      <bdi>{{ price_formatted }}</bdi>
+    </span>
+    {%- comment -%} <s> (strikethrough) is the correct semantic element for the original price; the color setting intentionally overrides compare-at color with the rest of the price. {%- endcomment -%}
+    <s class="text-compare text-sm"{% if price_style != blank %} style="{{ price_style }}"{% endif %}>
+      <span class="sr-only">{{ 'products.price.regular_price' | t }}: </span>
+      <bdi>{{ compare_at_price_formatted }}</bdi>
+    </s>
+    {%- capture savings_percent_label %}{{ savings_percent }}%{%- endcapture -%}
+    <span class="text-sale text-sm"{% if price_style != blank %} style="{{ price_style }}"{% endif %}>
+      <span class="sr-only">{{ 'products.price.savings' | t: amount: savings_percent_label }}</span>
+      <bdi aria-hidden="true">(-{{ savings_percent }}%)</bdi>
+    </span>
+  {%- else -%}
+    <span class="text-on-surface"{% if price_style != blank %} style="{{ price_style }}"{% endif %}>
+      <span class="sr-only">{{ 'products.price.price' | t }}: </span>
+      <bdi>{{ price_formatted }}</bdi>
+    </span>
+  {%- endif -%}
+</div>
+
+{% schema %}
+  {
+    "name": "t:blocks.price",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color",
+        "label": "t:general.color"
+      },
+      {
+        "type": "select",
+        "id": "variant",
+        "label": "t:general.text_style",
+        "default": "type-body",
+        "options": [
+          { "value": "type-display-xl", "label": "t:variants.text_style.display_xl" },
+          { "value": "type-display", "label": "t:variants.text_style.display" },
+          { "value": "type-title", "label": "t:variants.text_style.title" },
+          { "value": "type-heading-2xl", "label": "t:variants.text_style.heading_2xl" },
+          { "value": "type-heading-xl", "label": "t:variants.text_style.heading_xl" },
+          { "value": "type-heading-lg", "label": "t:variants.text_style.heading_lg" },
+          { "value": "type-heading-md", "label": "t:variants.text_style.heading_md" },
+          { "value": "type-heading-sm", "label": "t:variants.text_style.heading_sm" },
+          { "value": "type-body-lg", "label": "t:variants.text_style.body_lg" },
+          { "value": "type-body", "label": "t:variants.text_style.body" },
+          { "value": "type-body-sm", "label": "t:variants.text_style.body_sm" },
+          { "value": "type-overline-lg", "label": "t:variants.text_style.overline_lg" },
+          { "value": "type-overline", "label": "t:variants.text_style.overline" },
+          { "value": "type-data-lg", "label": "t:variants.text_style.data_lg" },
+          { "value": "type-data", "label": "t:variants.text_style.data" },
+          { "value": "type-data-sm", "label": "t:variants.text_style.data_sm" },
+          { "value": "hud-tag", "label": "t:variants.text_style.tag" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,248 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "title_accessible": "404 — ไม่พบหน้าเว็บ",
+    "not_found": "ไม่พบหน้าเว็บ",
+    "back_to_shopping": "สำรวจคอลเลกชัน",
+    "suggestions_heading": "อีกทางหนึ่งในการก้าวต่อไป",
+    "recovery_body": "ไม่พบหน้านี้ แต่ยังมีอีกมากมายให้ค้นพบ"
+  },
+  "general": {
+    "skip_to_content": "ข้ามไปที่เนื้อหา",
+    "play_video": "เล่นวิดีโอ",
+    "video_player": "เครื่องเล่นวิดีโอ",
+    "captions": "คำบรรยาย",
+    "clear": "ล้าง",
+    "back": "ย้อนกลับ",
+    "close": "ปิด",
+    "dismiss": "ปิด",
+    "drawer": "ลิ้นชัก",
+    "placeholder_image": "รูปภาพตัวยึดตำแหน่ง",
+    "account": "บัญชี",
+    "search": "ค้นหา",
+    "pagination": {
+      "label": "การแบ่งหน้า",
+      "previous_page": "หน้าก่อนหน้า",
+      "next_page": "หน้าถัดไป",
+      "page": "หน้า {{ number }}",
+      "current_page": "หน้า {{ number }} หน้าปัจจุบัน"
+    },
+    "meta": {
+      "tagged": "ติดแท็ก {{ tags }}",
+      "page": "หน้า {{ number }}"
+    }
+  },
+  "accessibility": {
+    "results_updated": "อัปเดตผลลัพธ์แล้ว",
+    "variant_updated": "อัปเดตการเลือกแล้ว",
+    "update_error": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง"
+  },
+  "blog": {
+    "articles_heading": "บทความ",
+    "article_metadata_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time> · {{ author }}",
+    "article_metadata_no_author_html": "<time datetime=\"{{ datetime }}\">{{ date }}</time>",
+    "comment_form_body": "ความคิดเห็น",
+    "comment_form_email": "อีเมล",
+    "comment_form_name": "ชื่อ",
+    "comment_form_submit": "โพสต์",
+    "comment_form_title": "เพิ่มความคิดเห็น",
+    "comments_count": {
+      "one": "1 ความคิดเห็น",
+      "other": "{{ count }} ความคิดเห็น"
+    },
+    "no_articles": "ยังไม่มีบทความ"
+  },
+  "cart": {
+    "checkout": "ชำระเงิน",
+    "title": "ตะกร้าสินค้า",
+    "remove": "ลบ {{ title }}",
+    "empty": "ตะกร้าสินค้าของคุณว่างเปล่า",
+    "empty_description": "ดูเหมือนว่าคุณยังไม่ได้เพิ่มสินค้าใดลงในตะกร้าสินค้า",
+    "icon_label": {
+      "one": "ตะกร้าสินค้า (1 รายการ)",
+      "other": "ตะกร้าสินค้า ({{ count }} รายการ)"
+    },
+    "item_count": {
+      "one": "มี 1 รายการในตะกร้าสินค้า",
+      "other": "มี {{ count }} รายการในตะกร้าสินค้า"
+    },
+    "item_removed": "ลบรายการออกจากตะกร้าสินค้าแล้ว",
+    "updated": "อัปเดตตะกร้าสินค้าแล้ว",
+    "note_label": "หมายเหตุคำสั่งซื้อ",
+    "note_placeholder": "เพิ่มคำแนะนำพิเศษสำหรับคำสั่งซื้อของคุณ",
+    "taxes_and_shipping_at_checkout": "คำนวณภาษีและการจัดส่งเมื่อชำระเงิน",
+    "discount_list": "ส่วนลดที่ใช้",
+    "discount_savings": "(-{{ amount }})",
+    "discount_code": "รหัสส่วนลด",
+    "discount_title": "ส่วนลด {{ title }}",
+    "update_error": "ไม่สามารถอัปเดตตะกร้าสินค้าได้ โปรดลองอีกครั้ง",
+    "refresh_error": "อัปเดตตะกร้าสินค้าแล้ว แต่ข้อมูลที่แสดงอาจไม่เป็นปัจจุบัน โปรดรีเฟรชหน้าเพื่อดูตะกร้าสินค้าล่าสุด",
+    "continue_shopping": "เลือกซื้อสินค้าต่อ",
+    "checkout_description": "ดำเนินการไปยังการชำระเงินอย่างปลอดภัย",
+    "discount_placeholder": "ป้อนรหัส",
+    "discount_apply": "ใช้",
+    "note_accordion_label": "คำแนะนำพิเศษ",
+    "total_label": "ยอดรวมโดยประมาณ"
+  },
+  "contact": {
+    "name": "ชื่อ",
+    "email": "อีเมล",
+    "phone": "หมายเลขโทรศัพท์ (ไม่บังคับ)",
+    "message": "ข้อความ",
+    "submit": "ส่งข้อความ",
+    "success": "ขอบคุณที่ติดต่อเรา เราจะติดต่อกลับในเร็วๆนี้"
+  },
+  "collections": {
+    "all_collections": "คอลเลกชันทั้งหมด",
+    "browse_heading": "เลือกดูคอลเลกชัน",
+    "products_heading": "สินค้า",
+    "placeholder_title": "ชื่อคอลเลกชัน",
+    "no_collections": "ไม่พบคอลเลกชัน",
+    "no_products": "ไม่มีสินค้าที่ตรงกับตัวกรองที่เลือก",
+    "products_count": {
+      "one": "สินค้า 1 รายการ",
+      "other": "สินค้า {{ count }} รายการ"
+    },
+    "filter": "ตัวกรอง",
+    "filters": "ตัวกรอง",
+    "active_filters": "ตัวกรองที่ใช้งานอยู่",
+    "clear_all": "ล้างทั้งหมด",
+    "remove_filter": "ลบ {{ filter }}",
+    "show_results": "แสดงผลลัพธ์",
+    "value_unavailable": "Unavailable",
+    "price_min": "ราคาขั้นต่ำ",
+    "price_max": "ราคาสูงสุด",
+    "price_to": "ถึง",
+    "sort_by": "จัดเรียงตาม",
+    "filtering": {
+      "show_more": "แสดงเพิ่มเติม"
+    },
+    "view_all": "ดูทั้งหมด"
+  },
+  "header": {
+    "menu": "เมนู",
+    "mobile_navigation": "การนำทางบนมือถือ",
+    "navigation": "การนำทางหลัก",
+    "show_submenu": "แสดงเมนูย่อยของ{{ title }}"
+  },
+  "footer": {
+    "quick_links": "ลิงก์ด่วน",
+    "policies": "นโยบาย"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "เพิ่มลงใน Apple Wallet",
+    "card": "บัตรของขวัญ",
+    "expired": "บัตรของขวัญนี้หมดอายุแล้ว",
+    "expires_on": "หมดอายุวันที่ {{ expires_on }}",
+    "use_at_checkout": "ใช้บัตรของขวัญนี้เมื่อชำระเงิน",
+    "a_gift_for_you": "ของขวัญสำหรับคุณ",
+    "available": "ใช้ได้ {{ amount }}",
+    "a_little_something": "ของขวัญเล็ก ๆ สำหรับคุณ",
+    "card_label": "บัตรของขวัญจาก {{ shop }}",
+    "copy_code": "คัดลอกรหัส",
+    "copied": "คัดลอกรหัสแล้ว",
+    "copy_error": "ไม่สามารถคัดลอกโดยอัตโนมัติได้ โปรดคัดลอกรหัสด้วยตนเอง",
+    "disabled": "บัตรของขวัญนี้ใช้ไม่ได้แล้ว",
+    "start_shopping": "เริ่มช้อปปิ้ง"
+  },
+  "page": {
+    "content_heading": "เนื้อหาหน้า"
+  },
+  "password": {
+    "title": "ร้านค้านี้เป็นแบบส่วนตัว",
+    "eyebrow": "เร็ว ๆ นี้",
+    "launch_description": "ดูสิ่งที่กำลังจะมาถึงก่อนใคร",
+    "enter": "เข้าสู่ระบบ",
+    "enter_with_password": "เข้าสู่ร้านด้วยรหัสผ่าน",
+    "enter_store": "เข้าสู่ร้านค้า",
+    "show": "แสดง",
+    "hide": "ซ่อน",
+    "error": "รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง",
+    "field_label": "รหัสผ่าน",
+    "placeholder": "ป้อนรหัสผ่าน",
+    "get_updates": "รับข่าวสารการเปิดร้าน",
+    "updates_description": "รับข่าวก่อนใครเมื่อเราเปิดร้าน",
+    "updates_submit": "แจ้งให้ฉันทราบ",
+    "updates_success": "ขอบคุณที่สมัครรับข่าวสาร"
+  },
+  "product": {
+    "details": "รายละเอียดสินค้า",
+    "placeholder_title": "ชื่อสินค้า",
+    "quantity": "จำนวน",
+    "quantity_decrease": "ลดจำนวน {{ title }}",
+    "quantity_increase": "เพิ่มจำนวน {{ title }}",
+    "quantity_input": "จำนวนสำหรับ {{ title }}",
+    "add_to_cart": "เพิ่มลงในตะกร้าสินค้า",
+    "added_to_cart": "เพิ่มลงในตะกร้าสินค้าแล้ว",
+    "sold_out": "สินค้าหมด",
+    "description": "คำอธิบาย",
+    "view_image": "View image: {{ title }}",
+    "image_zoom": "Expanded product image"
+  },
+  "products": {
+    "price": {
+      "price": "ราคา",
+      "price_range_html": "{{ min }} ถึง {{ max }}",
+      "price_range_label": "ช่วงราคา",
+      "regular_price": "ราคาปกติ",
+      "sale_price": "ราคาโปรโมชัน",
+      "savings": "ประหยัด {{ amount }}"
+    },
+    "quantity": {
+      "decrease": "ลดจำนวน",
+      "increase": "เพิ่มจำนวน",
+      "input_label": "จำนวน"
+    }
+  },
+  "filters": {
+    "active_count": {
+      "one": "ตัวกรองที่ใช้งานอยู่ 1 รายการ",
+      "other": "ตัวกรองที่ใช้งานอยู่ {{ count }} รายการ"
+    }
+  },
+  "forms": {
+    "required": "จำเป็น",
+    "form_errors_title": "โปรดแก้ไขข้อผิดพลาดต่อไปนี้"
+  },
+  "search": {
+    "title": "ค้นหา",
+    "label": "ค้นหา",
+    "placeholder": "ค้นหา",
+    "products_heading": "สินค้า",
+    "results_heading": "ผลการค้นหา",
+    "view_all_results": "ดูผลลัพธ์ทั้งหมด",
+    "results_count_announcement": {
+      "one": "มี 1 ผลลัพธ์",
+      "other": "มี {{ count }} ผลลัพธ์"
+    },
+    "no_results_announcement": "ไม่พบผลลัพธ์สำหรับ {{ terms }}",
+    "results_for": "พบ {{ count }} ผลลัพธ์สำหรับ {{ terms }}",
+    "no_results": "ไม่พบผลลัพธ์สำหรับ {{ terms }}",
+    "live_results_announcement": {
+      "one": "{{ count }} result found for {{ terms }}",
+      "other": "{{ count }} results found for {{ terms }}"
+    },
+    "live_no_results_announcement": "No results found for {{ terms }}"
+  },
+  "localization": {
+    "form_label": "Region and language",
+    "language": "Language",
+    "country_region_currency": "Country/region and currency",
+    "update_language": "อัปเดต"
+  },
+  "home": {
+    "hero": {
+      "title": "สินค้ามาใหม่",
+      "subtitle": "เลือกชมคอลเลกชัน"
+    }
+  }
+}

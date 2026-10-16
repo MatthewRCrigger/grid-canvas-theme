@@ -1,0 +1,96 @@
+{% doc %}
+  Resource-agnostic card shell. The caller owns media, text, price, placeholders,
+  overlay layout and analytics; this block never selects or derives a resource.
+  The body renders in caller scope before the shell's settings are available.
+
+  @param {string} [url] - Whole-card destination. Omit for a non-linked card; no root-route fallback is added.
+  @param {string} [aria_label] - Raw accessible article/link label, escaped here. Required when url is supplied.
+  @param {string} [link_mode] - 'content' (default): the body supplies one named keyboard-accessible link to url and the shell adds a pointer-only link. 'card': the shell supplies the named keyboard-accessible link; do not add a duplicate body link.
+  @param {string} [class] - Additional classes on the article; overlay callers add overflow-hidden.
+  @param {string} [attributes] - Additional HTML attributes on the article.
+
+  @category content
+  @renders article
+
+  @example Media link with independently editable content
+  {% block 'card', block.name: 't:blocks.product_card', url: product.url, aria_label: product.title, border_radius: 'rounded-card' %}
+    <a href="{{ product.url | escape }}" class="relative block overflow-hidden rounded-[inherit]" aria-label="{{ product.title | escape }}">
+      {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', alt: product.title, attributes: 'loading="lazy"' %}{% endblock %}
+    </a>
+    <div class="flex flex-col gap-0.5">
+      {% block 'text', tag: 'h3' %}{{ product.title | escape }}{% endblock %}
+      {% block 'price', price: product.price, class: 'self-start group-[.text-center]/card:self-center group-[.text-end]/card:self-end' %}{% endblock %}
+    </div>
+  {% endblock %}
+
+  @example Overlay composition with one accessible whole-card link
+  {% block 'card', block.name: 't:blocks.collection_card', url: collection.url, aria_label: collection.title, link_mode: 'card', class: 'overflow-hidden', border_radius: 'rounded-card' %}
+    <div class="relative overflow-hidden">
+      {% block 'image', fallback_image: collection.image, alt: collection.title, attributes: 'loading="lazy"', placeholder_kind: 'collection' %}{% endblock %}
+    </div>
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-interactive/90 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 p-4 text-interactive-text">
+      {% block 'text', tag: 'h3' %}{{ collection.title | escape }}{% endblock %}
+    </div>
+  {% endblock %}
+
+  @example Imageless card; independent actions belong outside links, above the stretched link
+  {% block 'card', block.name: 't:blocks.article_card', url: article.url, aria_label: article.title, link_mode: 'card' %}
+    {% block 'text', tag: 'h3' %}{{ article.title | escape }}{% endblock %}
+  {% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign background = background_color
+  assign radius = border_radius
+  assign alignment = alignment | default: 'text-start'
+  assign link_mode = link_mode | default: 'content'
+-%}
+
+<article class="group/card isolate relative flex flex-col gap-2 {{ alignment }} {{ radius }}{% if class != blank %} {{ class }}{% endif %}"{% if aria_label != blank %} aria-label="{{ aria_label | escape }}"{% endif %}{% if background != blank %} style="background: {{ background }};"{% endif %}{% if attributes != blank %} {{ attributes }}{% endif %}>
+  {{ content }}
+  {%- if url != blank -%}
+    {%- comment -%} Keep decorative overlay content below this link; independent actions use relative z-20 outside body anchors. {%- endcomment -%}
+    {%- if link_mode == 'card' -%}
+      <a href="{{ url | escape }}" class="absolute inset-0 z-10 rounded-[inherit] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" aria-label="{{ aria_label | escape }}"></a>
+    {%- else -%}
+      <a href="{{ url | escape }}" class="absolute inset-0 z-10 rounded-[inherit]" aria-hidden="true" tabindex="-1"></a>
+    {%- endif -%}
+  {%- endif -%}
+</article>
+
+{% schema %}
+{
+  "name": "t:blocks.card",
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background_color",
+      "label": "t:general.color"
+    },
+    {
+      "type": "select",
+      "id": "border_radius",
+      "label": "t:general.corner_radius",
+      "default": "rounded-none",
+      "options": [
+        { "value": "rounded-none", "label": "t:general.none" },
+        { "value": "rounded-card", "label": "t:general.default" },
+        { "value": "rounded-md", "label": "t:general.rounded" },
+        { "value": "rounded-[16px]", "label": "t:general.large" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:general.alignment",
+      "default": "text-start",
+      "options": [
+        { "value": "text-start", "label": "t:direction.start" },
+        { "value": "text-center", "label": "t:direction.center" },
+        { "value": "text-end", "label": "t:direction.end" }
+      ]
+    }
+  ]
+}
+{% endschema %}

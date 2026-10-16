@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "Tło",
+    "buttons": "Przyciski",
+    "cards": "Karty",
+    "color": "Kolor",
+    "collection": "Kolekcja",
+    "default": "Domyślne",
+    "forms": "Formularze",
+    "link": "Link",
+    "pill": "Pigułka",
+    "rounded": "Zaokrąglone",
+    "sharp": "Ostre",
+    "size": "Rozmiar",
+    "small": "Mały",
+    "style": "Styl",
+    "text_style": "Styl tekstu",
+    "transparent": "Przezroczyste",
+    "video": "Wideo",
+    "alignment": "Wyrównanie",
+        "none": "Brak",
+    "medium": "Średni",
+    "large": "Duży",
+    "corner_radius": "Promień zaokrąglenia",
+    "extra_small": "Bardzo mały",
+    "extra_large": "Bardzo duży"
+  },
+  "settings": {
+    "border_radius": "Promień obramowania",
+    "colors": "Kolory",
+    "fonts": "Czcionki",
+    "type_styles": "Style typografii"
+  },
+  "variants": {
+    "text_style": {
+      "display": "Tytułowy",
+      "heading_xl": "Nagłówek XL",
+      "heading_lg": "Nagłówek LG",
+      "heading_md": "Nagłówek MD",
+      "heading_sm": "Nagłówek SM",
+      "body_lg": "Treść LG",
+      "body": "Treść",
+      "body_sm": "Treść (mały)",
+      "overline": "Nadlinia"
+    },
+    "quantity_selector": {
+      "outlined": "Z obrysem",
+      "filled": "Wypełnione"
+    },
+    "button": {
+      "custom": "Niestandardowe",
+      "outline": "Z obrysem",
+      "plain": "Zwykły",
+      "primary": "Główny",
+      "secondary": "Dodatkowy"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "Próbka",
+        "buttons": "Przyciski",
+        "dropdown": "Lista rozwijana"
+      }
+    }
+  },
+  "blocks": {
+    "button": "Przycisk",
+    "container": "Kontener",
+    "container_settings": {
+      "fill": "Wypełnienie",
+      "fill_info": "Automatyczne zachowuje istniejące tło.",
+      "fill_automatic": "Automatyczne",
+      "background_image": "Obraz tła",
+      "padding": "Wypełnienie",
+      "padding_small": "Małe",
+      "padding_medium": "Średnie",
+      "padding_large": "Duże",
+      "padding_extra_large": "Bardzo duże"
+    },
+    "featured_collection": "Polecana kolekcja",
+    "image": "Obraz",
+    "link": "Link",
+    "image_settings": {
+      "image": "Obraz",
+      "aspect_ratio": "Proporcje",
+      "auto": "Auto",
+      "square": "Kwadrat",
+      "portrait": "Pionowo"
+    },
+    "logo": "Logo",
+    "logo_settings": {
+      "image": "Obraz logo",
+      "image_info": "Niestandardowy obraz logo dla tego położenia.",
+      "height_info": "Stosowane tylko wtedy, gdy wybrana jest opcja niestandardowego rozmiaru.",
+      "size": "Rozmiar",
+      "size_small": "Mały",
+      "size_medium": "Średni",
+      "size_large": "Duży",
+      "size_custom": "Niestandardowy",
+      "height": "Wysokość logo"
+    },
+    "main_menu": "Menu główne",
+    "basic_menu": "Menu podstawowe",
+    "header": "Nagłówek",
+    "footer": "Stopka",
+    "menu_settings": {
+      "menu": "Menu",
+      "menu_info": "Wybierz menu nawigacji do wyświetlenia.",
+      "dropdown_color": "Kolor listy rozwijanej"
+    },
+    "card": "Karta",
+    "product_card": "Karta produktu",
+    "collection_card": "Karta kolekcji",
+    "article_card": "Karta artykułu",
+    "text": "Tekst",
+    "richtext": "Tekst sformatowany",
+    "video": "Wideo",
+    "video_settings": {
+      "vimeo_id": "ID Vimeo",
+      "youtube_id": "ID YouTube",
+      "ratio": "Proporcje",
+      "ratio_auto": "Auto",
+      "ratio_square": "Kwadrat",
+      "ratio_video": "Wideo (16:9)",
+      "ratio_portrait": "Pionowo (3:4)",
+      "autoplay": "Autoodtwarzanie",
+      "loop": "Pętla",
+      "muted": "Wyciszone",
+      "plays_inline": "Odtwarzanie w linii",
+      "pause_on_hover": "Wstrzymaj po najechaniu kursorem"
+    },
+    "pagination": "Paginacja",
+    "predictive_search": "Wyszukiwanie predykcyjne",
+    "price": "Cena",
+    "quantity_selector": "Selektor ilości",
+    "quantity_selector_settings": {
+      "button_color": "Kolor przycisku"
+    },
+    "variant_picker_settings": {
+      "shape": "Kształt",
+      "shape_square": "Kwadrat",
+      "shape_rounded": "Zaokrąglony",
+      "shape_circle": "Koło"
+    },
+    "variant_picker": "Selektor wariantów",
+    "gift_card": "Karta prezentowa"
+  },
+  "type_styles": {
+    "paragraph_size": "Rozmiar akapitu",
+    "heading_size": "Rozmiar nagłówka"
+  },
+  "typography": {
+    "primary_font": "Czcionka podstawowa",
+    "secondary_font": "Czcionka dodatkowa"
+  },
+  "direction": {
+    "start": "Do lewej",
+    "center": "Do środka",
+    "end": "Do prawej"
+  }
+}

@@ -1,0 +1,14 @@
+{% doc %}
+  Renders the visually hidden "skip to content" link that becomes visible on
+  keyboard focus. Render it as the first element inside `<body>` in every layout so
+  it is the first thing keyboard and screen-reader users reach, and keep a
+  `#main-content` element on the page as its target.
+
+  @example
+  {% render 'skip-link' %}
+{% enddoc %}
+
+{%- comment -%} The focused link uses logical safe-area offsets because it becomes viewport-fixed. {%- endcomment -%}
+<a href="#main-content" class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:z-50 focus-visible:px-4 focus-visible:py-2 focus-visible:bg-interactive focus-visible:text-interactive-text focus-visible:rounded focus-visible:inset-bs-[max(1rem,var(--safe-area-inset-top))] focus-visible:inset-s-[max(1rem,var(--safe-area-inset-inline-start))]">
+  {{ 'general.skip_to_content' | t }}
+</a>

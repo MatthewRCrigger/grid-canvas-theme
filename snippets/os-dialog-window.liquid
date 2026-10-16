@@ -1,0 +1,25 @@
+{% doc %}
+  The GRID OS window inside a pop-up <dialog> (cart drawer, mobile menu, filters, search). It is
+  the same window as a Frame block with Window = Pop-up window: an <s-window> with the frame ring,
+  a filled title bar and the three working lights (close and minimize close the dialog, zoom fills
+  the screen from 64rem). Used where a snippet or block owns the dialog and so cannot call the
+  Frame block; layouts and templates use `{% block 'frame', window: 'dialog' %}` instead.
+
+  The caller's content must start with the title bar (`<div class="panel-header">…</div>`); the
+  window seats its lights there.
+
+  @param {string} id - Id for the window (the dialog's id plus '-window').
+  @param {string} content - Title bar followed by the window body.
+  @param {string} [inner_class] - Utilities on the inner box.
+  @param {string} [attributes] - Extra attributes on the window.
+
+  @example
+  {% render 'os-dialog-window', id: 'cart-drawer-window', content: drawer_body %}
+{% enddoc %}
+
+<s-window id="{{ id }}" class="frame frame-grid" data-window data-mode="dialog" data-role="dialog" data-state="open" data-active data-header="shown"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  <div class="frame-inner{% if inner_class != blank %} {{ inner_class }}{% endif %}">
+    {% render 'os-window-controls', id: id, role: 'dialog' %}
+    {{ content }}
+  </div>
+</s-window>

@@ -1,0 +1,37 @@
+{% doc %}
+  GRID compare switch for a product card. Sends `--compare-toggle` to the
+  #compare-window dialog with the product's spec sheet as JSON; <s-compare-toggle>
+  reflects whether the product is in the compare list. Sits above the card's
+  overlay link (z-20) so it stays clickable.
+
+  @param {object} product - The product to add to or remove from compare. @required
+
+  @example
+  {% render 'compare-toggle', product: product %}
+{% enddoc %}
+{%- liquid
+  if product.available
+    assign compare_status = 'home.status.in_stock' | t
+  else
+    assign compare_status = 'home.status.sold_out' | t
+  endif
+  assign compare_image = ''
+  if product.featured_image
+    assign compare_image = product.featured_image | image_url: width: 480
+  endif
+  assign compare_price = product.price | money | strip_html
+-%}
+{%- capture compare_json -%}
+  {"handle":{{ product.handle | json }},"title":{{ product.title | json }},"url":{{ product.url | json }},"image":{{ compare_image | json }},"price":{{ compare_price | json }},"type":{{ product.type | json }},"vendor":{{ product.vendor | json }},"status":{{ compare_status | json }}}
+{%- endcapture -%}
+<s-compare-toggle class="block self-start">
+  <button
+    type="button"
+    class="compare-toggle"
+    commandfor="compare-window"
+    command="--compare-toggle"
+    aria-pressed="false"
+    aria-label="{{ 'compare.toggle_label' | t: title: product.title | escape }}"
+    data-compare="{{ compare_json | strip | escape }}"
+  >{{ 'compare.toggle' | t }}</button>
+</s-compare-toggle>

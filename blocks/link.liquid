@@ -1,0 +1,43 @@
+{% doc %}
+  Renders an ordinary text link as an `<a>`. Use this block for standalone
+  navigation links, not commands, form submitters, card overlays, or
+  platform-owned links. Body content is composed via `{{ content }}`.
+
+  The URL is a schema setting. Call sites override it with the bare `url:`
+  kwarg; when it is blank, the link falls back to the storefront root route
+  so the rendered anchor always has a valid destination.
+
+  @param {string} [class] - Additional Tailwind classes appended to the link treatment.
+  @param {string} [attributes] - Additional HTML attributes passed through to the anchor.
+
+  @category interactive
+  @renders a
+
+  @example
+  {% block 'link', url: routes.all_products_collection_url %}Browse products{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign url = url | default: routes.root_url
+
+  assign base_class = 'inline-flex min-h-touch-target items-center type-overline text-accent no-underline hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-colors'
+  assign full_class = base_class
+  if class != blank
+    assign full_class = full_class | append: ' ' | append: class
+  endif
+-%}
+
+<a href="{{ url | escape }}" class="{{ full_class }}"{% if attributes != blank %} {{ attributes }}{% endif %}>{{ content }}</a>
+
+{% schema %}
+  {
+    "name": "t:blocks.link",
+    "settings": [
+      {
+        "type": "url",
+        "id": "url",
+        "label": "t:general.link"
+      }
+    ]
+  }
+{% endschema %}

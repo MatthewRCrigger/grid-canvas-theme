@@ -1,0 +1,75 @@
+{% doc %}
+  Emits CSS custom property declarations for merchant-configurable typography
+  scale settings. Render inside a CSS rule or style attribute.
+
+  @example
+  :root {
+    {% render 'theme-type-scale-variables' %}
+  }
+
+  @example
+  <div style="{% render 'theme-type-scale-variables' %}">
+    {{ content_for_layout }}
+  </div>
+{% enddoc %}
+
+{%- liquid
+  case settings.type_scale_paragraph_size
+    when 'xs'
+      assign paragraph_anchor = 12
+    when 'sm'
+      assign paragraph_anchor = 14
+    when 'md'
+      assign paragraph_anchor = 16
+    when 'lg'
+      assign paragraph_anchor = 18
+    when 'xl'
+      assign paragraph_anchor = 20
+    else
+      assign paragraph_anchor = 14
+  endcase
+
+  case settings.type_scale_heading_size
+    when 'xs'
+      assign heading_anchor = 28
+    when 'sm'
+      assign heading_anchor = 39
+    when 'md'
+      assign heading_anchor = 50
+    when 'lg'
+      assign heading_anchor = 61
+    when 'xl'
+      assign heading_anchor = 72
+    else
+      assign heading_anchor = 39
+  endcase
+
+  assign type_paragraph_lg_size = paragraph_anchor | times: 1.18 | round: 2
+  assign type_paragraph_size = paragraph_anchor
+  assign type_paragraph_sm_size = paragraph_anchor | times: 0.82 | round: 2
+  assign type_subheading_size = paragraph_anchor | times: 0.78 | round: 2
+
+  assign type_heading_2xl_size = heading_anchor | times: 1.25 | round: 2
+  assign type_heading_xl_size = heading_anchor
+  assign type_heading_lg_size = heading_anchor | times: 0.80 | round: 2
+  assign type_heading_md_size = heading_anchor | times: 0.65 | round: 2
+  assign type_heading_sm_size = heading_anchor | times: 0.50 | round: 2
+-%}
+--type-paragraph-lg-font: var(--font-body);
+--type-paragraph-lg-size: {{ type_paragraph_lg_size }}px;
+--type-paragraph-font: var(--font-body);
+--type-paragraph-size: {{ type_paragraph_size }}px;
+--type-paragraph-sm-font: var(--font-body);
+--type-paragraph-sm-size: {{ type_paragraph_sm_size }}px;
+--type-heading-2xl-font: var(--font-heading);
+--type-heading-2xl-size: {{ type_heading_2xl_size }}px;
+--type-heading-xl-font: var(--font-heading);
+--type-heading-xl-size: {{ type_heading_xl_size }}px;
+--type-heading-lg-font: var(--font-heading);
+--type-heading-lg-size: {{ type_heading_lg_size }}px;
+--type-heading-md-font: var(--font-heading);
+--type-heading-md-size: {{ type_heading_md_size }}px;
+--type-heading-sm-font: var(--font-heading);
+--type-heading-sm-size: {{ type_heading_sm_size }}px;
+--type-subheading-font: var(--font-body);
+--type-subheading-size: {{ type_subheading_size }}px;

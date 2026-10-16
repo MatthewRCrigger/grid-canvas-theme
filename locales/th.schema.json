@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "general": {
+    "background": "พื้นหลัง",
+    "buttons": "ปุ่ม",
+    "cards": "การ์ด",
+    "color": "สี",
+    "collection": "คอลเลกชัน",
+    "default": "ค่าเริ่มต้น",
+    "forms": "แบบฟอร์ม",
+    "link": "ลิงก์",
+    "pill": "ทรงแคปซูล",
+    "rounded": "โค้งมน",
+    "sharp": "เหลี่ยม",
+    "size": "ขนาด",
+    "small": "เล็ก",
+    "style": "สไตล์",
+    "text_style": "สไตล์ข้อความ",
+    "transparent": "โปร่งใส",
+    "video": "วิดีโอ",
+    "alignment": "การจัดแนว",
+        "none": "ไม่มี",
+    "medium": "กลาง",
+    "large": "ใหญ่",
+    "corner_radius": "รัศมีมุม",
+    "extra_small": "เล็กพิเศษ",
+    "extra_large": "ใหญ่พิเศษ"
+  },
+  "settings": {
+    "border_radius": "รัศมีเส้นขอบ",
+    "colors": "สี",
+    "fonts": "แบบอักษร",
+    "type_styles": "สไตล์แบบอักษร"
+  },
+  "variants": {
+    "text_style": {
+      "display": "ดิสเพลย์",
+      "heading_xl": "ส่วนหัว XL",
+      "heading_lg": "ส่วนหัว LG",
+      "heading_md": "ส่วนหัว MD",
+      "heading_sm": "ส่วนหัว SM",
+      "body_lg": "เนื้อหา LG",
+      "body": "เนื้อหา",
+      "body_sm": "เนื้อหาขนาดเล็ก",
+      "overline": "โอเวอร์ไลน์"
+    },
+    "quantity_selector": {
+      "outlined": "แบบมีเส้นขอบ",
+      "filled": "แบบทึบ"
+    },
+    "button": {
+      "custom": "กำหนดเอง",
+      "outline": "เส้นขอบ",
+      "plain": "แบบเรียบ",
+      "primary": "หลัก",
+      "secondary": "รอง"
+    },
+    "variant_picker": {
+      "style": {
+        "swatch": "ตัวอย่างสี",
+        "buttons": "ปุ่ม",
+        "dropdown": "ดรอปดาวน์"
+      }
+    }
+  },
+  "blocks": {
+    "button": "ปุ่ม",
+    "container": "คอนเทนเนอร์",
+    "container_settings": {
+      "fill": "การเติม",
+      "fill_info": "อัตโนมัติจะคงพื้นหลังที่มีอยู่",
+      "fill_automatic": "อัตโนมัติ",
+      "background_image": "รูปภาพพื้นหลัง",
+      "padding": "การเว้นขอบด้านใน",
+      "padding_small": "เล็ก",
+      "padding_medium": "กลาง",
+      "padding_large": "ใหญ่",
+      "padding_extra_large": "ใหญ่มาก"
+    },
+    "featured_collection": "คอลเลกชันแนะนำ",
+    "image": "รูปภาพ",
+    "link": "ลิงก์",
+    "image_settings": {
+      "image": "รูปภาพ",
+      "aspect_ratio": "อัตราส่วน",
+      "auto": "อัตโนมัติ",
+      "square": "สี่เหลี่ยมจัตุรัส",
+      "portrait": "แนวตั้ง"
+    },
+    "logo": "โลโก้",
+    "logo_settings": {
+      "image": "รูปภาพโลโก้",
+      "image_info": "รูปภาพโลโก้แบบกำหนดเองสำหรับตำแหน่งการจัดวางนี้",
+      "height_info": "นำไปใช้เมื่อเลือกตัวเลือกขนาดแบบกำหนดเองเท่านั้น",
+      "size": "ขนาด",
+      "size_small": "เล็ก",
+      "size_medium": "กลาง",
+      "size_large": "ใหญ่",
+      "size_custom": "กำหนดเอง",
+      "height": "ความสูงโลโก้"
+    },
+    "main_menu": "เมนูหลัก",
+    "basic_menu": "เมนูพื้นฐาน",
+    "header": "ส่วนหัว",
+    "footer": "ส่วนท้าย",
+    "menu_settings": {
+      "menu": "เมนู",
+      "menu_info": "เลือกเมนูการนำทางที่จะแสดง",
+      "dropdown_color": "สีเมนูดรอปดาวน์"
+    },
+    "card": "การ์ด",
+    "product_card": "การ์ดสินค้า",
+    "collection_card": "การ์ดคอลเลกชัน",
+    "article_card": "การ์ดบทความ",
+    "text": "ข้อความ",
+    "richtext": "Rich Text",
+    "video": "วิดีโอ",
+    "video_settings": {
+      "vimeo_id": "Vimeo ID",
+      "youtube_id": "YouTube ID",
+      "ratio": "อัตราส่วน",
+      "ratio_auto": "อัตโนมัติ",
+      "ratio_square": "สี่เหลี่ยมจัตุรัส",
+      "ratio_video": "วิดีโอ (16:9)",
+      "ratio_portrait": "แนวตั้ง (3:4)",
+      "autoplay": "เล่นอัตโนมัติ",
+      "loop": "วนซ้ำ",
+      "muted": "ปิดเสียง",
+      "plays_inline": "เล่นแบบอินไลน์",
+      "pause_on_hover": "หยุดชั่วคราวเมื่อชี้เมาส์"
+    },
+    "pagination": "การแบ่งหน้า",
+    "predictive_search": "การค้นหาเชิงคาดการณ์",
+    "price": "ราคา",
+    "quantity_selector": "ตัวเลือกจำนวน",
+    "quantity_selector_settings": {
+      "button_color": "สีปุ่ม"
+    },
+    "variant_picker_settings": {
+      "shape": "รูปร่าง",
+      "shape_square": "สี่เหลี่ยมจัตุรัส",
+      "shape_rounded": "โค้งมน",
+      "shape_circle": "วงกลม"
+    },
+    "variant_picker": "รายการตัวเลือกสินค้า",
+    "gift_card": "บัตรของขวัญ"
+  },
+  "type_styles": {
+    "paragraph_size": "ขนาดย่อหน้า",
+    "heading_size": "ขนาดหัวเรื่อง"
+  },
+  "typography": {
+    "primary_font": "แบบอักษรหลัก",
+    "secondary_font": "แบบอักษรรอง"
+  },
+  "direction": {
+    "start": "ซ้าย",
+    "center": "ตรงกลาง",
+    "end": "ขวา"
+  }
+}

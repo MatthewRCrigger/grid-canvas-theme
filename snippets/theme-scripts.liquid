@@ -1,0 +1,18 @@
+{% doc %}
+  Loads the module scripts every page needs: view instrumentation, the initial
+  page-view dispatch, and the components that appear across templates
+  (`<s-live-form>`, `<s-localization-dropdown>`). Render once per layout near the
+  end of `<body>`.
+
+  Module scripts are deferred, so document position does not change execution
+  order relative to the markup they enhance. Component-specific scripts stay at
+  their own call sites (for example `drawer` renders `s-dialog.js`).
+
+  @example
+  {% render 'theme-scripts' %}
+{% enddoc %}
+
+<script type="module" src="{{ 's-view-event.js' | asset_url }}"></script>
+<script type="module" src="{{ 'page-view-event-init.js' | asset_url }}"></script>
+<script type="module" src="{{ 's-live-form.js' | asset_url }}"></script>
+<script type="module" src="{{ 's-localization-dropdown.js' | asset_url }}"></script>

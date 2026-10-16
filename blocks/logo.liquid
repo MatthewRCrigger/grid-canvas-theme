@@ -1,0 +1,59 @@
+{% doc %}
+  Renders the shop's brand mark as a link to the storefront homepage.
+  The image, size and height come from the global Logo theme settings
+  (`settings.logo_image`, `settings.logo_size`, `settings.logo_height`), so every
+  logo block on the site stays in sync. The image falls back to
+  `shop.brand.logo`, then to the shop name as text.
+
+  @param {string} [class] - Additional CSS classes on the root `<a>` element.
+  @param {string} [attributes] - Additional HTML attributes passed through to the root `<a>` element.
+
+  @category content
+  @renders a
+
+  @example
+  {% block 'logo' %}{% endblock %}
+
+  {% block 'logo', class: 'mx-auto' %}{% endblock %}
+{% enddoc %}
+
+{%- liquid
+  assign logo_image  = settings.logo_image | default: shop.brand.logo
+  assign logo_size   = settings.logo_size | default: 'logo-size-custom'
+  assign logo_height = settings.logo_height | default: 32
+
+  assign size_class = logo_size | append: ' h-auto'
+  if logo_size == 'logo-size-custom'
+    assign size_class = 'w-auto'
+  endif
+
+  assign base_class = 'inline-flex items-center text-lg font-medium no-underline text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm'
+  assign full_class = base_class
+  if class != blank
+    assign full_class = full_class | append: ' ' | append: class
+  endif
+-%}
+
+<a href="{{ routes.root_url }}" class="{{ full_class }}"{% if attributes != blank %} {{ attributes }}{% endif %}>
+  {%- if logo_image -%}
+    {%- liquid
+      assign render_width = logo_image.width | times: logo_height | divided_by: logo_image.height
+      assign logo_alt = logo_image.alt | default: shop.name
+    -%}
+    <img src="{{ logo_image | image_url: width: 400 }}" alt="{{ logo_alt | escape }}" width="{{ render_width }}" height="{{ logo_height }}"{% if logo_size == 'logo-size-custom' %} style="height:{{ logo_height }}px"{% endif %} loading="eager" class="{{ size_class }}" />
+  {%- else -%}
+    {{ shop.name | escape }}
+  {%- endif -%}
+</a>
+
+{% schema %}
+  {
+    "name": "t:blocks.logo",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:blocks.logo_settings.global_info"
+      }
+    ]
+  }
+{% endschema %}
