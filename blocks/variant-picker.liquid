@@ -72,7 +72,7 @@
           {%- endif -%}
           {%- render 'swatch', name: option.name, value: value, swatch: value.swatch,
             selected: value.selected, unavailable: variant_unavailable,
-            disabled: variant_unavailable, data_variant_id: value.variant.id,
+            disabled: false, data_variant_id: value.variant.id,
             size: size, shape: shape -%}
         {%- endfor -%}
       </div>
@@ -95,7 +95,7 @@
         {%- for value in option.values -%}
           {%- assign input_id = form_id | append: '-' | append: option.name | handleize | append: '-' | append: value | handleize -%}
           {%- assign variant_available = value.variant.available -%}
-          <label class="relative{% if variant_available %} cursor-pointer{% else %} cursor-not-allowed pointer-events-none{% endif %}" for="{{ input_id }}">
+          <label class="relative cursor-pointer" for="{{ input_id }}">
             <input
               type="radio"
               name="{{ option.name | escape }}"
@@ -103,8 +103,7 @@
               id="{{ input_id }}"
               class="peer sr-only"
               data-variant-id="{{ value.variant.id }}"
-              {% if value.selected %}checked{% endif %}
-              {% unless variant_available %}disabled{% endunless %}>
+              {% if value.selected %}checked{% endif %}>
             <span class="inline-flex min-h-touch-target min-w-touch-target items-center justify-center px-3 type-overline border rounded-chip cursor-pointer motion-safe:transition-colors
               {% if variant_available == false %}border-line-400 text-ink-400{% else %}border-line-300 text-on-surface{% endif %}
               peer-not-checked:hover:border-line-200 peer-not-checked:hover:bg-hover
