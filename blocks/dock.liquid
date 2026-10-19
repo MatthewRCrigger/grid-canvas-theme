@@ -1,12 +1,14 @@
 {% doc %}
   The GRID OS dock: a framed bar fixed to the bottom centre of the screen (a full-width bar on
   phones). Caller dock items sit in the list; the tray after the divider holds minimized windows,
-  filled by s-window-manager. Tiles magnify on hover from tablet width up.
+  filled by s-window-manager. Tiles magnify with the cursor (fisheye) from tablet width up;
+  arrow keys move between tiles.
 
   Compositional: the caller writes dock-item blocks inside the call.
 
   @param {string} [class] - Extra utilities on the nav.
   @param {string} [attributes] - Extra attributes on the nav.
+  @param {boolean} [hide_recents] - Leave out the Recents shelf (e.g. on the password page, where pages are locked).
 
   @category navigation
   @renders nav
@@ -18,16 +20,67 @@
 {% enddoc %}
 
 <nav class="os-dock {{ class }}" aria-label="{{ 'os.dock_label' | t | escape }}" {{ attributes }} {{ block.shopify_attributes }}>
-  <ul role="list" class="os-dock-list">
-    {{ content }}
-  </ul>
-  {%- comment -%} s-window-manager fills this tray with one button per minimized window; it stays hidden while empty. {%- endcomment -%}
-  <div class="os-dock-tray" role="group" aria-label="{{ 'os.dock_minimized' | t | escape }}" data-os-tray hidden></div>
+  {%- comment -%} s-dock-physics (display: contents) drives cursor magnification, the launch blip and arrow-key focus. {%- endcomment -%}
+  <s-dock-physics>
+    <ul role="list" class="os-dock-list">
+      {{ content }}
+    </ul>
+    {%- comment -%}
+      Recents shelf: s-dock-recents fills this list from the pages the visitor opened last (recorded by
+      the layout). It skips the page loaded behind the desktop and stays hidden while empty.
+    {%- endcomment -%}
+    {%- liquid
+      assign recents_limit = block.settings.recents | default: '3'
+      if hide_recents
+        assign recents_limit = 'off'
+      endif
+      case request.page_type
+        when 'product'
+          assign recents_current = product.url
+        when 'collection'
+          assign recents_current = collection.url
+        when 'article'
+          assign recents_current = article.url
+        when 'blog'
+          assign recents_current = blog.url
+        when 'page'
+          assign recents_current = page.url
+        when 'list-collections'
+          assign recents_current = routes.collections_url
+        else
+          assign recents_current = request.path
+      endcase
+    -%}
+    {%- unless recents_limit == 'off' -%}
+      <s-dock-recents class="os-dock-recents" data-limit="{{ recents_limit }}" data-current="{{ recents_current | escape }}" role="group" aria-label="{{ 'os.dock_recents' | t | escape }}" hidden>
+        <ul role="list" class="os-dock-list" data-recents-list></ul>
+        <template data-icon="bag">{% render 'os-icon', name: 'bag', class: 'size-6' %}</template>
+        <template data-icon="folder">{% render 'os-icon', name: 'folder', class: 'size-6' %}</template>
+        <template data-icon="journal">{% render 'os-icon', name: 'journal', class: 'size-6' %}</template>
+        <template data-icon="file">{% render 'os-icon', name: 'file', class: 'size-6' %}</template>
+      </s-dock-recents>
+    {%- endunless -%}
+    {%- comment -%} s-window-manager fills this tray with one button per minimized window; it stays hidden while empty. {%- endcomment -%}
+    <div class="os-dock-tray" role="group" aria-label="{{ 'os.dock_minimized' | t | escape }}" data-os-tray hidden></div>
+  </s-dock-physics>
 </nav>
 
 {% schema %}
   {
     "name": "t:blocks.dock",
-    "settings": []
+    "settings": [
+      {
+        "type": "select",
+        "id": "recents",
+        "label": "t:blocks.dock_settings.recents",
+        "info": "t:blocks.dock_settings.recents_info",
+        "default": "3",
+        "options": [
+          { "value": "off", "label": "t:blocks.dock_settings.recents_off" },
+          { "value": "3", "label": "t:blocks.dock_settings.recents_3" },
+          { "value": "5", "label": "t:blocks.dock_settings.recents_5" }
+        ]
+      }
+    ]
   }
 {% endschema %}

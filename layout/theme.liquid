@@ -289,6 +289,47 @@
     {% render 'os-wallpaper' %}
 
     <main class="flex-1 lg:min-h-0 lg:overflow-hidden" id="main-content" tabindex="-1" data-template="{{ request.page_type }}">
+      {%- comment -%}
+        Dock Recents recorder: inside #main-content so it is recorded both on a full page load and when
+        s-window-manager streams this page into a desktop window. Only content pages are recorded.
+      {%- endcomment -%}
+      {%- liquid
+        assign dock_recent_url = blank
+        assign dock_recent_title = blank
+        assign dock_recent_image = blank
+        case request.page_type
+          when 'product'
+            assign dock_recent_url = product.url
+            assign dock_recent_title = product.title
+            if product.featured_image
+              assign dock_recent_image = product.featured_image | image_url: width: 144
+            endif
+          when 'collection'
+            assign dock_recent_url = collection.url
+            assign dock_recent_title = collection.title
+            if collection.featured_image
+              assign dock_recent_image = collection.featured_image | image_url: width: 144
+            endif
+          when 'article'
+            assign dock_recent_url = article.url
+            assign dock_recent_title = article.title
+            if article.image
+              assign dock_recent_image = article.image | image_url: width: 144
+            endif
+          when 'blog'
+            assign dock_recent_url = blog.url
+            assign dock_recent_title = blog.title
+          when 'page'
+            assign dock_recent_url = page.url
+            assign dock_recent_title = page.title
+          when 'list-collections'
+            assign dock_recent_url = routes.collections_url
+            assign dock_recent_title = page_title
+        endcase
+      -%}
+      {%- if dock_recent_url != blank -%}
+        <s-dock-recents mode="record" hidden data-url="{{ dock_recent_url | escape }}" data-title="{{ dock_recent_title | strip_html | escape }}" data-kind="{{ request.page_type }}" data-image="{{ dock_recent_image }}"></s-dock-recents>
+      {%- endif -%}
       {%- comment -%} The editor refreshes this content region for live setting changes, while head-level :root styles can stay cached. {%- endcomment -%}
       <div style="{% render 'theme-type-scale-variables' %}">
         {{ content_for_layout }}
@@ -340,7 +381,7 @@
       {% block 'dock-item', icon: 'folder', url: routes.collections_url, class: 'max-md:hidden' %}
         {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_collections' | t }}{% endblock %}
       {% endblock %}
-      {%- assign journal_url = blogs.news.url | default: routes.root_url -%}
+      {%- assign journal_url = blogs['articles'].url | default: routes.root_url -%}
       {% block 'dock-item', icon: 'journal', url: journal_url, class: 'max-md:hidden' %}
         {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_journal' | t }}{% endblock %}
       {% endblock %}
@@ -423,6 +464,8 @@
     <script type="module" src="{{ 's-window.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-window-manager.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-dock-count.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-dock-physics.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-dock-recents.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-finder-view.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-command-key.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-compare.js' | asset_url }}"></script>

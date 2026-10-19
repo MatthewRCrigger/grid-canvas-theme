@@ -1982,6 +1982,8 @@
   s-window-manager {
     display: block;
   }
+  /* Dock controller wraps the list and tray without adding a box. */
+  s-dock-physics { display: contents; }
   :root {
     --os-menubar-h: 44px;
     --os-dock-space: 96px;
@@ -2134,22 +2136,61 @@
     }
     .os-tray-glyph { display: grid; flex: 1; place-items: center; font: 400 12px/1 var(--font-mono); text-transform: uppercase; color: var(--color-accent); }
   }
-  /* Magnification: the hovered tile grows and lifts, its neighbours grow a little. Scale does not take
-     layout space, so the items also widen (padding, part of their hover area so the pointer never
-     falls into a gap) by exactly what the scaled tiles need: the dock opens up instead of overlapping. */
+  /* Magnification fallback (before s-dock-physics runs): the hovered tile grows and lifts, its
+     neighbours grow a little; the items widen by padding so the dock opens up instead of overlapping.
+     s-dock-physics sets [data-physics] and replaces this with continuous fisheye magnification. */
   @media (min-width: 48rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .os-dock-item { transition: padding 200ms var(--ease-ui); }
-    .os-tray-tile:hover { margin-inline: 7px; }
-    .os-dock-item:hover { padding-inline: 8px; }
-    .os-dock-item:hover + .os-dock-item,
-    .os-dock-item:has(+ .os-dock-item:hover) { padding-inline: 3px; }
-    .os-dock-item:hover .os-dock-tile,
-    .os-tray-tile:hover { scale: 1.3; translate: 0 -6px; }
-    .os-dock-item:hover + .os-dock-item .os-dock-tile,
-    .os-dock-item:has(+ .os-dock-item:hover) .os-dock-tile { scale: 1.12; translate: 0 -2px; }
-    .os-dock-item:hover .os-dock-label,
-    .os-tray-tile:hover .os-dock-label { scale: 0.77; transform-origin: 50% 100%; }
+    .os-dock:not([data-physics]) {
+      .os-dock-item { transition: padding 200ms var(--ease-ui); }
+      .os-tray-tile:hover { margin-inline: 7px; }
+      .os-dock-item:hover { padding-inline: 8px; }
+      .os-dock-item:hover + .os-dock-item,
+      .os-dock-item:has(+ .os-dock-item:hover) { padding-inline: 3px; }
+      .os-dock-item:hover .os-dock-tile,
+      .os-tray-tile:hover { scale: 1.3; translate: 0 -6px; }
+      .os-dock-item:hover + .os-dock-item .os-dock-tile,
+      .os-dock-item:has(+ .os-dock-item:hover) .os-dock-tile { scale: 1.12; translate: 0 -2px; }
+      .os-dock-item:hover .os-dock-label,
+      .os-tray-tile:hover .os-dock-label { scale: 0.77; transform-origin: 50% 100%; }
+    }
   }
+  /* Fisheye physics: s-dock-physics writes --mag (1 to 1.4) on each item from the cursor distance and
+     ramps it in and out itself, so scale and padding transitions are off here. A 48px tile scaled by
+     --mag needs 24px x (--mag - 1) more on each side, so magnified tiles never overlap. */
+  .os-dock[data-physics] {
+    .os-dock-item { padding-inline: calc((var(--mag, 1) - 1) * 24px); }
+    .os-tray-tile { margin-inline: calc((var(--mag, 1) - 1) * 24px); }
+    .os-dock-item .os-dock-tile,
+    .os-tray-tile {
+      scale: var(--mag, 1);
+      translate: 0 calc((var(--mag, 1) - 1) * -20px);
+      transition: border-color 120ms var(--ease-ui), color 120ms var(--ease-ui);
+    }
+    .os-dock-label { scale: calc(1 / var(--mag, 1)); transform-origin: 50% 100%; }
+  }
+  /* Launch ring: one 1px cyan square that s-dock-physics plays outward when a tile is activated. */
+  .os-dock-tile::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid var(--color-accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Recents shelf (s-dock-recents): the last pages opened, after a hairline divider, from 48rem.
+     Tiles are ordinary dock items, so physics, tooltips and running squares apply; a page with an
+     image shows it filling the tile inside the 1px frame, others show their kind's glyph. */
+  .os-dock-recents { display: none; }
+  @media (min-width: 48rem) {
+    .os-dock-recents:not([hidden]) {
+      display: flex;
+      align-items: flex-end;
+      margin-inline-start: 2px;
+      border-inline-start: 1px solid var(--color-line-300);
+    }
+  }
+  .os-dock-thumb { display: block; width: 100%; height: 100%; object-fit: cover; }
 
   /* Desktop. Phones and tablets: a home screen (stacked windows + an app icon grid). */
   .os-desktop {
@@ -2837,4 +2878,28 @@
 @layer components {
   /* Password page: no dock tray to restore into here, so the LOGIN window has close and zoom only. */
   [data-password-page] .os-light-min { display: none; }
+}
+
+/* Stage bottom fade (64rem+): while a scrolling page stage has more content below, its lower edge
+   dissolves into the wallpaper instead of hard-cutting above the dock. Driven by the stage's own scroll,
+   so it is absent when nothing overflows and eases away over the last 64px of travel. Browsers without
+   scroll-driven animations keep the plain edge. */
+@property --os-stage-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes os-stage-fade {
+  from { --os-stage-fade: 72px; }
+  to { --os-stage-fade: 0px; }
+}
+@media (min-width: 64rem) {
+  @supports (animation-timeline: scroll()) {
+    .os-stage:not(.os-window-body .os-stage) {
+      mask-image: linear-gradient(to bottom, #000 calc(100% - var(--os-stage-fade)), transparent 100%);
+      animation: os-stage-fade linear both;
+      animation-timeline: scroll(self block);
+      animation-range: calc(100% - 64px) 100%;
+    }
+  }
 }

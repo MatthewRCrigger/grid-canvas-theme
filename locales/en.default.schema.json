@@ -192,6 +192,13 @@
       "window_dialog": "Pop-up window"
     },
     "dock": "Dock",
+    "dock_settings": {
+      "recents": "Recent items",
+      "recents_info": "Pages the visitor opened last, shown after a divider in the dock from tablet width up.",
+      "recents_off": "Off",
+      "recents_3": "3 items",
+      "recents_5": "5 items"
+    },
     "dock_item": "Dock item",
     "dock_item_settings": {
       "icon": "Icon",

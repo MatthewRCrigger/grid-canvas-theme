@@ -193,78 +193,57 @@
 
 {%- comment -%} The caller owns this collection source; the shell's collection setting binds to it so the editor picker rewrites the handle here. {%- endcomment -%}
 {%- liquid
-  assign featured_collection = collections.all
-  assign featured_product_limit = 6
-  assign featured_url = featured_collection.url | default: routes.all_products_collection_url
-  assign featured_total = featured_collection.products_count
-  assign featured_shown = featured_total
-  if featured_shown > featured_product_limit
-    assign featured_shown = featured_product_limit
+  assign demos_blog = blogs['articles']
+  assign demos_limit = 6
+  assign demos_url = demos_blog.url | default: routes.root_url
+  assign demos_total = demos_blog.articles_count | plus: 0
+  assign demos_shown = demos_total
+  if demos_shown > demos_limit
+    assign demos_shown = demos_limit
   endif
-  assign featured_product_sizes = '(min-width: 1024px) calc((min(100vw, 1440px) - 80px) * 0.22), (min-width: 768px) calc((100vw - 64px) / 3), calc((100vw - 48px) / 2)'
+  assign demos_sizes = '(min-width: 1024px) calc((min(100vw, 1440px) - 80px) * 0.22), (min-width: 768px) calc((100vw - 64px) / 3), calc((100vw - 48px) / 2)'
 -%}
 
 {%- comment -%}
-  INVENTORY — the product grid as an 8-column window (target lock and compare on every
-  card), beside a stack of two utility windows: COMPARE and SHORTCUTS.
+  ARTICLES — the latest posts from the Articles blog as an 8-column window, beside a
+  stack of two utility windows: COMPARE and SHORTCUTS.
 {%- endcomment -%}
-{% block 'featured-collection', collection: featured_collection, class: 'contents' %}
+{% block 'container', class: 'contents' %}
   {% block 'frame', id: 'win-inventory', window: 'closed', class: 'lg:absolute lg:start-[4%] lg:top-6 lg:w-[min(60%,880px)]' %}
       <div class="panel-header">
         {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.inventory_title' | t }}{% endblock %}
-        <span class="type-data-sm uppercase text-ink-invert">{{ 'home.inventory.units' | t: count: featured_total }}</span>
+        <span class="type-data-sm uppercase text-ink-invert">{{ 'home.inventory.units' | t: count: demos_total }}</span>
       </div>
 
-      {%- if featured_collection != blank and featured_total > 0 -%}
+      {%- if demos_total > 0 -%}
         <ul role="list" class="-mb-px -me-px grid grid-cols-2 md:grid-cols-3">
-          {% for product in featured_collection.products limit: featured_product_limit %}
+          {% for article in demos_blog.articles limit: demos_limit %}
+            {%- assign demo_image = article.image | default: images['grid-dev-notebook.png'] -%}
             <li class="border-b border-e border-line-400 bg-panel">
-              {%- # theme-check-disable-next-line UnknownFilter %}
-              <s-view-event class="block h-full" view-event-trigger="intersect" view-event-payload="{{ product | standard_event_data: 'view', context: 'collection' | escape }}">
-                {%- assign card_variant = product.selected_or_first_available_variant -%}
-                {% block 'card', block.name: 't:blocks.product_card', url: product.url, aria_label: product.title, class: 'h-full p-3 md:p-4' %}
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="type-data-sm text-ink-300" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
-                    {%- if product.available -%}
-                      <span class="badge badge-success">{{ 'home.status.in_stock' | t }}</span>
-                    {%- else -%}
-                      <span class="badge badge-danger">{{ 'home.status.sold_out' | t }}</span>
-                    {%- endif -%}
-                  </div>
-                  {%- comment -%} The live unit above already carries its own morph name, so it is skipped here to keep names unique on the page. {%- endcomment -%}
-                  <a href="{{ product.url | escape }}"{% unless product.id == live_product.id %} style="view-transition-name: pimg-{{ product.id }}"{% endunless %} class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ product.title | escape }}">
-                    {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: featured_product_sizes, attributes: 'loading="lazy"', alt: product.title, seed: forloop.index %}{% endblock %}
-                    {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>
-                  </a>
-                  <div class="flex flex-col gap-1 pt-1">
-                    {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ product.title | escape }}{% endblock %}
-                    {% block 'price', price: card_variant.price, compare_at_price: card_variant.compare_at_price, price_min: product.price_min, price_max: product.price_max, variant: 'type-data', class: 'self-start' %}{% endblock %}
-                  </div>
-                  {% render 'compare-toggle', product: product %}
-                {% endblock %}
-              </s-view-event>
-            </li>
-          {% endfor %}
-        </ul>
-      {%- else -%}
-        <ul role="list" class="-mb-px -me-px grid grid-cols-2 md:grid-cols-3">
-          {% for placeholder_index in (1..3) %}
-            <li class="bg-panel p-3 md:p-4">
-              {%- assign placeholder_title = 'product.placeholder_title' | t -%}
-              {% block 'card', block.name: 't:blocks.product_card', aria_label: placeholder_title %}
-                <div class="border border-line-400">
-                  {% block 'image', aspect_ratio: 'aspect-square', sizes: featured_product_sizes, alt: placeholder_title, seed: placeholder_index %}{% endblock %}
+              {% block 'card', block.name: 't:blocks.article_card', url: article.url, aria_label: article.title, class: 'h-full p-3 md:p-4' %}
+                <div class="flex items-center justify-between gap-2">
+                  <span class="type-data-sm text-ink-300" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+                  <span class="type-data-sm text-ink-300"><time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%Y.%m.%d' }}</time></span>
                 </div>
-                {% block 'text', variant: 'type-heading-sm', tag: 'h3' %}{{ placeholder_title | escape }}{% endblock %}
+                <a href="{{ article.url | escape }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ article.title | escape }}">
+                  {% block 'image', fallback_image: demo_image, aspect_ratio: 'aspect-square', sizes: demos_sizes, attributes: 'loading="lazy"', alt: article.title, seed: forloop.index, placeholder_kind: 'article' %}{% endblock %}
+                </a>
+                <div class="flex flex-col gap-1 pt-1">
+                  {% block 'text', variant: 'type-heading-sm', tag: 'h3', class: 'line-clamp-2 text-on-surface' %}{{ article.title | escape }}{% endblock %}
+                </div>
               {% endblock %}
             </li>
           {% endfor %}
         </ul>
+      {%- else -%}
+        <div class="p-4 md:p-6">
+          {% block 'text', variant: 'type-body', class: 'text-ink-200' %}{{ 'blog.no_articles' | t }}{% endblock %}
+        </div>
       {%- endif -%}
 
       <div class="flex min-h-12 items-center justify-between gap-4 border-t border-line-300 px-3 md:px-4">
-        <span class="type-data-sm text-ink-300">{{ 'home.inventory.readout' | t: shown: featured_shown, total: featured_total }}</span>
-        {% block 'link', url: featured_url %}{{ 'home.inventory.view_all' | t }}{% endblock %}
+        <span class="type-data-sm text-ink-300">{{ 'home.inventory.readout' | t: shown: demos_shown, total: demos_total }}</span>
+        {% block 'link', url: demos_url %}{{ 'home.inventory.view_all' | t }}{% endblock %}
       </div>
   {% endblock %}
 
@@ -315,6 +294,7 @@
 {%- liquid
   assign target_collection = collections['hydrogen']
   assign target_limit = 3
+  assign target_count = target_collection.products_count | plus: 0
   assign target_url = target_collection.url | default: routes.collections_url
 -%}
 {% block 'featured-collection', collection: target_collection, class: 'contents' %}
@@ -337,13 +317,13 @@
       {% block 'frame' %}
           <div class="panel-header">
             {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.target.title' | t }}{% endblock %}
-            <span class="type-data-sm uppercase text-ink-invert">{{ target_collection.products_count }}</span>
+            <span class="type-data-sm uppercase text-ink-invert">{{ target_count }}</span>
           </div>
           <div class="border-b border-line-300 p-4 md:p-6">
             {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-accent' %}{{ 'home.target.overline' | t }}{% endblock %}
             <p class="type-heading-xl mt-2 text-on-surface">{{ target_collection.title | default: shop.name | escape }}</p>
           </div>
-          {%- if target_collection.products_count > 0 -%}
+          {%- if target_count > 0 -%}
             <ul role="list" class="flex flex-col">
               {%- for product in target_collection.products limit: target_limit -%}
                 {%- assign target_variant = product.selected_or_first_available_variant -%}
@@ -547,7 +527,7 @@
   {%- liquid
     assign icon_hydrogen_url = collections['hydrogen'].url | default: routes.collections_url
     assign icon_automated_url = collections['automated-collection'].url | default: routes.collections_url
-    assign icon_journal_url = blogs.news.url | default: routes.root_url
+    assign icon_journal_url = blogs['articles'].url | default: routes.root_url
     assign icon_contact_url = pages.contact.url | default: routes.root_url
   -%}
   <ul role="list" class="os-icons max-lg:order-2" aria-label="{{ 'os.icons_label' | t | escape }}">
@@ -572,7 +552,7 @@
     {% block 'desktop-icon', icon: 'folder', window: 'win-directory' %}
       {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_directory' | t }}{% endblock %}
     {% endblock %}
-    {% block 'desktop-icon', icon: 'bag', window: 'win-inventory' %}
+    {% block 'desktop-icon', icon: 'file', window: 'win-inventory' %}
       {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_inventory' | t }}{% endblock %}
     {% endblock %}
     {% block 'desktop-icon', icon: 'journal', url: icon_journal_url %}
