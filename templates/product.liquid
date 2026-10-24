@@ -13,123 +13,262 @@
       {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'os.inspector_media' | t }}{% endblock %}
       <span class="os-page-meta truncate">{{ product_title | escape }}</span>
     </div>
-    <s-product-image-zoom class="block">
-        {%- liquid
-          # product-grid gives the gallery 2/3 of the width after gutters and the 48px gap.
-          # Mirror this media-count branch in snippets/lcp-preload.liquid; mobile stays full bleed.
-          if product.media.size > 2
-            assign gallery_sizes = '(min-width: 1280px) 384px, (min-width: 768px) calc((100vw - 128px) / 3), 100vw'
+    {%- comment -%}
+      Variant-focused inspection viewport. Everything inside the 'product-media' partial is fetched
+      by s-variant-picker.js on variant change, alongside product-form and product-title — keep the
+      partial name stable on both sides.
+    {%- endcomment -%}
+    {% partial 'product-media' %}
+    {%- liquid
+      # Frame set for the selected variant, in priority order:
+      # 1. the variant's custom.media file list, when it has images or videos;
+      # 2. the variant's linked image first, then product media that is not another variant's linked image (shared shots);
+      # 3. every product image, when step 2 leaves nothing.
+      # The first frame always leads, so mirror this choice in snippets/lcp-preload.liquid.
+      assign gallery_variant = product.selected_or_first_available_variant
+      assign gallery_field_media = gallery_variant.metafields.custom.media.value
+      assign gallery_from_field = false
+      assign gallery_total = 0
+      if gallery_field_media != blank
+        for item in gallery_field_media
+          if item.media_type == 'image' or item.media_type == 'video'
+            assign gallery_total = gallery_total | plus: 1
+          endif
+        endfor
+        if gallery_total > 0
+          assign gallery_from_field = true
+          assign gallery_items = gallery_field_media
+        endif
+      endif
+
+      unless gallery_from_field
+        assign other_variant_media_ids = ','
+        for v in product.variants
+          if v.featured_media and v.id != gallery_variant.id
+            assign other_variant_media_ids = other_variant_media_ids | append: v.featured_media.id | append: ','
+          endif
+        endfor
+        assign gallery_lead = ''
+        assign gallery_rest = ''
+        for media in product.media
+          assign media_key = ',' | append: media.id | append: ','
+          if gallery_variant.featured_media and media.id == gallery_variant.featured_media.id
+            assign gallery_lead = forloop.index0 | append: ','
+          elsif other_variant_media_ids contains media_key
+            continue
           else
-            assign gallery_sizes = '(min-width: 1280px) 768px, (min-width: 768px) calc((100vw - 128px) * 2 / 3), 100vw'
+            assign gallery_rest = gallery_rest | append: forloop.index0 | append: ','
+          endif
+        endfor
+        assign gallery_index_string = gallery_lead | append: gallery_rest
+        if gallery_index_string == blank
+          for media in product.media
+            assign gallery_index_string = gallery_index_string | append: forloop.index0 | append: ','
+          endfor
+        endif
+        assign gallery_items = gallery_index_string | split: ','
+        assign gallery_total = gallery_items.size
+      endunless
+
+      assign gallery_total_label = gallery_total | prepend: '0' | slice: -2, 2
+      assign viewport_id = 'media-viewport-' | append: product.id
+      # The stage spans the full 2fr gallery column; lcp-preload mirrors this sizes value.
+      assign gallery_sizes = '(min-width: 1280px) 768px, (min-width: 768px) calc((100vw - 128px) * 2 / 3), 100vw'
+    -%}
+    <s-product-image-zoom class="block">
+      <s-media-viewport id="{{ viewport_id }}" class="block md:pb-4" data-start="0">
+        {%- comment -%} Stage: a scroll-snap track (swipe on phones, full bleed) framed by HUD brackets. Native media controls own keyboard focus, so the track adds no tab stop of its own. {%- endcomment -%}
+        <div class="hud-viewport mx-[calc(-1*var(--spacing-margin)-max(0px,(100vw-var(--spacing-page))/2))] w-[calc(100%+2*var(--spacing-margin)+max(0px,100vw-var(--spacing-page)))] border-y border-line-400 bg-panel md:mx-0 md:w-auto md:border">
+          <s-inspect class="contents" data-label="{{ 'product.inspect_label' | t }}">
+          <div
+            data-viewport-track
+            {% if gallery_total > 0 %}role="region" aria-label="{{ product_title | escape }}"{% endif %}
+            class="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain scrollbar-none [&::-webkit-scrollbar]:hidden md:mx-auto md:max-w-[max(16rem,calc(100dvh-var(--os-menubar-h,3rem)-var(--os-dock-space,5rem)-40px-12rem))]"
+          >
+            {% if gallery_total == 0 %}
+              {% render 'placeholder-texture', kind: 'product', seed: 1, class: 'shrink-0 snap-center w-full aspect-square contain-paint', aria_label: product_title %}
+            {% endif %}
+            {%- assign frame_index = 0 -%}
+            {% for item in gallery_items %}
+              {%- liquid
+                if gallery_from_field
+                  assign media = item
+                else
+                  assign media_position = item | plus: 0
+                  assign media = product.media[media_position]
+                endif
+                unless media.media_type == 'image' or media.media_type == 'video' or media.media_type == 'external_video'
+                  continue
+                endunless
+              -%}
+              <div class="shrink-0 snap-center snap-always w-full contain-paint" data-frame>
+                {%- if media.media_type == 'image' -%}
+                  {%- liquid
+                    assign image_label = media.alt | default: media.preview_image.alt | default: product_title
+                    assign zoom_dialog_id = 'product-image-zoom-' | append: media.id
+                  -%}
+                  <div {% if frame_index == 0 %}style="view-transition-name: pimg-{{ product.id }}"{% endif %} data-inspect-src="{{ media | image_url: width: 2000 }}" class="aspect-square overflow-hidden bg-panel">
+                    <button
+                      type="button"
+                      commandfor="{{ zoom_dialog_id }}"
+                      command="show-modal"
+                      data-zoom-preload
+                      aria-haspopup="dialog"
+                      aria-controls="{{ zoom_dialog_id }}"
+                      aria-label="{{ 'product.view_image' | t: title: image_label | escape }}"
+                      class="group block size-full cursor-zoom-in bg-panel p-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
+                    >
+                      {%- if frame_index == 0 -%}
+                        {% block 'image', image: media, alt: image_label, sizes: gallery_sizes, attributes: 'loading="eager" fetchpriority="high"' %}{% endblock %}
+                      {%- else -%}
+                        {% block 'image', image: media, alt: image_label, sizes: gallery_sizes, attributes: 'loading="lazy"' %}{% endblock %}
+                      {%- endif -%}
+                    </button>
+                  </div>
+                {%- elsif media.media_type == 'video' -%}
+                  <div class="aspect-square overflow-hidden">
+                    {% block 'video', video: media, class: 'size-full object-cover' %}{% endblock %}
+                  </div>
+                {%- elsif media.media_type == 'external_video' -%}
+                  {%- liquid
+                    assign external_youtube_id = ''
+                    assign external_vimeo_id = ''
+                    if media.host == 'youtube'
+                      assign external_youtube_id = media.external_id
+                    elsif media.host == 'vimeo'
+                      assign external_vimeo_id = media.external_id
+                    endif
+                    assign external_video_label = media.alt | default: media.preview_image.alt | default: product_title
+                  -%}
+                  <div class="aspect-square overflow-hidden">
+                    {% block 'video', youtube_id: external_youtube_id, vimeo_id: external_vimeo_id, class: 'size-full object-cover' %}
+                      {%- if frame_index == 0 -%}
+                        {% block 'image', fallback_image: media.preview_image, alt: external_video_label, sizes: gallery_sizes, placeholder_kind: 'surface', attributes: 'loading="eager" fetchpriority="high"' %}{% endblock %}
+                      {%- else -%}
+                        {% block 'image', fallback_image: media.preview_image, alt: external_video_label, sizes: gallery_sizes, placeholder_kind: 'surface', attributes: 'loading="lazy"' %}{% endblock %}
+                      {%- endif -%}
+                    {% endblock %}
+                  </div>
+                {%- endif -%}
+              </div>
+              {%- assign frame_index = frame_index | plus: 1 -%}
+            {% endfor %}
+          </div>
+          </s-inspect>
+          {% render 'hud-brackets' %}
+        </div>
+
+        {%- comment -%} Readout: frame counter and the variant this set belongs to. {%- endcomment -%}
+        <div class="mt-3 flex items-center justify-between gap-4 type-data-sm uppercase text-ink-300 md:mt-4 md:px-4">
+          <p class="shrink-0">
+            {{ 'product.gallery_frame' | t }}
+            <span class="text-on-surface" data-frame-current>01</span>/<span>{{ gallery_total_label }}</span>
+          </p>
+          {%- unless product.has_only_default_variant -%}
+            <p class="flex min-w-0 items-center gap-2">
+              <span class="inline-block size-1.5 shrink-0 rounded-full bg-info" aria-hidden="true"></span>
+              <span class="truncate">{{ 'product.gallery_variant' | t }} <bdi class="text-on-surface">{{ gallery_variant.title | escape }}</bdi></span>
+            </p>
+          {%- endunless -%}
+        </div>
+
+        {%- if gallery_total > 1 -%}
+          {%- comment -%} Filmstrip: one thumbnail per frame, plus step controls. The active thumbnail gets the bright line and a cyan marker. {%- endcomment -%}
+          <div class="mt-3 flex items-center gap-3 md:px-4">
+            <div data-filmstrip role="group" aria-label="{{ 'product.gallery_filmstrip' | t | escape }}" class="flex min-w-0 flex-1 gap-2 overflow-x-auto p-0.5 scrollbar-none [&::-webkit-scrollbar]:hidden">
+              {%- assign thumb_index = 0 -%}
+              {% for item in gallery_items %}
+                {%- liquid
+                  if gallery_from_field
+                    assign media = item
+                  else
+                    assign media_position = item | plus: 0
+                    assign media = product.media[media_position]
+                  endif
+                  unless media.media_type == 'image' or media.media_type == 'video' or media.media_type == 'external_video'
+                    continue
+                  endunless
+                  assign thumb_number = thumb_index | plus: 1
+                -%}
+                <button
+                  type="button"
+                  data-frame-thumb
+                  data-index="{{ thumb_index }}"
+                  commandfor="{{ viewport_id }}"
+                  command="--frame-go"
+                  aria-label="{{ 'product.gallery_show_frame' | t: index: thumb_number, total: gallery_total | escape }}"
+                  {% if thumb_index == 0 %}aria-current="true"{% endif %}
+                  class="relative size-16 shrink-0 cursor-pointer overflow-hidden border border-line-400 bg-panel p-0 transition-colors duration-150 hover:border-line-200 aria-[current=true]:border-line-100 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-info after:opacity-0 after:content-[''] aria-[current=true]:after:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:size-18"
+                >
+                  {% block 'image', fallback_image: media.preview_image, alt: '', sizes: '72px', widths: '144,216', placeholder_kind: 'surface', attributes: 'loading="lazy"' %}{% endblock %}
+                </button>
+                {%- assign thumb_index = thumb_index | plus: 1 -%}
+              {% endfor %}
+            </div>
+            <div class="flex shrink-0 gap-2">
+              <button type="button" data-frame-step="prev" commandfor="{{ viewport_id }}" command="--frame-prev" disabled aria-label="{{ 'product.gallery_previous' | t | escape }}" class="inline-flex size-touch-target cursor-pointer items-center justify-center border border-line-300 bg-panel text-on-surface transition-colors duration-150 hover:border-line-100 disabled:cursor-not-allowed disabled:border-line-400 disabled:text-ink-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                <span class="inline-flex size-5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-left.svg' | inline_asset_content -}}</span>
+              </button>
+              <button type="button" data-frame-step="next" commandfor="{{ viewport_id }}" command="--frame-next" aria-label="{{ 'product.gallery_next' | t | escape }}" class="inline-flex size-touch-target cursor-pointer items-center justify-center border border-line-300 bg-panel text-on-surface transition-colors duration-150 hover:border-line-100 disabled:cursor-not-allowed disabled:border-line-400 disabled:text-ink-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                <span class="inline-flex size-5 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+              </button>
+            </div>
+          </div>
+        {%- endif -%}
+      </s-media-viewport>
+
+      {%- assign zoom_widths = '750,1100,1500,2000,2400' | split: ',' -%}
+      {% for item in gallery_items %}
+        {%- liquid
+          if gallery_from_field
+            assign media = item
+          else
+            assign media_position = item | plus: 0
+            assign media = product.media[media_position]
           endif
         -%}
-        {%- comment -%} One media loop scrolls horizontally on mobile and becomes the contained desktop grid. Native media controls own keyboard focus so the desktop gallery adds no redundant tab stop. {%- endcomment -%}
-        <s-inspect class="contents" data-label="{{ 'product.inspect_label' | t }}">
-        <div
-          data-product-gallery
-          {% if product.media != blank %}role="region" aria-label="{{ product_title | escape }}"{% endif %}
-          class="mx-[calc(-1*var(--spacing-margin)-max(0px,(100vw-var(--spacing-page))/2))] w-[calc(100%+2*var(--spacing-margin)+max(0px,100vw-var(--spacing-page)))] flex snap-x snap-mandatory overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:w-auto md:gap-3 md:snap-none md:overflow-visible {% if product.media.size > 2 %}md:grid-cols-2{% endif %}"
-        >
-          {% if product.media == blank %}
-            {% render 'placeholder-texture', kind: 'product', seed: 1, class: 'shrink-0 snap-center w-full aspect-square contain-paint md:aspect-4/5', aria_label: product_title %}
-          {% endif %}
-          {% for media in product.media %}
-            <div class="shrink-0 snap-center w-full contain-paint">
-              {%- if media.media_type == 'image' -%}
-                {%- liquid
-                  assign image_label = media.alt | default: media.preview_image.alt | default: product_title
-                  assign zoom_dialog_id = 'product-image-zoom-' | append: media.id
-                -%}
-                <div{% if forloop.first %} style="view-transition-name: pimg-{{ product.id }}"{% endif %} data-inspect-src="{{ media | image_url: width: 2000 }}" class="aspect-square overflow-hidden border-y border-line-400 bg-panel md:border {% if product.media.size == 1 %}md:aspect-4/5{% endif %}">
-                  <button
-                    type="button"
-                    commandfor="{{ zoom_dialog_id }}"
-                    command="show-modal"
-                    data-zoom-preload
-                    aria-haspopup="dialog"
-                    aria-controls="{{ zoom_dialog_id }}"
-                    aria-label="{{ 'product.view_image' | t: title: image_label | escape }}"
-                    class="group block size-full cursor-zoom-in bg-panel p-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
-                  >
-                    {%- if forloop.first -%}
-                      {% block 'image', image: media, alt: image_label, sizes: gallery_sizes, attributes: 'loading="eager" fetchpriority="high"' %}{% endblock %}
-                    {%- else -%}
-                      {% block 'image', image: media, alt: image_label, sizes: gallery_sizes, attributes: 'loading="lazy"' %}{% endblock %}
-                    {%- endif -%}
-                  </button>
-                </div>
-              {%- elsif media.media_type == 'video' -%}
-                <div class="aspect-square overflow-hidden {% if product.media.size == 1 %}md:aspect-4/5{% endif %}">
-                  {% block 'video', video: media, class: 'size-full object-cover' %}{% endblock %}
-                </div>
-              {%- elsif media.media_type == 'external_video' -%}
-                {%- liquid
-                  assign external_youtube_id = ''
-                  assign external_vimeo_id = ''
-                  if media.host == 'youtube'
-                    assign external_youtube_id = media.external_id
-                  elsif media.host == 'vimeo'
-                    assign external_vimeo_id = media.external_id
-                  endif
-                  assign external_video_label = media.alt | default: media.preview_image.alt | default: product_title
-                -%}
-                <div class="aspect-square overflow-hidden {% if product.media.size == 1 %}md:aspect-4/5{% endif %}">
-                  {% block 'video', youtube_id: external_youtube_id, vimeo_id: external_vimeo_id, class: 'size-full object-cover' %}
-                    {%- if forloop.first -%}
-                      {% block 'image', fallback_image: media.preview_image, alt: external_video_label, sizes: gallery_sizes, placeholder_kind: 'surface', attributes: 'loading="eager" fetchpriority="high"' %}{% endblock %}
-                    {%- else -%}
-                      {% block 'image', fallback_image: media.preview_image, alt: external_video_label, sizes: gallery_sizes, placeholder_kind: 'surface', attributes: 'loading="lazy"' %}{% endblock %}
-                    {%- endif -%}
-                  {% endblock %}
-                </div>
-              {%- endif -%}
-            </div>
-          {% endfor %}
-        </div>
-        </s-inspect>
+        {%- if media.media_type == 'image' -%}
+          {%- liquid
+            assign zoom_image = media.preview_image | default: media
+            assign image_label = media.alt | default: zoom_image.alt | default: product_title
+            assign zoom_dialog_id = 'product-image-zoom-' | append: media.id
+            assign zoom_title_id = zoom_dialog_id | append: '-title'
+          -%}
+          {%- capture zoom_srcset -%}
+            {%- for width in zoom_widths -%}
+              {%- assign image_width = width | strip | plus: 0 -%}
+              {{ zoom_image | image_url: width: image_width }} {{ image_width }}w{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          {%- endcapture -%}
 
-        {%- assign zoom_widths = '750,1100,1500,2000,2400' | split: ',' -%}
-        {% for media in product.media %}
-          {%- if media.media_type == 'image' -%}
-            {%- liquid
-              assign zoom_image = media.preview_image | default: media
-              assign image_label = media.alt | default: zoom_image.alt | default: product_title
-              assign zoom_dialog_id = 'product-image-zoom-' | append: media.id
-              assign zoom_title_id = zoom_dialog_id | append: '-title'
-            -%}
-            {%- capture zoom_srcset -%}
-              {%- for width in zoom_widths -%}
-                {%- assign image_width = width | strip | plus: 0 -%}
-                {{ zoom_image | image_url: width: image_width }} {{ image_width }}w{%- unless forloop.last -%},{%- endunless -%}
-              {%- endfor -%}
-            {%- endcapture -%}
-
-            {%- comment -%} Gallery commands open a full-bleed, fade-only surface: no closed transform and no extra backdrop dimming. {%- endcomment -%}
-            <s-dialog>
-              <dialog id="{{ zoom_dialog_id }}" class="overlay-panel [--panel-backdrop:transparent] fixed inset-0 w-screen h-dvh rounded-none bg-overlay text-surface shadow-none" aria-labelledby="{{ zoom_title_id }}">
-                <div class="relative flex size-full items-center justify-center bg-surface">
-                  <h2 id="{{ zoom_title_id }}" class="sr-only">{{ 'product.image_zoom' | t }}</h2>
-                  {%- comment -%} Zoom media stays full bleed; only the close control moves inside the safe viewport. {%- endcomment -%}
-                  {%- capture zoom_close_button_attrs -%}aria-label="{{ 'general.close' | t | escape }}"{%- endcapture -%}
-                  {% block 'button', commandfor: zoom_dialog_id, command: 'close', variant: 'button-ghost', class: 'absolute z-10 size-touch-target rounded-none border border-line-300 bg-panel text-on-surface hover:border-line-100 inset-bs-[max(1rem,var(--safe-area-inset-top))] inset-e-[max(1rem,var(--safe-area-inset-inline-end))]', attributes: zoom_close_button_attrs %}<span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span>{% endblock %}
-                  <img
-                    src="{{ zoom_image | image_url: width: 1500 }}"
-                    srcset="{{ zoom_srcset | strip }}"
-                    sizes="100vw"
-                    loading="lazy"
-                    alt="{{ image_label | escape }}"
-                    width="{{ zoom_image.width }}"
-                    height="{{ zoom_image.height }}"
-                    class="size-full object-contain"
-                    data-zoom-image
-                  >
-                </div>
-              </dialog>
-            </s-dialog>
-          {%- endif -%}
-        {% endfor %}
-      </s-product-image-zoom>
-      <script type="module" src="{{ 's-product-image-zoom.js' | asset_url }}"></script>
+          {%- comment -%} Gallery commands open a full-bleed, fade-only surface: no closed transform and no extra backdrop dimming. {%- endcomment -%}
+          <s-dialog>
+            <dialog id="{{ zoom_dialog_id }}" class="overlay-panel [--panel-backdrop:transparent] fixed inset-0 w-screen h-dvh rounded-none bg-overlay text-surface shadow-none" aria-labelledby="{{ zoom_title_id }}">
+              <div class="relative flex size-full items-center justify-center bg-surface">
+                <h2 id="{{ zoom_title_id }}" class="sr-only">{{ 'product.image_zoom' | t }}</h2>
+                {%- comment -%} Zoom media stays full bleed; only the close control moves inside the safe viewport. {%- endcomment -%}
+                {%- capture zoom_close_button_attrs -%}aria-label="{{ 'general.close' | t | escape }}"{%- endcapture -%}
+                {% block 'button', commandfor: zoom_dialog_id, command: 'close', variant: 'button-ghost', class: 'absolute z-10 size-touch-target rounded-none border border-line-300 bg-panel text-on-surface hover:border-line-100 inset-bs-[max(1rem,var(--safe-area-inset-top))] inset-e-[max(1rem,var(--safe-area-inset-inline-end))]', attributes: zoom_close_button_attrs %}<span class="inline-flex items-center justify-center shrink-0 size-5" aria-hidden="true">{{- 'icon-x.svg' | inline_asset_content -}}</span>{% endblock %}
+                <img
+                  src="{{ zoom_image | image_url: width: 1500 }}"
+                  srcset="{{ zoom_srcset | strip }}"
+                  sizes="100vw"
+                  loading="lazy"
+                  alt="{{ image_label | escape }}"
+                  width="{{ zoom_image.width }}"
+                  height="{{ zoom_image.height }}"
+                  class="size-full object-contain"
+                  data-zoom-image
+                >
+              </div>
+            </dialog>
+          </s-dialog>
+        {%- endif -%}
+      {% endfor %}
+    </s-product-image-zoom>
+    {% endpartial %}
+    <script type="module" src="{{ 's-product-image-zoom.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-media-viewport.js' | asset_url }}"></script>
     {% endblock %}
 
     {%- comment -%} Right: Product Information (40%) {%- endcomment -%}

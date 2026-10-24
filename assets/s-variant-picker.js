@@ -22,6 +22,7 @@
  * Partial contract:
  *   "product-form"   — must match {% partial "product-form" %} in templates/product.liquid.
  *   "product-title"  — must match {% partial "product-title" %} in templates/product.liquid.
+ *   "product-media"  — must match {% partial "product-media" %} in templates/product.liquid.
  *                      Renaming either side silently breaks variant switching.
  *
  * External coupling:
@@ -120,9 +121,9 @@ class VariantPicker extends HTMLElement {
       this.#throwIfSuperseded(controller, updateHost);
       history.replaceState(history.state, '', url);
 
-      // 'product-form' and 'product-title' must match the {% partial %} names in
-      // templates/product.liquid — changing either name here or there breaks variant switching.
-      const html = await partials.fetch('product-form', 'product-title', { url: url.toString(), signal: controller.signal });
+      // 'product-form', 'product-title' and 'product-media' must match the {% partial %} names in
+      // templates/product.liquid — changing any name here or there breaks variant switching.
+      const html = await partials.fetch('product-form', 'product-title', 'product-media', { url: url.toString(), signal: controller.signal });
       this.#throwIfSuperseded(controller, updateHost);
       await transition(() => {
         this.#throwIfSuperseded(controller, updateHost);

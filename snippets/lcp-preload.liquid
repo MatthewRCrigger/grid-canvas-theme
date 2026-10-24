@@ -54,13 +54,20 @@
       assign lcp_sizes = '(min-width: 1440px) 320px, (min-width: 990px) calc((100vw - 96px) / 4), (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 64px) / 2)'
     endif
   elsif template == 'product'
-    assign lcp_image = product.featured_media.preview_image | default: product.featured_image
-    # Mirrors templates/product.liquid: the 2fr gallery is split into two columns only for 3+ media.
-    if product.media.size > 2
-      assign lcp_sizes = '(min-width: 1280px) 384px, (min-width: 768px) calc((100vw - 128px) / 3), 100vw'
-    else
-      assign lcp_sizes = '(min-width: 1280px) 768px, (min-width: 768px) calc((100vw - 128px) * 2 / 3), 100vw'
+    # Mirrors the product-media partial in templates/product.liquid: the selected variant's
+    # custom.media list leads, then the variant's linked image, then the product's featured media.
+    assign lcp_variant = product.selected_or_first_available_variant
+    assign lcp_field_media = lcp_variant.metafields.custom.media.value
+    assign lcp_image = nil
+    if lcp_field_media != blank
+      assign lcp_field_first = lcp_field_media | first
+      assign lcp_image = lcp_field_first.preview_image
     endif
+    if lcp_image == blank
+      assign lcp_image = lcp_variant.featured_media.preview_image | default: product.featured_media.preview_image | default: product.featured_image
+    endif
+    # The inspection viewport stage always spans the full 2fr gallery column.
+    assign lcp_sizes = '(min-width: 1280px) 768px, (min-width: 768px) calc((100vw - 128px) * 2 / 3), 100vw'
   elsif template == 'search'
     # Preload only for a nonblank query on page one — search.results respects the paginate window.
     if current_page == 1 and search.performed and search.terms != blank and search.results.first.object_type == 'product'
