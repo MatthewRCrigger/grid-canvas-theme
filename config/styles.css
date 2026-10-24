@@ -2365,6 +2365,8 @@
       padding-inline: 6px;
     }
     s-window[data-dragging] { cursor: grabbing; user-select: none; }
+    /* Genie warp in flight (s-window.js): no clicks or text selection mid-pour. */
+    s-window[data-genie] { pointer-events: none; user-select: none; will-change: transform, clip-path, opacity; }
     s-window[data-window] > .frame-inner > .panel-header { cursor: default; }
     /* The focused window keeps the bright ring and title strip; the rest step back a tone. */
     s-window.frame-grid:not([data-active]):not([style*="--frame-line"]):not(.os-window-body s-window) { border-color: var(--color-line-200); }

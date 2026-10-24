@@ -114,7 +114,13 @@ class SWindow extends HTMLElement {
     this.dataset.state = 'open';
     this.focusWindow();
     if (!wasOpen) {
-      this.#animate([{ opacity: 0, transform: 'scale(0.97)' }, { opacity: 1, transform: 'none' }], 220);
+      // Opened from a dock tile: the window pours up out of it (Genie); elsewhere it scales in.
+      const tile = DESKTOP.matches && !this.isDialog && opener instanceof Element
+        ? opener.closest('.os-dock-tile, .os-tray-tile, .os-dock a, .os-dock button')
+        : null;
+      if (!tile || !this.#genie(tile.getBoundingClientRect(), 'in', 340)) {
+        this.#animate([{ opacity: 0, transform: 'scale(0.97)' }, { opacity: 1, transform: 'none' }], 220);
+      }
       this.#emit('os:open');
     }
     const heading = this.querySelector('[data-window-title]');
@@ -175,27 +181,22 @@ class SWindow extends HTMLElement {
       if (!this.isStatic) this.close();
       return;
     }
-    const tray = document.querySelector('[data-os-tray]') || document.querySelector('.os-dock');
-    const from = this.getBoundingClientRect();
-    const to = tray?.getBoundingClientRect();
-    if (to && from.width) {
-      // Shrinks toward the dock tray: physical x/y here follow the measured screen positions.
-      const dx = to.left + to.width / 2 - (from.left + from.width / 2);
-      const dy = to.top + to.height / 2 - (from.top + from.height / 2);
-      await this.#animate([
-        { opacity: 1, transform: 'none' },
-        { opacity: 0, transform: `translate(${dx}px, ${dy}px) scale(0.08)` },
-      ], 280, 'cubic-bezier(0.32, 0.72, 0, 1)');
-    }
+    // Genie into the dock tray: physical x/y here follow the measured screen positions.
+    await this.#genie(this.#trayTarget(), 'out', 300);
     this.dataset.state = 'minimized';
     delete this.dataset.active;
     this.#emit('os:minimize');
   }
 
   restore() {
+    // Measure the tray tile before it is removed, then Genie back out of it.
+    const tile = document.querySelector(`[data-os-tray] [data-restores="${CSS.escape(this.id)}"]`);
+    const from = tile?.getBoundingClientRect() || this.#trayTarget();
     this.dataset.state = 'open';
     this.focusWindow();
-    this.#animate([{ opacity: 0, transform: 'translateY(40px) scale(0.9)' }, { opacity: 1, transform: 'none' }], 260);
+    if (!DESKTOP.matches || !this.#genie(from, 'in', 340)) {
+      this.#animate([{ opacity: 0, transform: 'translateY(40px) scale(0.9)' }, { opacity: 1, transform: 'none' }], 260);
+    }
     this.#emit('os:restore');
     (this.querySelector('[data-window-title]') || this).focus({ preventScroll: true });
   }
@@ -247,6 +248,75 @@ class SWindow extends HTMLElement {
   #animate(keyframes, duration, easing = 'cubic-bezier(0.16, 1, 0.3, 1)') {
     if (REDUCED.matches || !this.animate || !this.getClientRects().length) return Promise.resolve();
     return this.animate(keyframes, { duration, easing }).finished.catch(() => {});
+  }
+
+
+  /**
+   * The macOS Genie warp between this window and a dock tile (`target`, a DOMRect-like box).
+   * The window pinches into a curved funnel whose neck is the tile, then slides down through it
+   * (`out`); `in` plays the same frames backwards. Built as WAAPI keyframes of a translate plus a
+   * clip-path polygon traced along the funnel, so it stays interruptible and needs no snapshot.
+   */
+  #genie(target, direction = 'out', duration = 480) {
+    const from = this.getBoundingClientRect();
+    if (!target || !from.width || !from.height || !target.width) return null;
+    const ease = (t) => 1 - (1 - t) ** 3;
+    const smooth = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const neckBottom = target.top + target.height;
+    const travel = Math.max(1, neckBottom - from.top);
+    // If the tile sits outside the window's span, the window drifts sideways so the neck fits.
+    const shift = Math.max(0, target.right - from.right) + Math.min(0, target.left - from.left);
+    const ROWS = 18;
+    const FRAMES = 28;
+    const frames = [];
+    for (let i = 0; i <= FRAMES; i++) {
+      const p = i / FRAMES;
+      const pinch = ease(Math.min(1, p / 0.35));
+      const slide = Math.max(0, (p - 0.15) / 0.85) ** 1.4;
+      const dx = shift * pinch;
+      const dy = slide * travel;
+      const top = from.top + dy;
+      const bottom = Math.min(top + from.height, neckBottom);
+      const left = [];
+      const right = [];
+      for (let r = 0; r <= ROWS; r++) {
+        const y = bottom > top ? lerp(top, bottom, r / ROWS) : neckBottom;
+        const f = pinch * smooth(Math.min(1, Math.max(0, (y - from.top) / travel)));
+        const ly = (y - top).toFixed(1);
+        left.push(`${(lerp(from.left + dx, target.left, f) - from.left - dx).toFixed(1)}px ${ly}px`);
+        right.unshift(`${(lerp(from.right + dx, target.right, f) - from.left - dx).toFixed(1)}px ${ly}px`);
+      }
+      frames.push({
+        offset: p,
+        transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`,
+        clipPath: `polygon(${left.concat(right).join(', ')})`,
+        opacity: p < 0.88 ? 1 : 1 - (p - 0.88) / 0.12,
+      });
+    }
+    if (direction === 'in') {
+      frames.reverse();
+      for (const frame of frames) frame.offset = 1 - frame.offset;
+    }
+    this.dataset.genie = '';
+    const done = this.#animate(frames, duration, 'cubic-bezier(0.4, 0, 0.2, 1)');
+    return done.then(() => delete this.dataset.genie);
+  }
+
+  /** Where a minimized window lands: the end of the dock tray, else the end of the dock. */
+  #trayTarget() {
+    const tray = document.querySelector('[data-os-tray]');
+    const tiles = tray && !tray.hidden ? tray.querySelectorAll('.os-tray-tile') : [];
+    if (tiles.length) {
+      const last = tiles[tiles.length - 1].getBoundingClientRect();
+      const rtl = getComputedStyle(tray).direction === 'rtl';
+      return new DOMRect(rtl ? last.left - last.width - 8 : last.right + 8, last.top, last.width, last.height);
+    }
+    const dock = document.querySelector('.os-dock')?.getBoundingClientRect();
+    if (!dock?.width) return null;
+    const rtl = getComputedStyle(document.documentElement).direction === 'rtl';
+    const size = Math.min(48, dock.height - 16);
+    return new DOMRect(rtl ? dock.left + 8 : dock.right - size - 8, dock.bottom - size - 8, size, size);
   }
 
   #emit(type) {
