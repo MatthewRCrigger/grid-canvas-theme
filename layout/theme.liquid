@@ -44,11 +44,56 @@
           </div>
 
           {% block 'logo', class: 'min-w-0 truncate font-heading text-[16px] font-semibold uppercase tracking-[0.2em] md:text-[15px] md:tracking-[0.26em] group-data-[layout=logo-center]/header:[grid-area:logo] group-data-[layout=logo-center]/header:justify-self-center group-data-[scrolled]/header:text-[14px]! group-data-[scrolled]/header:tracking-[0.22em]! group-data-[scrolled]/header:[&_img]:h-6! group-data-[scrolled]/header:[&_img]:w-auto! motion-safe:transition-[font-size,letter-spacing] motion-safe:duration-200 motion-safe:ease-ui motion-safe:[&_img]:transition-[height] motion-safe:[&_img]:duration-200' %}{% endblock %}
-          {%- comment -%} App slot: the editable default name, swapped by s-window-manager for the focused window's title. {%- endcomment -%}
-          <span class="os-menubar-app hidden md:inline-flex ms-3 border-s border-line-300 ps-4">
-            <span data-os-app-default>{% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-on-surface' %}{{ 'os.menubar_app' | t }}{% endblock %}</span>
-            <span data-os-app-title class="type-overline-lg truncate text-nowrap text-accent" hidden></span>
-          </span>
+          {%- comment -%}
+            System menu (the Apple menu of GRID OS), 64rem+: About This Site, Spotlight, Mission Control,
+            a Terminal window and the screen saver. A native popover; s-context-menu closes it after a
+            choice and adds arrow-key movement. Each item commands the element that owns the action.
+          {%- endcomment -%}
+          {% block 'os-menus' %}
+          {%- comment -%} The system menu trigger: a stable, editable label beside the chevron. {%- endcomment -%}
+          <button type="button" class="os-system-trigger" popovertarget="os-system-menu" aria-label="{{ 'os.system.trigger' | t | escape }}">
+            <span class="os-menubar-app">{% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-on-surface' %}{{ 'os.menubar_app' | t }}{% endblock %}</span>
+            <span class="inline-flex size-4 shrink-0 items-center justify-center" aria-hidden="true">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+          </button>
+          <div id="os-system-menu" popover class="os-menu os-system-menu" role="menu" aria-label="{{ 'os.system.trigger' | t | escape }}" data-os-menu>
+            <button type="button" class="os-menu-item" role="menuitem" commandfor="about-site" command="show-modal"><span>{{ 'os.menu.about' | t }}</span></button>
+            <div class="os-menu-sep" role="separator"></div>
+            <button type="button" class="os-menu-item" role="menuitem" commandfor="predictive-search" command="show-modal"><span>{{ 'os.menu.spotlight' | t }}</span><span class="os-menu-key" aria-hidden="true">⌘K</span></button>
+            <button type="button" class="os-menu-item" role="menuitem" commandfor="os-mission" command="--mission"><span>{{ 'os.menu.mission_control' | t }}</span><span class="os-menu-key" aria-hidden="true">⌥↑</span></button>
+            <button type="button" class="os-menu-item" role="menuitem" commandfor="win-terminal" command="--open"><span>{{ 'os.menu.new_terminal' | t }}</span></button>
+            {%- if request.page_type == 'index' -%}
+              <button type="button" class="os-menu-item" role="menuitem" commandfor="os-desktop" command="--cleanup"><span>{{ 'os.menu.clean_up' | t }}</span></button>
+            {%- endif -%}
+            {%- comment -%}
+              Live Web Vitals for the current page (assets/s-web-vitals.js fills [data-metric]). On the homepage the
+              readout is a menu item that opens the Net.scan window (#win-scan in templates/index.liquid); elsewhere it is read-only.
+            {%- endcomment -%}
+            {%- capture os_vitals_grid -%}
+              <s-web-vitals class="grid w-full grid-cols-2 gap-x-5 gap-y-1 normal-case" data-unit-ms="{{ 'home.scan.unit_ms' | t }}" data-unit-s="{{ 'home.scan.unit_s' | t }}" data-na="{{ 'home.scan.vitals_na' | t }}">
+                <span class="flex justify-between gap-3"><span class="text-ink-300">{{ 'home.scan.alt_label' | t }}</span><span class="text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="lcp">{{ 'home.scan.vitals_pending' | t }}</span></span>
+                <span class="flex justify-between gap-3"><span class="text-ink-300">{{ 'home.scan.slope_label' | t }}</span><span class="text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="cls">{{ 'home.scan.vitals_pending' | t }}</span></span>
+                <span class="flex justify-between gap-3"><span class="text-ink-300">{{ 'home.scan.temp_label' | t }}</span><span class="text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="ttfb">{{ 'home.scan.vitals_pending' | t }}</span></span>
+                <span class="flex justify-between gap-3"><span class="text-ink-300">{{ 'home.scan.wind_label' | t }}</span><span class="text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="inp">{{ 'home.scan.vitals_pending' | t }}</span></span>
+              </s-web-vitals>
+            {%- endcapture -%}
+            <div class="os-menu-sep" role="separator"></div>
+            {%- if request.page_type == 'index' -%}
+              <button type="button" class="os-menu-item !flex-col !items-stretch !gap-2 py-2.5" role="menuitem" commandfor="win-scan" command="--open">
+                <span class="flex justify-between gap-6"><span>{{ 'os.menu.web_vitals' | t }}</span><span class="os-menu-key">{{ 'os.menu.open_scan' | t }}</span></span>
+                {{ os_vitals_grid }}
+              </button>
+            {%- else -%}
+              <div class="flex flex-col gap-2 px-3 py-2.5 type-data-sm uppercase text-ink-200" role="group" aria-label="{{ 'os.menu.web_vitals' | t | escape }}">
+                <span>{{ 'os.menu.web_vitals' | t }}</span>
+                {{ os_vitals_grid }}
+              </div>
+            {%- endif -%}
+            {%- if settings.screensaver_enabled -%}
+              <div class="os-menu-sep" role="separator"></div>
+              <button type="button" class="os-menu-item" role="menuitem" commandfor="os-screensaver" command="--start"><span>{{ 'os.menu.screensaver' | t }}</span></button>
+            {%- endif -%}
+          </div>
+          {% endblock %}
         </div>
 
         {%- capture mobile_nav_localization_submit -%}
@@ -371,7 +416,7 @@
       the tray of minimized windows. Search, compare and cart open their windows in place; counts
       mirror the header cart trigger and the compare store.
     {%- endcomment -%}
-    {% block 'dock' %}
+    {% block 'dock', recents: '3' %}
       {% block 'dock-item', icon: 'finder', url: routes.root_url %}
         {% block 'text', tag: 'span', variant: 'type-overline' %}{{ 'os.dock_home' | t }}{% endblock %}
       {% endblock %}
@@ -412,7 +457,145 @@
       data-restore-label="{{ os_restore_label | escape }}"
       data-opened-label="{{ os_opened_label | escape }}"
     >
-      <div class="os-window-layer" data-os-layer></div>
+      <div class="os-window-layer" data-os-layer>
+        {%- comment -%}
+          TERMINAL — a desktop window on every page (opened from the Terminal desktop icon, the system
+          menu or the desktop's right-click menu). s-terminal builds a little filesystem from the store index below: the All collection, collections,
+          pages, blogs and their articles, policies, the main menu tree and the core Shopify routes.
+        {%- endcomment -%}
+        {%- liquid
+          assign term_user = ''
+          assign term_guest = 'os.terminal.guest' | t
+          if customer
+            assign term_user = customer.first_name | default: customer.email | handleize
+          endif
+          assign term_menus = 'main-menu,footer' | split: ','
+          assign term_probe_pages = 'contact,about,about-us,faq,shipping' | split: ','
+          assign term_probe_blogs = 'articles,news,journal' | split: ','
+          assign term_seen = ','
+        -%}
+        {%- comment -%} Liquid can't loop every page or blog, so the terminal finds them through a few standard handles plus every page/blog link in the main and footer menus. {%- endcomment -%}
+        {%- capture term_pages -%}
+          {%- for term_handle in term_probe_pages -%}
+            {%- assign term_page = pages[term_handle] -%}
+            {%- if term_page.handle != blank -%}
+              {%- assign term_key = 'p:' | append: term_page.handle | append: ',' -%}
+              {%- unless term_seen contains term_key -%}
+                {%- assign term_seen = term_seen | append: term_key -%}
+                ,{"h": {{ term_page.handle | json }}, "t": {{ term_page.title | json }}, "u": {{ term_page.url | json }}}
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- for term_menu in term_menus -%}
+            {%- for l1 in linklists[term_menu].links -%}
+              {%- if l1.type == 'page_link' and l1.object.handle != blank -%}
+                {%- assign term_key = 'p:' | append: l1.object.handle | append: ',' -%}
+                {%- unless term_seen contains term_key -%}
+                  {%- assign term_seen = term_seen | append: term_key -%}
+                  ,{"h": {{ l1.object.handle | json }}, "t": {{ l1.object.title | json }}, "u": {{ l1.url | json }}}
+                {%- endunless -%}
+              {%- endif -%}
+              {%- for l2 in l1.links -%}
+                {%- if l2.type == 'page_link' and l2.object.handle != blank -%}
+                  {%- assign term_key = 'p:' | append: l2.object.handle | append: ',' -%}
+                  {%- unless term_seen contains term_key -%}
+                    {%- assign term_seen = term_seen | append: term_key -%}
+                    ,{"h": {{ l2.object.handle | json }}, "t": {{ l2.object.title | json }}, "u": {{ l2.url | json }}}
+                  {%- endunless -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- capture term_blogs -%}
+          {%- for term_handle in term_probe_blogs -%}
+            {%- assign term_b = blogs[term_handle] -%}
+            {%- if term_b.handle != blank -%}
+              {%- assign term_key = 'b:' | append: term_b.handle | append: ',' -%}
+              {%- unless term_seen contains term_key -%}
+                {%- assign term_seen = term_seen | append: term_key -%}
+                ,{"h": {{ term_b.handle | json }}, "t": {{ term_b.title | json }}, "u": {{ term_b.url | json }}, "a": [{%- for a in term_b.articles limit: 12 -%}{"h": {{ a.handle | json }}, "t": {{ a.title | json }}, "u": {{ a.url | json }}, "d": {{ a.published_at | date: '%Y-%m-%d' | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]}
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- for term_menu in term_menus -%}
+            {%- for l1 in linklists[term_menu].links -%}
+              {%- if l1.type == 'blog_link' and l1.object.handle != blank -%}
+                {%- assign term_b = l1.object -%}
+                {%- assign term_key = 'b:' | append: term_b.handle | append: ',' -%}
+                {%- unless term_seen contains term_key -%}
+                  {%- assign term_seen = term_seen | append: term_key -%}
+                  ,{"h": {{ term_b.handle | json }}, "t": {{ term_b.title | json }}, "u": {{ term_b.url | json }}, "a": [{%- for a in term_b.articles limit: 12 -%}{"h": {{ a.handle | json }}, "t": {{ a.title | json }}, "u": {{ a.url | json }}, "d": {{ a.published_at | date: '%Y-%m-%d' | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]}
+                {%- endunless -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- liquid
+          # The homepage opens on the Terminal alone on desktop (64rem+); s-window applies data-desktop-state.
+          assign term_attrs = ''
+          if template.name == 'index'
+            assign term_attrs = 'data-desktop-state="open"'
+          endif
+        -%}
+        {% block 'frame', readout: 'status', entrance: 'none', id: 'win-terminal', window: 'closed', attributes: term_attrs, class: 'lg:start-[16%] lg:top-[8%] lg:w-[min(48%,680px)] lg:h-[min(62%,460px)]', inner_class: 'flex flex-col' %}
+          <div class="panel-header">
+            {% block 'text', tag: 'h2', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'os.terminal.title' | t }}{% endblock %}
+          </div>
+          <s-terminal class="os-term">
+            <script type="application/json" data-terminal-data>
+              {
+                "products": [{%- for p in collections.all.products limit: 50 -%}{"h": {{ p.handle | json }}, "t": {{ p.title | json }}, "u": {{ p.url | json }}, "p": {{ p.price | money_without_trailing_zeros | strip_html | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}],
+                "collections": [{%- for c in collections limit: 50 -%}{%- assign term_count = 'os.items' | t: count: c.products_count -%}{"h": {{ c.handle | json }}, "t": {{ c.title | json }}, "u": {{ c.url | json }}, "n": {{ term_count | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}],
+                "pages": [{{ term_pages | strip | remove_first: ',' }}],
+                "blogs": [{{ term_blogs | strip | remove_first: ',' }}],
+                "policies": [{%- for policy in shop.policies -%}{"h": {{ policy.url | split: '/' | last | json }}, "t": {{ policy.title | json }}, "u": {{ policy.url | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}],
+                "menu": [{%- for l in linklists['main-menu'].links -%}{"h": {{ l.handle | json }}, "t": {{ l.title | json }}, "u": {{ l.url | json }}, "c": [{%- for s in l.links -%}{"h": {{ s.handle | json }}, "t": {{ s.title | json }}, "u": {{ s.url | json }}, "c": [{%- for ss in s.links -%}{"h": {{ ss.handle | json }}, "t": {{ ss.title | json }}, "u": {{ ss.url | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]}{% unless forloop.last %},{% endunless %}{%- endfor -%}]}{% unless forloop.last %},{% endunless %}{%- endfor -%}],
+                "routes": {"root": {{ routes.root_url | json }}, "collections": {{ routes.collections_url | json }}, "all": {{ routes.all_products_collection_url | json }}, "search": {{ routes.search_url | json }}, "cart": {{ routes.cart_url | json }}, "account": {% if shop.customer_accounts_enabled %}{{ routes.account_url | json }}{% else %}null{% endif %}},
+                "about": {{ shop.description | default: '' | json }},
+                "user": {{ term_user | json }},
+                "searchUrl": {{ routes.search_url | json }},
+                "i18n": {
+                  "greeting": {{ 'os.terminal.greeting' | t | json }},
+                  "help_help": {{ 'os.terminal.help_help' | t | json }},
+                  "help_ls": {{ 'os.terminal.help_ls' | t | json }},
+                  "help_cd": {{ 'os.terminal.help_cd' | t | json }},
+                  "help_pwd": {{ 'os.terminal.help_pwd' | t | json }},
+                  "help_open": {{ 'os.terminal.help_open' | t | json }},
+                  "help_look": {{ 'os.terminal.help_look' | t | json }},
+                  "help_search": {{ 'os.terminal.help_search' | t | json }},
+                  "help_cart": {{ 'os.terminal.help_cart' | t | json }},
+                  "help_cat": {{ 'os.terminal.help_cat' | t | json }},
+                  "help_whoami": {{ 'os.terminal.help_whoami' | t | json }},
+                  "help_date": {{ 'os.terminal.help_date' | t | json }},
+                  "help_clear": {{ 'os.terminal.help_clear' | t | json }},
+                  "help_history": {{ 'os.terminal.help_history' | t | json }},
+                  "help_exit": {{ 'os.terminal.help_exit' | t | json }},
+                  "unknown": {{ 'os.terminal.unknown' | t | json }},
+                  "not_found": {{ 'os.terminal.not_found' | t | json }},
+                  "usage_open": {{ 'os.terminal.usage_open' | t | json }},
+                  "usage_look": {{ 'os.terminal.usage_look' | t | json }},
+                  "usage_search": {{ 'os.terminal.usage_search' | t | json }},
+                  "usage_ls": {{ 'os.terminal.usage_ls' | t | json }},
+                  "empty": {{ 'os.terminal.empty' | t | json }},
+                  "guest": {{ 'os.terminal.guest' | t | json }},
+                  "cart_items": {{ 'os.terminal.cart_items' | t | json }},
+                  "opening": {{ 'os.terminal.opening' | t | json }},
+                  "sudo": {{ 'os.terminal.sudo' | t | json }},
+                  "no_such": {{ 'os.terminal.no_such' | t | json }},
+                  "main_menu": {{ 'os.terminal.main_menu' | t | json }},
+                  "no_about": {{ 'os.terminal.no_about' | t | json }}
+                }
+              }
+            </script>
+            <div class="os-term-output" data-terminal-output role="log" aria-live="polite"></div>
+            <form class="os-term-form" autocomplete="off">
+              <label for="os-term-input" class="os-term-prompt">{{ term_user | default: term_guest }}@grid ~ %</label>
+              <input id="os-term-input" class="os-term-input" type="text" data-terminal-input autocapitalize="off" spellcheck="false" enterkeyhint="send">
+            </form>
+          </s-terminal>
+        {% endblock %}
+      </div>
       <p class="sr-only" aria-live="polite" data-os-live></p>
     </s-window-manager>
     {%- comment -%} Streamed page windows are the same Frame block window as every other; s-window-manager clones this and gives each copy its own id. {%- endcomment -%}
@@ -461,6 +644,7 @@
 
     <script type="module" src="{{ 's-entrance.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-clock.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-web-vitals.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-window.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-window-manager.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-dock-count.js' | asset_url }}"></script>
@@ -471,6 +655,136 @@
     <script type="module" src="{{ 's-compare.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-compare-toggle.js' | asset_url }}"></script>
     <script type="module" src="{{ 's-compare-count.js' | asset_url }}"></script>
+
+    {%- comment -%}
+      QUICK LOOK / GET INFO pop-up: s-quick-look fills it with the product.quick-look fragment.
+      Space previews the focused, hovered or selected product; Option+I shows its spec sheet.
+    {%- endcomment -%}
+    <s-dialog>
+      <dialog id="quick-look" class="overlay-panel grid-window-modal [--grid-window-width:780px]" aria-labelledby="quick-look-title">
+        {% block 'frame', id: 'quick-look-frame', window: 'dialog', entrance: 'none' %}
+          <div class="panel-header">
+            <h2 id="quick-look-title" class="type-overline-lg min-w-0 flex-1 truncate text-ink-invert">{{ 'os.quick_look.window_label' | t }}</h2>
+            <button type="button" commandfor="quick-look-viewer" command="--toggle" data-ql-toggle class="type-overline inline-flex min-h-touch-target lg:min-h-0 lg:self-stretch items-center px-3 text-ink-invert cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-ink-invert">{{ 'os.quick_look.show_info' | t }}</button>
+          </div>
+          <s-quick-look
+            id="quick-look-viewer"
+            class="block min-h-0 flex-1 overflow-auto overscroll-contain"
+            data-dialog="quick-look"
+            data-title="quick-look-title"
+            data-loading-label="{{ 'os.quick_look.loading' | t | escape }}"
+            data-error-label="{{ 'os.quick_look.error' | t | escape }}"
+            data-info-label="{{ 'os.quick_look.show_info' | t | escape }}"
+            data-preview-label="{{ 'os.quick_look.show_preview' | t | escape }}"
+          ></s-quick-look>
+        {% endblock %}
+      </dialog>
+    </s-dialog>
+
+    {%- comment -%}
+      ABOUT THIS SITE pop-up (system menu, desktop right-click): the "About This Mac" spec sheet.
+      Every label and value is its own text block; the button links to the contact page.
+    {%- endcomment -%}
+    {%- assign about_contact_url = pages.contact.url | default: routes.root_url -%}
+    <s-dialog>
+      <dialog id="about-site" class="overlay-panel grid-window-modal [--grid-window-width:540px]" aria-labelledby="about-site-title">
+        {% block 'frame', id: 'about-site-frame', window: 'dialog', entrance: 'draw' %}
+          <div class="panel-header">
+            <h2 id="about-site-title" class="type-overline-lg flex-1 text-ink-invert">{{ 'os.about.title' | t }}</h2>
+          </div>
+          <div class="flex min-h-0 flex-1 flex-col gap-6 overflow-auto overscroll-contain p-5 md:p-7">
+            <div class="flex items-center gap-5">
+              <span class="os-about-mark" aria-hidden="true">{% render 'os-icon', name: 'grid', class: 'size-full' %}</span>
+              <div class="flex min-w-0 flex-col gap-1">
+                {% block 'text', tag: 'p', variant: 'type-heading-lg', class: 'text-on-surface' %}{{ shop.name | escape }}{% endblock %}
+                {% block 'text', tag: 'p', variant: 'type-data-sm', class: 'uppercase text-ink-300' %}{{ 'os.about.version' | t }}{% endblock %}
+              </div>
+            </div>
+            <dl class="os-info-list">
+              <div><dt>{% block 'text', tag: 'span' %}{{ 'os.about.platform' | t }}{% endblock %}</dt><dd>{% block 'text', tag: 'span', color: '#95FF92' %}{{ 'os.about.platform_value' | t }}{% endblock %}</dd></div>
+              <div><dt>{% block 'text', tag: 'span' %}{{ 'os.about.theme' | t }}{% endblock %}</dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.theme_value' | t }}{% endblock %}</dd></div>
+              <div><dt>{% block 'text', tag: 'span' %}{{ 'os.about.stack' | t }}{% endblock %}</dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.stack_value' | t }}{% endblock %}</dd></div>
+              <div><dt>{% block 'text', tag: 'span' %}{{ 'os.about.built' | t }}{% endblock %}</dt><dd>{% block 'text', tag: 'span' %}{{ shop.name | escape }}{% endblock %}</dd></div>
+            </dl>
+            <div class="flex flex-col gap-2 max-lg:hidden">
+              {% block 'text', tag: 'h3', variant: 'type-overline', class: 'text-ink-300' %}{{ 'os.about.shortcuts' | t }}{% endblock %}
+              <dl class="os-key-list">
+                <div><dt><kbd class="grid-kbd">Space</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_quick_look' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">⌥</kbd><kbd class="grid-kbd">I</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_info' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">⌥</kbd><kbd class="grid-kbd">↑</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_mission' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">⌥</kbd><kbd class="grid-kbd">Tab</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_switch' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">⌥</kbd><kbd class="grid-kbd">W</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_close' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">⌥</kbd><kbd class="grid-kbd">M</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_minimize' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">⌘</kbd><kbd class="grid-kbd">K</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_palette' | t }}{% endblock %}</dd></div>
+                <div><dt><kbd class="grid-kbd">Right-click</kbd></dt><dd>{% block 'text', tag: 'span' %}{{ 'os.about.key_menu' | t }}{% endblock %}</dd></div>
+              </dl>
+            </div>
+            <div>
+              {% block 'button', url: about_contact_url, variant: 'button-secondary', class: 'h-11 px-5 text-[13px]' %}{{- 'os.about.cta' | t -}}{% endblock %}
+            </div>
+          </div>
+        {% endblock %}
+      </dialog>
+    </s-dialog>
+
+    {%- comment -%} Right-click menus: labels for s-context-menu. {%- endcomment -%}
+    <s-context-menu>
+      <script type="application/json" data-labels>
+        {
+          "label": {{ 'os.menu.label' | t | json }},
+          "open": {{ 'os.menu.open' | t | json }},
+          "open_new_tab": {{ 'os.menu.open_new_tab' | t | json }},
+          "quick_look": {{ 'os.menu.quick_look' | t | json }},
+          "get_info": {{ 'os.menu.get_info' | t | json }},
+          "copy_link": {{ 'os.menu.copy_link' | t | json }},
+          "link_copied": {{ 'os.menu.link_copied' | t | json }},
+          "minimize": {{ 'os.menu.minimize' | t | json }},
+          "zoom": {{ 'os.menu.zoom' | t | json }},
+          "close": {{ 'os.menu.close' | t | json }},
+          "new_terminal": {{ 'os.menu.new_terminal' | t | json }},
+          "mission_control": {{ 'os.menu.mission_control' | t | json }},
+          "clean_up": {{ 'os.menu.clean_up' | t | json }},
+          "spotlight": {{ 'os.menu.spotlight' | t | json }},
+          "about": {{ 'os.menu.about' | t | json }},
+          "screensaver": {{ 'os.menu.screensaver' | t | json }}
+        }
+      </script>
+    </s-context-menu>
+
+    {%- comment -%} Mission Control (Option+↑ / F3): labels and hints over the spread-out windows. {%- endcomment -%}
+    <s-mission-control id="os-mission" class="os-mission" hidden>
+      <p class="os-mission-hint" data-mission-hint>{{ 'os.mission.hint' | t }}</p>
+      <div class="os-mission-empty" data-mission-empty role="status" hidden>
+        <p class="os-mission-empty-title">{{ 'os.mission.empty' | t }}</p>
+        <p class="os-mission-empty-sub">{{ 'os.mission.empty_hint' | t }}</p>
+      </div>
+    </s-mission-control>
+
+    {%- comment -%} Window switcher (hold Option, press Tab). {%- endcomment -%}
+    <s-app-switcher class="os-switcher" hidden aria-label="{{ 'os.switcher.label' | t | escape }}">
+      <div class="os-switcher-strip" data-switcher-strip aria-hidden="true"></div>
+      <p class="sr-only" aria-live="polite" data-switcher-live></p>
+    </s-app-switcher>
+
+    {%- comment -%} Screen saver: Theme settings > Wallpaper > Screen saver. {%- endcomment -%}
+    {%- if settings.screensaver_enabled -%}
+      <s-screensaver id="os-screensaver" class="os-screensaver" data-delay="{{ settings.screensaver_delay | default: 3 }}" hidden aria-hidden="true">
+        <div class="os-saver-floor"><div class="os-saver-grid"></div></div>
+        <div class="os-saver-center">
+          <s-clock class="os-saver-clock">--:--:--</s-clock>
+          <span class="os-saver-name">{{ shop.name | escape }}</span>
+          <span class="os-saver-hint">{{ 'os.screensaver.hint' | t }}</span>
+        </div>
+      </s-screensaver>
+      <script type="module" src="{{ 's-screensaver.js' | asset_url }}"></script>
+    {%- endif -%}
+
+    <script type="module" src="{{ 's-product-form.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-quick-look.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-context-menu.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-mission-control.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-app-switcher.js' | asset_url }}"></script>
+    <script type="module" src="{{ 's-terminal.js' | asset_url }}"></script>
 
     {% render 'notification-host' %}
     {% render 'theme-scripts' %}

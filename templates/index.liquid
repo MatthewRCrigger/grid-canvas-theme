@@ -18,7 +18,7 @@
   stay as closed desktop windows opened from their icons.
 {%- endcomment -%}
 {%- assign live_product = all_products['demo-product'] -%}
-{% block 'desktop', wallpaper_style: 'plain' %}
+{% block 'desktop', wallpaper_style: 'grid', attributes: 'id="os-desktop"' %}
 
     {%- comment -%}
       SPOTLIGHT — the landing window, Apple Spotlight behaviour in GRID style: intro copy, a
@@ -37,7 +37,7 @@
         assign spotlight_shown = spotlight_limit
       endif
     -%}
-    {% block 'frame', entrance: 'scan', id: 'win-spotlight', window: 'open', attributes: 'data-active', class: 'max-lg:order-1 lg:absolute lg:top-[4%] lg:start-[calc((100%_-_330px_-_min(860px,58%))_/_2)] lg:w-[min(860px,58%)]' %}
+    {% block 'frame', entrance: 'scan', id: 'win-spotlight', window: 'open', attributes: 'data-active data-desktop-state="closed"', class: 'max-lg:order-1 lg:absolute lg:top-[4%] lg:start-[calc((100%_-_330px_-_min(860px,58%))_/_2)] lg:w-[min(860px,58%)]' %}
       <div class="panel-header">
         {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.spotlight.title' | t }}{% endblock %}
         {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert' %}{{ 'home.spotlight.index' | t }}{% endblock %}
@@ -132,7 +132,7 @@
     {% endblock %}
 
       {%- comment -%} SPEC sheet: the four board layers, matching the hotspots. {%- endcomment -%}
-        {% block 'frame', variant: 'frame-grid', header: 'outline', border_color: settings.color_palette.interactive, entrance: 'scan', id: 'win-spec', window: 'closed', class: 'lg:absolute lg:start-[26%] lg:top-[180px] lg:w-[min(28%,400px)]' %}
+        {% block 'frame', variant: 'frame-grid', header: 'outline', border_color: settings.color_palette.interactive, entrance: 'draw', id: 'win-spec', window: 'closed', class: 'lg:absolute lg:start-[26%] lg:top-[180px] lg:w-[min(28%,400px)]' %}
             <div class="panel-header">
               {% block 'text', tag: 'h3', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.hud.spec_title' | t }}{% endblock %}
               {% block 'text', tag: 'span', variant: 'type-data-sm', class: 'uppercase text-ink-invert' %}{{ 'home.hud.spec_count' | t }}{% endblock %}
@@ -173,7 +173,8 @@
             </div>
             {%- if live_product != blank -%}
               {%- assign live_variant = live_product.selected_or_first_available_variant -%}
-              {% block 'card', block.name: 't:blocks.product_card', url: live_product.url, aria_label: live_product.title, class: 'flex flex-col gap-3 p-3' %}
+              {%- capture card_ql_attrs -%}data-quick-look="{{ live_product.url | escape }}"{%- endcapture -%}
+              {% block 'card', block.name: 't:blocks.product_card', url: live_product.url, aria_label: live_product.title, class: 'flex flex-col gap-3 p-3', attributes: card_ql_attrs %}
                 <a href="{{ live_product.url | escape }}" style="view-transition-name: pimg-{{ live_product.id }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100 motion-safe:[&_img]:transition-transform motion-safe:[&_img]:duration-500 motion-safe:[&_img]:ease-ui motion-safe:group-hover/card:[&_img]:scale-[1.03]" aria-label="{{ live_product.title | escape }}">
                   {% block 'image', fallback_image: live_product.featured_image, aspect_ratio: 'aspect-[4/3]', sizes: '(min-width: 1280px) 300px, (min-width: 768px) 50vw, 100vw', attributes: 'loading="lazy"', alt: live_product.title %}{% endblock %}
                   {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>
@@ -298,7 +299,7 @@
   assign target_url = target_collection.url | default: routes.collections_url
 -%}
 {% block 'featured-collection', collection: target_collection, class: 'contents' %}
-  {% block 'frame', variant: 'frame-hairline', id: 'win-target', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[3%] lg:top-4 lg:w-[min(64%,980px)]' %}
+  {% block 'frame', variant: 'frame-grid', id: 'win-target', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[3%] lg:top-4 lg:w-[min(64%,980px)]' %}
     <div class="panel-header">
       {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.target_window' | t }}{% endblock %}
     </div>
@@ -357,7 +358,7 @@
   FIELD SCAN — a tall survey viewport (reticle on the rider, telemetry readout over the
   empty sky) beside an editorial window carrying the brand line, with a live scroll readout.
 {%- endcomment -%}
-  {% block 'frame', variant: 'frame-hairline', id: 'win-scan', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[12%] lg:top-4 lg:w-[min(26%,380px)]' %}
+  {% block 'frame', variant: 'frame-grid', id: 'win-scan', window: 'closed', class: 'hud-viewport [--frame-fallback:var(--color-surface)] lg:absolute lg:start-[12%] lg:top-4 lg:w-[min(26%,380px)]' %}
     <div class="panel-header">
       {% block 'text', tag: 'span', variant: 'type-overline-lg', class: 'text-ink-invert' %}{{ 'home.os.scan_window' | t }}{% endblock %}
     </div>
@@ -370,28 +371,39 @@
           {% block 'text', tag: 'span', variant: 'hud-tag', class: 'border-info text-info' %}{{ 'home.scan.tag' | t }}{% endblock %}
         </div>
       </div>
-      <dl class="absolute end-[7%] top-[6%] z-[2] w-[54%] border border-line-300 bg-surface md:w-[46%]">
-          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+      {%- comment -%} Live RUM readout: s-web-vitals fills each [data-metric] dd from the visitor's own PerformanceObserver entries. Keep the data-metric names (lcp, cls, ttfb, inp) in sync with assets/s-web-vitals.js. {%- endcomment -%}
+      <s-web-vitals
+        class="absolute end-[7%] top-[6%] z-[2] block w-[54%] border border-line-300 bg-surface md:w-[46%]"
+        data-unit-ms="{{ 'home.scan.unit_ms' | t }}"
+        data-unit-s="{{ 'home.scan.unit_s' | t }}"
+        data-na="{{ 'home.scan.vitals_na' | t }}"
+      >
+        <dl>
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 md:px-3">
             <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.alt_label' | t }}{% endblock %}</dt>
             <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
-            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.alt_value' | t }}{% endblock %}</dd>
+            <dd class="type-data-sm text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="lcp">{{ 'home.scan.vitals_pending' | t }}</dd>
           </div>
-          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 md:px-3">
             <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.slope_label' | t }}{% endblock %}</dt>
             <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
-            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.slope_value' | t }}{% endblock %}</dd>
+            <dd class="type-data-sm text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="cls">{{ 'home.scan.vitals_pending' | t }}</dd>
           </div>
-          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 md:px-3">
             <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.temp_label' | t }}{% endblock %}</dt>
             <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
-            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.temp_value' | t }}{% endblock %}</dd>
+            <dd class="type-data-sm text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="ttfb">{{ 'home.scan.vitals_pending' | t }}</dd>
           </div>
-          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 last:border-b-0 md:px-3">
+          <div class="flex min-h-8 items-center gap-2 border-b border-line-400 px-2 md:px-3">
             <dt>{% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.wind_label' | t }}{% endblock %}</dt>
             <span class="flex-1 translate-y-[3px] border-b border-dotted border-line-300" aria-hidden="true"></span>
-            <dd>{% block 'text', tag: 'span', variant: 'type-data-sm', class: 'text-on-surface' %}{{ 'home.scan.wind_value' | t }}{% endblock %}</dd>
+            <dd class="type-data-sm text-on-surface data-[rating=good]:text-success data-[rating=needs-improvement]:text-warning data-[rating=poor]:text-critical" data-metric="inp">{{ 'home.scan.vitals_pending' | t }}</dd>
           </div>
-      </dl>
+        </dl>
+        <div class="px-2 py-1.5 md:px-3">
+          {% block 'text', tag: 'span', variant: 'type-overline', class: 'text-ink-300' %}{{ 'home.scan.vitals_caption' | t }}{% endblock %}
+        </div>
+      </s-web-vitals>
     </div>
   {% endblock %}
 
@@ -581,6 +593,9 @@
     {% endblock %}
     {% block 'desktop-icon', icon: 'terminal', window: 'win-log' %}
       {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_log' | t }}{% endblock %}
+    {% endblock %}
+    {% block 'desktop-icon', icon: 'terminal', window: 'win-terminal' %}
+      {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.terminal.icon' | t }}{% endblock %}
     {% endblock %}
     {% block 'desktop-icon', icon: 'compare', window: 'win-compare' %}
       {% block 'text', tag: 'span', variant: 'type-data' %}{{ 'os.icon_compare' | t }}{% endblock %}

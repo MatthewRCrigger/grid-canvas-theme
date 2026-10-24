@@ -226,6 +226,26 @@
           { "value": "live", "label": "t:settings.wallpaper_motion_live" },
           { "value": "still", "label": "t:settings.wallpaper_motion_still" }
         ]
+      },
+      {
+        "type": "header",
+        "content": "t:settings.screensaver_header"
+      },
+      {
+        "type": "checkbox",
+        "id": "screensaver_enabled",
+        "label": "t:settings.screensaver_enabled",
+        "info": "t:settings.screensaver_enabled_info",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "screensaver_delay",
+        "label": "t:settings.screensaver_delay",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 3
       }
     ]
   },

@@ -102,7 +102,8 @@
               assign card_image_attributes = 'loading="' | append: card_loading | append: '" fetchpriority="' | append: fetch_priority | append: '"'
               assign card_index = paginate.current_offset | plus: forloop.index
             -%}
-            {% block 'card', block.name: 't:blocks.product_card', url: product.url, aria_label: product.title, class: 'h-full p-3 md:p-4' %}
+            {%- capture card_ql_attrs -%}data-quick-look="{{ product.url | escape }}"{%- endcapture -%}
+            {% block 'card', block.name: 't:blocks.product_card', url: product.url, aria_label: product.title, class: 'h-full p-3 md:p-4', attributes: card_ql_attrs %}
               <div class="flex items-center justify-between gap-2">
                 <span class="type-data-sm text-ink-300" aria-hidden="true">{% if card_index < 10 %}0{% endif %}{{ card_index }}</span>
                 {%- if product.available -%}

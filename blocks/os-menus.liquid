@@ -1,0 +1,29 @@
+{% doc %}
+  Owns the system trigger and shared popover menu chrome, delivered with the shell.
+  @param {string} [class] - Shell utilities.
+  @param {string} [attributes] - Extra shell attributes.
+{% enddoc %}
+<span class="os-menu-shell {{ class }}" {{ attributes }} {{ block.shopify_attributes }}>{{ content }}</span>
+{% style %}
+.os-menu-shell { display: contents; }
+.os-system-trigger { display: none; }
+@media (min-width:64rem) {
+ .os-menu-shell .os-system-trigger { position:relative; display:inline-flex; flex:none; align-items:center; justify-content:flex-start; gap:8px; height:44px; padding:0 10px 0 12px; margin:0 12px 0 4px; border:1px solid transparent; background:var(--color-surface); color:var(--color-on-surface); cursor:pointer; text-align:start; }
+ .os-menu-shell .os-system-trigger::after { content:""; position:absolute; inset-block:12px; inset-inline-end:-12px; border-inline-start:1px solid var(--color-line-300); }
+ .os-system-trigger svg { display:block; width:16px; height:16px; }
+ .os-system-trigger:hover, .os-menu-shell:has(.os-system-menu:popover-open) .os-system-trigger { border-color:var(--color-line-300); }
+ .os-system-trigger:hover svg { color:var(--color-accent); }
+ .os-system-trigger:focus-visible { outline:2px solid var(--color-accent); outline-offset:-3px; }
+}
+.os-menu[popover] { position:fixed; inset:auto; margin:0; box-sizing:border-box; min-width:248px; max-width:min(340px,calc(100vw - 16px)); max-height:calc(100dvh - 64px); overflow:auto; padding:4px; border:1px solid var(--color-line-100); border-radius:4px; background-color:var(--color-panel); color:var(--color-on-surface); box-shadow:none; transform:none; transition:none; isolation:isolate; text-align:start; }
+.os-menu[popover]:not(:popover-open) { display:none; }
+.os-menu[popover]:popover-open { display:block; opacity:1; transform:none; }
+.os-menu .os-menu-item { box-sizing:border-box; display:flex; width:100%; min-height:44px; align-items:center; justify-content:space-between; gap:24px; margin:0; padding:6px 12px; border:0; border-inline-start:2px solid transparent; background:transparent; color:var(--color-on-surface); font:400 12px/1.4 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; text-align:start; cursor:pointer; }
+.os-menu .os-menu-item:hover,.os-menu .os-menu-item:focus-visible { background:var(--color-hover); border-inline-start-color:var(--color-accent); color:var(--color-accent); outline:none; }
+.os-menu .os-menu-key { color:var(--color-ink-200); white-space:nowrap; }
+.os-menu .os-menu-sep { height:1px; margin:4px 8px; background:var(--color-line-400); }
+.os-menu.os-system-menu { top:48px; left:12px; }
+{% endstyle %}
+{% schema %}
+{"name":"t:blocks.main_menu","settings":[]}
+{% endschema %}

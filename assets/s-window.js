@@ -14,6 +14,16 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
 let topZ = 20;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+// v2: the homepage now opens on the Terminal alone, so window states saved under the old key are dropped once.
+const STORE_KEY = 'grid-os:windows:v2';
+
+const readStore = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {};
+  } catch {
+    return {};
+  }
+};
 
 class SWindow extends HTMLElement {
   #ac = null;
@@ -29,6 +39,19 @@ class SWindow extends HTMLElement {
     if (this.parentElement?.closest('s-window')) {
       this.dataset.nested = '';
       return;
+    }
+    // data-desktop-state="open|closed" gives a window a different starting state from 64rem up,
+    // e.g. the homepage opens on the Terminal on desktop while phones keep Spotlight as the hero.
+    const desktopState = this.dataset.desktopState;
+    if ((desktopState === 'open' || desktopState === 'closed') && DESKTOP.matches) {
+      this.dataset.state = desktopState;
+      this.toggleAttribute('data-active', desktopState === 'open');
+    }
+    if (this.#remembers) {
+      this.#restoreSaved();
+      const save = () => this.#persist();
+      for (const type of ['os:open', 'os:closed', 'os:minimize', 'os:restore']) this.addEventListener(type, save, { signal });
+      window.addEventListener('pagehide', save, { signal });
     }
     if (!this.hasAttribute('tabindex')) this.tabIndex = -1;
     if (!this.hasAttribute('role')) this.setAttribute('role', 'region');
@@ -67,6 +90,50 @@ class SWindow extends HTMLElement {
 
   disconnectedCallback() {
     this.#ac?.abort();
+  }
+
+  /**
+   * Desktop windows (fixed id, floating, 64rem+, outside the theme editor) remember whether they
+   * were open, where they were dragged and how they were resized, per visitor in localStorage.
+   * Page windows are remembered by s-window-manager instead.
+   */
+  get #remembers() {
+    return Boolean(this.id) && DESKTOP.matches && !window.Shopify?.designMode
+      && this.dataset.dynamic === undefined && !this.isStatic && !this.isDialog;
+  }
+
+  #restoreSaved() {
+    const saved = readStore()[this.id];
+    if (!saved) return;
+    // A minimized window has no dock tile on a fresh page, so it comes back open.
+    const state = saved.state === 'closed' ? 'closed' : 'open';
+    this.dataset.state = state;
+    if (state === 'closed') delete this.dataset.active;
+    if (Number.isFinite(saved.left) && Number.isFinite(saved.top)) {
+      this.style.inset = 'auto';
+      this.style.left = `${Math.max(0, Math.min(saved.left, window.innerWidth - 120))}px`;
+      this.style.top = `${Math.max(0, Math.min(saved.top, window.innerHeight - 160))}px`;
+    }
+    if (saved.width) this.style.width = saved.width;
+    if (saved.height) this.style.height = saved.height;
+  }
+
+  #persist() {
+    if (!this.#remembers) return;
+    const store = readStore();
+    const entry = { state: this.dataset.state === 'closed' ? 'closed' : 'open' };
+    if (this.style.left && this.style.top) {
+      entry.left = Number.parseFloat(this.style.left);
+      entry.top = Number.parseFloat(this.style.top);
+    }
+    if (this.style.width) entry.width = this.style.width;
+    if (this.style.height) entry.height = this.style.height;
+    store[this.id] = entry;
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(store));
+    } catch {
+      // Storage unavailable: the window opens where the page puts it next time.
+    }
   }
 
   /**
@@ -203,7 +270,16 @@ class SWindow extends HTMLElement {
 
   toggleZoom() {
     if (!DESKTOP.matches) return;
-    this.toggleAttribute('data-zoomed');
+    const zoomed = this.toggleAttribute('data-zoomed');
+    // A zoomed page window leaves its stage's flow, so the stage collapses; its bottom-fade mask
+    // would then clip the full-screen window to a strip. Lift the mask and stacking while zoomed.
+    const stage = this.closest('.os-stage');
+    if (stage) {
+      for (const prop of ['mask-image', '-webkit-mask-image', 'animation', 'isolation']) {
+        if (zoomed) stage.style.setProperty(prop, prop === 'isolation' ? 'auto' : 'none');
+        else stage.style.removeProperty(prop);
+      }
+    }
     this.focusWindow();
   }
 
@@ -236,6 +312,7 @@ class SWindow extends HTMLElement {
     };
     const end = () => {
       delete this.dataset.dragging;
+      this.#persist();
       bar.removeEventListener('pointermove', move);
       bar.removeEventListener('pointerup', end);
       bar.removeEventListener('pointercancel', end);

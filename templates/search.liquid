@@ -103,7 +103,8 @@
                               {%- # theme-check-disable-next-line UnknownFilter %}
                               <s-view-event class="block h-full" view-event-trigger="intersect" view-event-payload="{{ result | standard_event_data: 'view', context: 'search' | escape }}">
                                 {%- assign card_variant = result.selected_or_first_available_variant -%}
-                                {% block 'card', block.name: 't:blocks.product_card', url: result.url, aria_label: result.title, class: 'h-full p-3 md:p-4' %}
+                                {%- capture card_ql_attrs -%}data-quick-look="{{ result.url | escape }}"{%- endcapture -%}
+                                {% block 'card', block.name: 't:blocks.product_card', url: result.url, aria_label: result.title, class: 'h-full p-3 md:p-4', attributes: card_ql_attrs %}
                                   <div class="flex items-center justify-between gap-2">
                                     <span class="type-data-sm text-ink-300" aria-hidden="true">{% if result_index < 10 %}0{% endif %}{{ result_index }}</span>
                                     {%- if result.available -%}

@@ -11,7 +11,7 @@
   "current": {
     "logo_image": "shopify://shop_images/CRGGR-wordmark-dark_1.svg",
     "logo_size": "logo-size-custom",
-    "logo_height": 48,
+    "logo_height": 64,
     "favicon": "shopify://shop_images/CRGGR-favicon-512.png",
     "color_palette": {
       "surface": "#000000",
@@ -28,7 +28,7 @@
     "border_radius_buttons": "sharp",
     "border_radius_cards": "rounded",
     "border_radius_forms": "rounded",
-    "wallpaper_motion": "still",
+    "wallpaper_motion": "live",
     "social_linkedin": "https://linkedin.com/in/matthewrcrigger",
     "social_github": "https://github.com/MatthewRCrigger"
   }

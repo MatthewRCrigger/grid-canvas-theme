@@ -554,7 +554,8 @@
               {%- assign related_shown = related_shown | plus: 1 -%}
               {%- assign related_variant = related.selected_or_first_available_variant -%}
               <li class="border-b border-e border-line-400 bg-panel">
-                {% block 'card', block.name: 't:blocks.product_card', url: related.url, aria_label: related.title, class: 'h-full p-3 md:p-4' %}
+                {%- capture card_ql_attrs -%}data-quick-look="{{ related.url | escape }}"{%- endcapture -%}
+                {% block 'card', block.name: 't:blocks.product_card', url: related.url, aria_label: related.title, class: 'h-full p-3 md:p-4', attributes: card_ql_attrs %}
                   <a href="{{ related.url | escape }}" style="view-transition-name: pimg-{{ related.id }}" class="relative block overflow-hidden border border-line-400 bg-surface motion-safe:transition-colors group-hover/card:border-line-100" aria-label="{{ related.title | escape }}">
                     {% block 'image', fallback_image: related.featured_image, aspect_ratio: 'aspect-square', sizes: '(min-width: 768px) 25vw, 50vw', attributes: 'loading="lazy"', alt: related.title %}{% endblock %}
                     {% render 'hud-brackets', class: 'card-lock hud-brackets-accent' %}<span class="card-lock-tag" aria-hidden="true">{{ 'product.lock_tag' | t }}</span>

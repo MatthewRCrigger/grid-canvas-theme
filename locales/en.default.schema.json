@@ -57,7 +57,11 @@
     "wallpaper_motion": "Cursor glow",
     "wallpaper_motion_info": "The static grid floor behind every page on screens 1024px and wider. Cursor glow lights the grid cells near the mouse; it stays off for visitors who prefer reduced motion.",
     "wallpaper_motion_live": "On",
-    "wallpaper_motion_still": "Off"
+    "wallpaper_motion_still": "Off",
+    "screensaver_header": "Screen saver",
+    "screensaver_enabled": "Screen saver",
+    "screensaver_enabled_info": "After the visitor is idle, screens 1024px and wider fade to the grid floor and a clock. Any input wakes it.",
+    "screensaver_delay": "Start after (minutes)"
   },
   "variants": {
     "text_style": {

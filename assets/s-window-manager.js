@@ -13,6 +13,8 @@
  */
 const DESKTOP = window.matchMedia('(min-width: 64rem)');
 const MAX_WINDOWS = 6;
+const SESSION_KEY = 'grid-os:session';
+const SESSION_MAX = 4;
 
 class SWindowManager extends HTMLElement {
   #ac = null;
@@ -43,6 +45,40 @@ class SWindowManager extends HTMLElement {
     }
     document.addEventListener('click', (e) => this.#onClick(e), { signal });
     window.addEventListener('popstate', () => this.#onPopState(), { signal });
+    // Page windows are remembered between visits (like macOS reopening windows at login): the
+    // open ones are saved as the page is left and reopened on the next visit to the Desktop.
+    window.addEventListener('pagehide', () => this.#saveSession(), { signal });
+    if (DESKTOP.matches && desktop && this.#baseUrl === (this.dataset.root || '/')) this.#restoreSession();
+  }
+
+  #saveSession() {
+    if (!DESKTOP.matches) return;
+    const urls = this.#windows
+      .filter((win) => win.dataset.state === 'open' && win.dataset.url)
+      .sort((a, b) => Number(a.style.zIndex || 0) - Number(b.style.zIndex || 0))
+      .map((win) => win.dataset.url)
+      .slice(-SESSION_MAX);
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(urls));
+    } catch {
+      // Storage unavailable: nothing is reopened next time.
+    }
+  }
+
+  #restoreSession() {
+    let urls = [];
+    try {
+      urls = JSON.parse(localStorage.getItem(SESSION_KEY) || '[]');
+    } catch {
+      urls = [];
+    }
+    if (!Array.isArray(urls)) return;
+    for (const key of urls.slice(-SESSION_MAX)) {
+      if (typeof key !== 'string' || !key.startsWith('/')) continue;
+      const url = new URL(key, location.origin);
+      if (this.#isNative(url) || this.#key(url.href) === this.#baseUrl) continue;
+      this.open(url, null, { push: false });
+    }
   }
 
   disconnectedCallback() {
@@ -207,14 +243,6 @@ class SWindowManager extends HTMLElement {
   }
 
   #onFocus(win) {
-    const appTitle = document.querySelector('[data-os-app-title]');
-    const appDefault = document.querySelector('[data-os-app-default]');
-    const title = win?.windowTitle || '';
-    if (appTitle && appDefault) {
-      appTitle.textContent = title;
-      appTitle.hidden = !title;
-      appDefault.hidden = Boolean(title);
-    }
     if (window.Shopify?.designMode || !win) return;
     // The address bar follows the focused window; desktop windows belong to the base page.
     const target = win.dataset.dynamic !== undefined ? win.dataset.url : this.#baseUrl;

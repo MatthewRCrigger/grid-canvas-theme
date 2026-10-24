@@ -1993,8 +1993,8 @@
 
 @layer components {
   /* Menu bar: the focused window's name in the app slot. */
-  .os-menubar-app { display: inline-flex; align-items: center; min-width: 0; max-width: 22ch; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .os-menubar-app [data-os-app-title] { overflow: hidden; text-overflow: ellipsis; }
+  /* System menu label: a stable name beside the chevron, sized to its text. */
+  .os-menubar-app { display: inline-flex; align-items: center; flex: none; white-space: nowrap; }
 
   /* Dock: phones get a full-width bottom bar of icons; from 48rem a framed floating dock. */
   .os-dock {
@@ -2254,6 +2254,25 @@
   /* Windows (Frame blocks with Desktop window on). */
   s-window[data-window][data-state="closed"],
   s-window[data-window][data-state="minimized"] { display: none; }
+  /* A window that starts closed on desktop only (data-desktop-state) stays hidden until s-window upgrades it, so it never flashes. */
+  @media (min-width: 64rem) {
+    s-window[data-desktop-state="closed"]:not(:defined) { display: none; }
+  }
+  /* Desktop boot (64rem+): the desktop and window layer wait for s-desktop's data-ready, set once
+     saved windows, icons and the last session are restored, so a return visit never flashes the
+     fresh layout. The 2.5s reveal animation is the fallback if a script never loads. */
+  @media (min-width: 64rem) {
+    s-desktop:not([data-ready]),
+    body:has(s-desktop:not([data-ready])) .os-window-layer {
+      visibility: hidden;
+      animation: os-boot-reveal 0s linear 2.5s forwards;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      s-desktop[data-ready] { animation: os-boot-in 180ms var(--ease-ui, ease-out); }
+    }
+  }
+  @keyframes os-boot-reveal { to { visibility: visible; } }
+  @keyframes os-boot-in { from { opacity: 0; } }
   .frame-grid { --win-inset: 7px; }
   .frame-hairline { --win-inset: 1px; }
   .frame-none { --win-inset: 0px; }
@@ -2903,5 +2922,279 @@
       animation-timeline: scroll(self block);
       animation-range: calc(100% - 64px) 100%;
     }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   GRID OS macOS LAYER — system menu, context menus, Quick Look / Get Info, Terminal,
+   Mission Control, window switcher, desktop selection box and the screen saver.
+   Desktop-first chrome (64rem+, fine pointer); every surface follows the hairline rules.
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* System menu trigger: a quiet chevron after the logo, from 64rem. */
+  /* Quick Look variant picker and the Get Info / About spec lists. */
+  .os-ql-select {
+    width: 100%;
+    min-height: var(--spacing-touch-target);
+    padding: 0 12px;
+    border: 1px solid var(--color-line-300);
+    border-radius: 0;
+    background: var(--color-surface-secondary);
+    color: var(--color-on-surface);
+    font: 400 13px/1 var(--font-mono);
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+  }
+  .os-info-list, .os-key-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-line-400);
+    & > div {
+      display: grid;
+      grid-template-columns: 8.5rem minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      min-height: 40px;
+      padding-block: 6px;
+      border-bottom: 1px solid var(--color-line-400);
+    }
+    & dt { font: 500 12px/1.3 var(--font-heading); letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ink-300); }
+    & dd { margin: 0; font: 400 13px/1.4 var(--font-mono); color: var(--color-on-surface); overflow-wrap: anywhere; }
+  }
+  .os-key-list dt { display: flex; gap: 4px; }
+  .os-key-list dd { color: var(--color-ink-200); }
+  .os-about-mark { display: block; flex-shrink: 0; width: 64px; height: 64px; color: var(--color-line-100); }
+
+  /* Terminal: black screen, mono lines coloured only by meaning. */
+  .os-term {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--color-surface);
+    font: 400 13px/1.55 var(--font-mono);
+    color: var(--color-on-surface);
+  }
+  .os-term-output { flex: 1; min-height: 160px; overflow: auto; overscroll-behavior: contain; padding: 12px 16px; }
+  .os-term-line {
+    display: flex;
+    gap: 12px;
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    &[data-tone="muted"] { color: var(--color-ink-300); }
+    &[data-tone="info"] { color: var(--color-info); }
+    &[data-tone="ok"] { color: var(--color-success); }
+    &[data-tone="alert"] { color: var(--color-critical); }
+  }
+  .os-term-num { color: var(--color-ink-300); }
+  .os-term-meta { margin-inline-start: auto; color: var(--color-ink-300); }
+  .os-term-cmd, .os-term-prompt { color: var(--color-info); white-space: pre; }
+  .os-term-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--color-line-400);
+    &:focus-within { border-top-color: var(--color-accent); }
+  }
+  .os-term-input {
+    flex: 1;
+    min-width: 0;
+    min-height: 28px;
+    border: 0;
+    background: transparent;
+    color: var(--color-on-surface);
+    font: inherit;
+    caret-color: var(--color-interactive);
+    outline: none;
+  }
+
+  /* Desktop selection box and movable icons (64rem+). */
+  .os-marquee {
+    position: fixed;
+    z-index: 70;
+    border: 1px solid var(--color-info);
+    background: color-mix(in oklch, var(--color-info) 12%, transparent);
+    pointer-events: none;
+  }
+  @media (min-width: 64rem) {
+    .os-icon-item { transition: translate 240ms var(--ease-ui); }
+    .os-icon-item[data-dragging] { position: relative; z-index: 5; transition: none; cursor: grabbing; }
+  }
+  @media (prefers-reduced-motion: reduce) { .os-icon-item { transition: none; } }
+
+  /* Mission Control: windows shrink into a grid (transforms set by s-mission-control). */
+  .os-mission { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+  .os-mission-hint {
+    position: fixed;
+    top: calc(var(--os-mission-top, var(--os-menubar-h)) + 16px);
+    left: 50%;
+    translate: -50% 0;
+    margin: 0;
+    font: 400 12px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-200);
+  }
+  .os-mission-label {
+    position: fixed;
+    translate: -50% 0;
+    max-width: 280px;
+    padding: 3px 8px;
+    border: 1px solid var(--color-line-300);
+    background: var(--color-surface);
+    font: 400 12px/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--color-on-surface);
+    &[data-current] { border-color: var(--color-interactive); color: var(--color-interactive); }
+  }
+  html[data-mission] s-window[data-mission-transform] { cursor: pointer; outline: 1px solid var(--color-line-300); }
+  html[data-mission] s-window[data-mission-target] { outline: 2px solid var(--color-interactive); }
+  html[data-mission] .os-icons,
+  html[data-mission] .os-desktop-coord { opacity: 0.15; transition: opacity 200ms var(--ease-ui); }
+  /* Empty state: a centered panel instead of a stray caption over a blacked-out desktop. */
+  .os-mission-empty {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+    max-width: min(420px, calc(100vw - 48px));
+    padding: 28px 36px;
+    border: 1px solid var(--color-line-300);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    text-align: center;
+    animation: os-mission-empty-in 200ms var(--ease-ui) both;
+    &[hidden] { display: none; }
+  }
+  .os-mission-empty-title {
+    margin: 0;
+    font: 400 13px/1.2 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .os-mission-empty-sub {
+    margin: 0;
+    font: 400 12px/1.5 var(--font-mono);
+    color: var(--color-ink-200);
+  }
+  @keyframes os-mission-empty-in { from { opacity: 0; scale: 0.97; } }
+  @media (prefers-reduced-motion: reduce) { .os-mission-empty { animation: none; } }
+  /* With nothing to arrange, keep the desktop icons legible: they are the way to open something. */
+  html[data-mission='empty'] .os-icons { opacity: 0.45; }
+
+  /* Window switcher (Option+Tab). */
+  .os-switcher {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 90;
+    translate: -50% -50%;
+    max-width: calc(100vw - 64px);
+    &[hidden] { display: none; }
+  }
+  .os-switcher-strip {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    overflow-x: auto;
+    border: 2px solid var(--color-line-100);
+    border-radius: var(--radius-panel, 8px);
+    background: var(--color-panel);
+  }
+  .os-switcher-tile {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 116px;
+    padding: 10px 8px;
+    border: 1px solid var(--color-line-400);
+    &[data-current] { border-color: var(--color-interactive); }
+    &[data-current] .os-switcher-name { color: var(--color-interactive); }
+    &[data-minimized] { opacity: 0.6; }
+    & .os-tray-glyph {
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--color-line-300);
+      font: 400 14px/1 var(--font-mono);
+      text-transform: uppercase;
+      color: var(--color-accent);
+    }
+  }
+  .os-switcher-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: 400 12px/1.2 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-200);
+  }
+
+  /* Screen saver: a travelling grid floor and a large clock over true black. */
+  .os-screensaver {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--color-surface);
+    opacity: 1;
+    transition: opacity 600ms var(--ease-ui);
+    @starting-style { opacity: 0; }
+    &[hidden] { display: none; }
+  }
+  html[data-screensaver] { cursor: none; }
+  .os-saver-floor { position: absolute; inset: 0; overflow: hidden; perspective: 420px; }
+  .os-saver-grid {
+    position: absolute;
+    inset-inline: -60%;
+    bottom: -20%;
+    height: 75%;
+    background-image:
+      linear-gradient(var(--color-line-400) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-line-400) 1px, transparent 1px);
+    background-size: 64px 64px;
+    transform: rotateX(72deg);
+    transform-origin: 50% 100%;
+    animation: os-saver-travel 5s linear infinite;
+  }
+  @keyframes os-saver-travel {
+    from { background-position: 0 0; }
+    to { background-position: 0 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .os-saver-grid { animation: none; } }
+  .os-saver-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding-bottom: 18vh;
+  }
+  .os-saver-clock { font: 300 clamp(56px, 9vw, 120px)/1 var(--font-mono); letter-spacing: 0.06em; color: var(--color-line-100); }
+  .os-saver-name { font: 600 14px/1 var(--font-heading); letter-spacing: 0.3em; text-transform: uppercase; color: var(--color-on-surface); }
+  .os-saver-hint { font: 400 12px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-300); }
+}
+
+/* A zoomed page window leaves the stage's flow; drop the stage's fade mask and stacking context so
+   the collapsed stage cannot clip the full-screen window. */
+@media (min-width: 64rem) {
+  .os-stage:has(> .os-stage-inner > s-window[data-zoomed], s-window[data-mode="static"][data-zoomed]) {
+    mask-image: none;
+    animation: none;
+    isolation: auto;
   }
 }

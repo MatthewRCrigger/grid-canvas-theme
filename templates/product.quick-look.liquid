@@ -1,0 +1,106 @@
+{%- layout none -%}
+{%- comment -%}
+  QUICK LOOK / GET INFO — a bare product fragment (no layout) that s-quick-look.js fetches with
+  ?view=quick-look and moves into the global #quick-look pop-up window. It carries two panes:
+  [data-ql-pane="preview"] (Space: image, price, add to cart) and [data-ql-pane="info"]
+  (Option+I: a Finder "Get Info" spec sheet). The script shows one pane at a time.
+  The add-to-cart form uses the same <s-product-form> contract as the product page.
+{%- endcomment -%}
+{%- liquid
+  assign ql_variant = product.selected_or_first_available_variant
+  assign ql_form_id = 'quick-look-form-' | append: product.id
+  assign ql_error_id = 'quick-look-error-' | append: product.id
+  assign ql_info_title = 'os.quick_look.info_title' | t: title: product.title
+-%}
+<div data-quick-look-root data-title="{{ product.title | escape }}" data-info-title="{{ ql_info_title | escape }}">
+  <section data-ql-pane="preview" class="grid gap-5 p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:p-6">
+    <div class="relative border border-line-400 bg-surface">
+      {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: '(min-width: 768px) 380px, 100vw', widths: '400,600,800', alt: product.title, attributes: 'loading="eager"' %}{% endblock %}
+      {% render 'hud-brackets' %}
+    </div>
+    <div class="flex min-w-0 flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        {%- if product.vendor != blank or product.type != blank -%}
+          <span class="type-data-sm uppercase text-ink-300">{{ product.vendor | escape }}{% if product.vendor != blank and product.type != blank %} // {% endif %}{{ product.type | escape }}</span>
+        {%- endif -%}
+        <h3 class="type-heading-lg text-on-surface [overflow-wrap:anywhere]">{{ product.title | escape }}</h3>
+      </div>
+      {% block 'price', price: ql_variant.price, compare_at_price: ql_variant.compare_at_price, price_min: product.price_min, price_max: product.price_max, variant: 'type-data', class: 'self-start text-[18px]' %}{% endblock %}
+      {%- if product.description != blank -%}
+        <p class="type-body-sm text-ink-200">{{ product.description | strip_html | truncatewords: 40 }}</p>
+      {%- endif -%}
+
+      <s-product-form class="mt-auto block" data-product-form data-product-id="{{ product.id }}" data-error-message="{{ 'cart.update_error' | t | escape }}">
+        {% form 'product', product, id: ql_form_id, class: 'flex flex-col gap-3' %}
+          {%- if product.has_only_default_variant == false -%}
+            <label class="flex flex-col gap-2">
+              <span class="type-overline text-ink-300">{{ 'os.quick_look.variant' | t }}</span>
+              <select class="os-ql-select" data-ql-variant>
+                {%- for variant in product.variants -%}
+                  <option value="{{ variant.id }}"{% if variant.id == ql_variant.id %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title | escape }}{% unless variant.available %} // {{ 'product.sold_out' | t }}{% endunless %}</option>
+                {%- endfor -%}
+              </select>
+            </label>
+          {%- endif -%}
+          <input type="hidden" name="id" value="{{ ql_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          {%- if product.available -%}
+            {%- capture ql_add_attrs -%}aria-describedby="{{ ql_error_id }}"{%- endcapture -%}
+            {% block 'button', type: 'submit', name: 'add', variant: 'button-primary', class: 'h-11 w-full px-3 text-[13px]', attributes: ql_add_attrs %}{{- 'product.add_to_cart' | t -}}{% endblock %}
+          {%- else -%}
+            {% block 'button', type: 'button', inert: true, disabled: true, variant: 'button-secondary', class: 'h-11 w-full px-3 text-[13px] border-line-400 text-ink-400' %}{{- 'product.sold_out' | t -}}{% endblock %}
+          {%- endif -%}
+          <p id="{{ ql_error_id }}" data-add-to-cart-error role="alert" hidden class="text-sm text-critical"></p>
+        {% endform %}
+      </s-product-form>
+      <a href="{{ product.url | escape }}" class="type-overline inline-flex min-h-11 items-center gap-2 self-start text-accent hover:underline">
+        {{- 'os.quick_look.view_details' | t -}}
+        <span class="inline-flex size-4 rtl:-scale-x-100" aria-hidden="true">{{- 'icon-arrow-right.svg' | inline_asset_content -}}</span>
+      </a>
+    </div>
+  </section>
+
+  <section data-ql-pane="info" hidden class="flex flex-col gap-4 p-4 md:p-6">
+    <div class="flex items-center gap-4">
+      <div class="size-16 shrink-0 border border-line-400 bg-surface">
+        {% block 'image', fallback_image: product.featured_image, aspect_ratio: 'aspect-square', sizes: '64px', widths: '128', alt: '', attributes: 'loading="eager"' %}{% endblock %}
+      </div>
+      <div class="flex min-w-0 flex-col gap-1">
+        <h3 class="type-heading-sm truncate text-on-surface">{{ product.title | escape }}</h3>
+        <span class="type-data-sm uppercase text-ink-300">{{ 'os.quick_look.modified' | t }} {{ product.updated_at | default: product.published_at | date: '%Y-%m-%d %H:%M' }}</span>
+      </div>
+    </div>
+    {%- liquid
+      assign ql_tracked = false
+      if ql_variant.inventory_management != blank
+        assign ql_tracked = true
+      endif
+    -%}
+    <dl class="os-info-list">
+      <div><dt>{{ 'os.quick_look.kind' | t }}</dt><dd>{{ product.type | default: '—' | escape }}</dd></div>
+      <div><dt>{{ 'os.quick_look.vendor' | t }}</dt><dd>{{ product.vendor | default: '—' | escape }}</dd></div>
+      <div><dt>{{ 'os.quick_look.price' | t }}</dt><dd>{% if product.price_varies %}{{ product.price_min | money }} – {{ product.price_max | money }}{% else %}{{ ql_variant.price | money }}{% endif %}</dd></div>
+      <div><dt>{{ 'os.quick_look.sku' | t }}</dt><dd>{{ ql_variant.sku | default: '—' | escape }}</dd></div>
+      <div>
+        <dt>{{ 'os.quick_look.status' | t }}</dt>
+        <dd>
+          {%- if product.available -%}
+            <span class="text-success">{{ 'home.status.in_stock' | t }}</span>
+            {%- if ql_tracked and ql_variant.inventory_quantity > 0 %} // {{ 'os.quick_look.units' | t: count: ql_variant.inventory_quantity }}{% endif -%}
+          {%- else -%}
+            <span class="text-critical">{{ 'home.status.sold_out' | t }}</span>
+          {%- endif -%}
+        </dd>
+      </div>
+      <div><dt>{{ 'os.quick_look.variants' | t }}</dt><dd>{{ product.variants.size }}{% unless product.has_only_default_variant %} // {{ product.options | join: ', ' | escape }}{% endunless %}</dd></div>
+      {%- if product.tags.size > 0 -%}
+        <div><dt>{{ 'os.quick_look.tags' | t }}</dt><dd>{{ product.tags | join: ', ' | escape }}</dd></div>
+      {%- endif -%}
+      {%- if product.collections.size > 0 -%}
+        <div><dt>{{ 'os.quick_look.collections' | t }}</dt><dd>{{ product.collections | map: 'title' | join: ', ' | escape }}</dd></div>
+      {%- endif -%}
+      <div><dt>{{ 'os.quick_look.created' | t }}</dt><dd>{{ product.created_at | date: '%Y-%m-%d' }}</dd></div>
+      <div><dt>{{ 'os.quick_look.where' | t }}</dt><dd class="break-all">{{ product.url }}</dd></div>
+    </dl>
+  </section>
+</div>
